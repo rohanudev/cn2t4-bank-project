@@ -1,0 +1,41 @@
+name: bank-projcet
+
+services:
+  backend:
+    build: ./backend
+    container_name: django_backend
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    
+
+  frontend:
+    build: ./frontend
+    container_name: vanilla_frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html   # 개발 중에만 사용
+      - ./frontend/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend # 순서만 보장
+
+# 로컬에서 개발용 DB 컨테이너 생성
+#   db:
+#     image: mysql:8
+#     container_name: mysql_db
+#     restart: always
+#     ports:
+#       - "3306:3306"
+#     environment:
+#       MYSQL_DATABASE: mydatabase
+#       MYSQL_USER: myuser
+#       MYSQL_PASSWORD: mypassword
+#       MYSQL_ROOT_PASSWORD: rootpassword
+#     volumes:
+#       - mysql_data:/var/lib/mysql
+
+# volumes:
+#   mysql_data:
