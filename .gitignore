@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.env
+*.log
+.env.*
+
+# Django
+db.sqlite3
+/media
+/staticfiles
+*.pot
+*.pyc
+
+# VSCode
+.vscode/
+
+# Node.js
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# macOS
+.DS_Store
+
+# Docker
+*.pid
+*.seed
+*.tar
+*.gz
+*.img
+
+# Test/coverage
+.coverage
+coverage/
+htmlcov/
+*.cover
+*.py,cover
+.cache/
