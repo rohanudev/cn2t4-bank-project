@@ -36,16 +36,15 @@ git clone https://github.com/nolzaheo/cn2t4-bank-project.git
 ```bash
 docker-compose up -d --build
 ```
-- 백엔드(Django): http://localhost:8000
-- 프론트엔드(Vanilla JS + Nginx): http://localhost
 
 🧪 3. 프로젝트 실행 및 API 연결 확인
 웹 브라우저에 아래 주소 입력
-- http://localhost
-- http://localhost:8000/api/hello -> { "message": "Hello from Django!" }
+- 프론트엔드(Vanilla JS + Nginx): http://localhost
+- 백엔드(Django): http://localhost:8000
+- API 테스트: http://localhost:8000/api/hello -> { "message": "Hello from Django!" }
 
 🔁 4. 개발 중 실시간 반영  
-프론트엔드와 백엔드 디렉토리는 volumes로 마운트되어 있어 코드 수정 시 자동 반영됩니다.
+- 프론트엔드와 백엔드 디렉토리는 volumes로 마운트되어 있어 코드 수정 시 자동 반영됩니다.
 
 🛑 5. 종료
 ```bash
