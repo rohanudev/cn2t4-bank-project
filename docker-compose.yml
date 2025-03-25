@@ -9,6 +9,8 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
+    depends_on:
+      - db # 순서만 보장
     
 
   frontend:
@@ -23,19 +25,19 @@ services:
       - backend # 순서만 보장
 
 # 로컬에서 개발용 DB 컨테이너 생성
-#   db:
-#     image: mysql:8
-#     container_name: mysql_db
-#     restart: always
-#     ports:
-#       - "3306:3306"
-#     environment:
-#       MYSQL_DATABASE: mydatabase
-#       MYSQL_USER: myuser
-#       MYSQL_PASSWORD: mypassword
-#       MYSQL_ROOT_PASSWORD: rootpassword
-#     volumes:
-#       - mysql_data:/var/lib/mysql
+  db:
+    image: mysql:8
+    container_name: mysql_db
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - mysql_data:/var/lib/mysql
 
-# volumes:
-#   mysql_data:
+volumes:
+  mysql_data:

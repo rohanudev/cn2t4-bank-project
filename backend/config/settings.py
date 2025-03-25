@@ -44,6 +44,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'api',
+    'accounts',
+    'users',
+    'transactions',
+    'notifications',
 ]
 
 MIDDLEWARE = [
@@ -84,10 +88,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': '',
-        'USER': 'root',
-        'PASSWORD': 'Groom-team4!',
-        'HOST': '3.34.120.230', # EC2 퍼블릭 IP. 로컬의 컨테이너 사용하려면 'db' 입력
+        'NAME': 'mydatabase',
+        'USER': 'myuser',
+        'PASSWORD': 'mypassword',
+        'HOST': 'db', # EC2 퍼블릭 IP 또는 로컬의 컨테이너 사용하려면 'db' 입력
         'PORT': '3306',
     }
 }
