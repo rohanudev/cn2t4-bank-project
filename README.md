@@ -50,3 +50,42 @@ docker-compose up -d --build
 ```bash
 docker-compose down
 ```
+---
+# 📦 데이터베이스 마이그레이션 가이드
+
+✅ 모델을 수정한 사람 (Git에 올리는 사람)
+
+Django 모델을 수정하거나 새로운 모델을 추가한 경우, 다음 과정을 따라주세요.
+
+1. 모델 수정 후 마이그레이션 파일 생성 및 마이그레이션 파일 반영
+
+```bash
+docker exec django_backend python manage.py makemigrations
+docker exec django_backend python manage.py migrate
+
+# 또는
+# 다음 명령으로 컨테이너에 직접 진입하여 실행할 수도 있습니다:
+
+docker exec -it django_backend bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+2. 생성된 마이그레이션 파일(migrations/000X_*.py)을 커밋 & push
+
+```bash
+git add .
+git commit -m "모델 수정 및 마이그레이션 파일 추가"
+git push
+```
+
+3. 🔥 팀원에게 모델이 변경 됐다고 알려주기!!
+
+✅ 다른 개발자 (Git에서 내려받는 사람)
+
+1. 자기 로컬 DB에 마이그레이션 하기
+
+```bash
+git pull
+docker exec django_backend python manage.py migrate
+```
