@@ -6,21 +6,10 @@
   <title>Simple API Demo</title>
 </head>
 <body>
-  <h1>API Data</h1>
-  <div id="data">Loading...</div>
+  <!-- 컴포넌트가 mount될 영역 -->
+  <div id="app"></div>
 
-  <script>
-    // 예시: 런타임 주입된 환경변수에서 API 주소 사용
-    const API_BASE_URL = 'http://localhost:8000';
-
-    fetch(`${API_BASE_URL}/api/hello`)
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('data').textContent = JSON.stringify(data, null, 2);
-      })
-      .catch(error => {
-        document.getElementById('data').textContent = 'Error: ' + error;
-      });
-  </script>
+  <!-- script -->
+  <script type="module" src="./js/main.js"></script>
 </body>
 </html>

@@ -16,12 +16,12 @@ class Transaction(models.Model):
     ]
 
     transaction_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    sender_account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='sent_transactions', null=True, blank=True)
-    receiver_account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='received_transactions', null=True, blank=True)
+    from_account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='sent_transactions', null=True, blank=True)
+    to_account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='received_transactions', null=True, blank=True)
     amount = models.IntegerField()
     type = models.CharField(max_length=12, choices=TRANSACTION_CHOICES)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
-    message = models.CharField(max_length=255, blank=True, null=True)
+    memo = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
