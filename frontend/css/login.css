@@ -1,9 +1,9 @@
-._1,
-._1 * {
+.login,
+.login * {
     box-sizing: border-box;
 }
 
-._1 {
+.login {
     background: #ffffff;
     height: 852px;
     position: relative;

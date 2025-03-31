@@ -1,0 +1,78 @@
+.signup,
+.signup * {
+  box-sizing: border-box;
+}
+
+.signup {
+  background: #ffffff;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.subtitle-signup,
+.subtitle-auth-info,
+.subtitle-user-info {
+  width: 100%;
+  font-family: "Inter-Bold", sans-serif;
+  font-weight: 700;
+  text-align: left;
+}
+
+.subtitle-signup {
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+
+.subtitle-auth-info, .subtitle-user-info {
+  font-size: 18px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+input {
+  width: 100%;
+  height: 50px;
+  border: 1px solid #818181;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 16px;
+  font-family: "Inter-Bold", sans-serif;
+  color: #333;
+}
+
+.enter-email-box,
+.enter-password-box,
+.check-password-box,
+.enter-name-box,
+.enter-phone-box,
+.enter-birth-box {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.back-btn, .create-btn {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  font-weight: 700;
+  color: #ffffff;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.back-btn {
+  background: #969696;
+}
+
+.create-btn {
+  background: #3b3939;
+}
