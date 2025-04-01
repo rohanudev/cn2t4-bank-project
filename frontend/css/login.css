@@ -1,3 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Lemon&display=swap');
+
+.title {
+    font-family: "Lemon", serif;
+}
+
+
 .login,
 .login * {
     box-sizing: border-box;
@@ -20,49 +27,6 @@
     font-weight: 400;
     text-align: center;
     margin-bottom: 30px;
-}
-
-.enter-email-box,
-.enter-password-box {
-    background: rgba(255, 254, 254, 0);
-    border-radius: 15px;
-    border: 1px solid #818181;
-    width: 321px;
-    height: 61px;
-    display: flex;
-    align-items: center;
-    padding: 0 15px;
-    margin-bottom: 15px;
-}
-
-.enter-email-text,
-.enter-password-text {
-    color: #818181;
-    font-family: "Inter-Bold", sans-serif;
-    font-size: 17px;
-    font-weight: 700;
-    border: none;
-    width: 100%;
-    outline: none;
-}
-
-.login-box {
-    background: #3b3939;
-    border-radius: 15px;
-    width: 321px;
-    height: 61px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    margin-top: 20px;
-}
-
-.div {
-    color: #ffffff;
-    font-family: "Inter-Bold", sans-serif;
-    font-size: 17px;
-    font-weight: 700;
 }
 
 .signup-btn {
