@@ -1,6 +1,7 @@
-from django.urls import path
-from .views import hello_view
+from django.urls import include, path
+from . import views
 
 urlpatterns = [
-    path('hello', hello_view),
+    path('hello', views.hello_view),
+    path('transactions/', include('transactions.urls')),
 ]
