@@ -19,6 +19,7 @@ class Transaction(models.Model):
     from_account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='sent_transactions', null=True, blank=True)
     to_account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='received_transactions', null=True, blank=True)
     amount = models.IntegerField()
+    balance_after = models.IntegerField(default=0)
     type = models.CharField(max_length=12, choices=TRANSACTION_CHOICES)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
     memo = models.CharField(max_length=255, blank=True, null=True)
