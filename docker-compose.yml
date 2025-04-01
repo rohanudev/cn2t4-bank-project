@@ -10,7 +10,8 @@ services:
     volumes:
       - ./backend:/app
     depends_on:
-      - db # 순서만 보장
+      db:
+        condition: service_healthy
     
 
   frontend:
@@ -38,6 +39,11 @@ services:
       MYSQL_ROOT_PASSWORD: rootpassword
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpassword"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
 volumes:
   mysql_data:
