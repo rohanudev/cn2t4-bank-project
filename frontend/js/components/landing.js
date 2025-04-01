@@ -1,31 +1,24 @@
-// 계좌 리스트
-import { state } from './store.js';
+import { state } from '../store.js';
+import { goTo } from '../router.js';
 
 export function Landing() {
-    // ✅ 내부 상태
-    let localState = {
-      accounts: [],
-      selectedAccountId: null,
-    };
+  const el = document.createElement("div");
+  el.className = "screen";
+  el.id = "screen-landing";
+  el.innerHTML = `
+    <h2>랜딩 페이지</h2>
+    <button id="btn-go-deposit">입금하러 가기</button>
+  `;
 
-    // ✅ 초기화
-    function init(optionalParams) {
-      localState.accounts = optionalParams;
-      bindEvents();
-    }
-    
-    // ✅ DOM 생성
-    const el = document.createElement("div");
+  function init(props) {
+    bindEvents();
+  }
 
-    // ✅ 이벤트 등록
-    function bindEvents() {
+  function bindEvents() {
+    el.querySelector("#btn-go-deposit").addEventListener("click", () => {
+      goTo("deposit", { accountId: "333322233358212" });
+    });
+  }
 
-    }
-    
-    // ✅ API 요청 함수
-    async function fetchData() {
-
-    }
-    
-    return { el, init}
+  return { el, init };
 }

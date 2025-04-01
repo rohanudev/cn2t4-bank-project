@@ -1,10 +1,14 @@
 // router.js
+import { Login } from "./components/login.js";
 import { Landing } from "./components/landing.js";
+import { Account } from "./components/account.js";
 import { Deposit } from "./components/deposit.js";
 import { state } from './store.js';
 
 const routes = {
+  login: Login,
   landing: Landing,
+  account: Account,
   deposit: Deposit,
 };
 
