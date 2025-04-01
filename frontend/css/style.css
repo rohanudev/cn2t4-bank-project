@@ -3,3 +3,92 @@
 .title {
     font-family: "Lemon", serif;
 }
+
+.subtitle {
+    color: #000000;
+    text-align: left;
+    font-family: "Inter-Bold", sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    display: block;  /* 블록 요소로 설정하여 input-box 위에 배치 */
+    margin-bottom: 5px; /* input-box와의 간격 조정 */
+  }
+  
+.subsubtitle {
+    width: 100%;
+    font-family: "Inter-Bold", sans-serif;
+    font-weight: 700;
+    text-align: left;
+    font-size: 18px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.info-input-box{
+    background: rgba(255, 254, 254, 0);
+    border-radius: 15px;
+    border: 1px solid #818181;
+    width: 321px;
+    height: 61px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    margin-bottom: 15px;
+}
+
+.info-input-text{
+    color: #818181;
+    font-family: "Inter-Bold", sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    border: none;
+    width: 100%;
+    outline: none;
+}
+
+.single-btn-dark-box {
+    background: #3b3939;
+    border-radius: 15px;
+    width: 321px;
+    height: 61px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.single-btn-dark-text {
+    color: #ffffff;
+    font-family: "Inter-Bold", sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.btn-container {
+    display: flex;
+    justify-content: space-between;
+    width: 321px; /* input-box와 동일한 너비 */
+    margin-top: 10px;
+}
+
+.half-btn-light, .half-btn-dark {
+    width: 48%; /* 버튼을 input-box의 절반 크기로 설정 */
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    font-weight: 700;
+    color: #ffffff;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.half-btn-light {
+    background: #969696;
+}
+
+.half-btn-dark {
+    background: #3b3939;
+}
