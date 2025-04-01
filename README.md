@@ -60,7 +60,7 @@ Django 모델을 수정하거나 새로운 모델을 추가한 경우, 다음 �
 1. 모델 수정 후 마이그레이션 파일 생성 및 마이그레이션 파일 반영
 
 ```bash
-docker exec django_backend python manage.py makemigrations
+docker exec -it django_backend python manage.py makemigrations
 docker exec django_backend python manage.py migrate
 
 # 또는
