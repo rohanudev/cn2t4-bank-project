@@ -1,0 +1,21 @@
+.menu {
+    display: flex;
+    flex-direction: column; /* 세로 정렬 */
+    align-items: flex-start; /* 왼쪽 정렬 */
+    gap: 20px; /* 메뉴 간격 */
+    padding: 40px 20px; /* 내부 여백 */
+  }
+  
+  .menu-list {
+    color: #000000;
+    font-family: "Inter-Bold", sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+  }
+  
+  .back-btn {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    margin-top: 20px; /* 위쪽 여백 */
+  }
