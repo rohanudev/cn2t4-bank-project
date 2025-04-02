@@ -1,0 +1,149 @@
+.landing,
+.landing * {
+  box-sizing: border-box;
+}
+
+.landing {
+  background: #ffffff;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* 위쪽 정렬 */
+  position: relative;
+  width: 100%;
+  height: 60px; /* 헤더 높이 설정 */
+}
+
+.user-name {
+  color: #000000;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 30px;
+  font-weight: 400;
+  margin-top: 20px; /* 아래로 조금 내리기 */
+}
+
+.center-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* 화면 높이 기준 중앙 정렬 */
+}
+
+.account-list-container {
+  width: 321px;
+  max-height: calc(127px * 3 + 15px * 2);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-right: 5px;
+  margin-top: 30px;
+}
+
+.account-info-card {
+  position: relative;
+  width: 321px;
+  height: 127px;
+  background: #d9d9d9;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.account-header {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.account-nick {
+  color: #000000;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.balance-container {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.balance {
+  color: #000000;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.money-unit {
+  color: #000000;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.transfer-btn {
+  background: #868686;
+  border-radius: 20px;
+  width: 63px;
+  height: 29px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+.transfer-text {
+  color: #ffffff;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.single-btn-dark-box {
+  background: #3b3939;
+  border-radius: 15px;
+  width: 321px;
+  height: 61px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.single-btn-dark-text {
+  color: #ffffff;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+
+.icons {
+  display: flex;
+  gap: 10px; /* 버튼 간격 */
+}
+
+.noti-btn,
+.menu-btn {
+  width: 34px;
+  height: 34px;
+  object-fit: cover;
+  aspect-ratio: 1;
+  margin-top: -5px; /* 버튼을 위로 올리기 */
+}

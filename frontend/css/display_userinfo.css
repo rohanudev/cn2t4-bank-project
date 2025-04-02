@@ -1,0 +1,73 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.display-userinfo {
+    background: #ffffff;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+    position: relative;
+}
+
+.back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.subtitle {
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 30px; /* back-btn 아래 10px 위치 */
+    margin-bottom: 20px;
+    position: relative;
+    top: 10px; /* back-btn 아래 10px 조정 */
+    left: 0;
+}
+
+.tiny-content-wrapper {
+    display: flex;
+    gap: 10px;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.info-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.info-list-subject {
+    font-weight: bold;
+    color: #444;
+}
+
+.edit-btn {
+    margin-top: 20px;
+    background: #868686;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    text-align: center;
+    width: 100px;
+    align-self: center;
+}
