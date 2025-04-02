@@ -97,6 +97,10 @@ DATABASES = {
         'PASSWORD': 'mypassword',
         'HOST': 'db', # EC2 퍼블릭 IP 또는 로컬의 컨테이너 사용하려면 'db' 입력
         'PORT': '3306',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'init_command': "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
+        },
     }
 }
 
