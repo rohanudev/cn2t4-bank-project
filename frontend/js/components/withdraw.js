@@ -2,7 +2,7 @@ import { state } from '../store.js';
 import { goTo } from '../router.js';
 import { API_BASE_URL } from '../config.js';
 
-export function Deposit() {
+export function Withdraw() {
     // 내부 상태
     let localState = {
       amount: 0,
@@ -12,7 +12,7 @@ export function Deposit() {
 
     // 📦 DOM 요소 생성
     const el = document.createElement("div");
-    el.id = "screen-deposit";
+    el.id = "screen-withdraw";
     el.className = "screen";
 
     // 🚀 컴포넌트 초기화 (초기 상태 세팅, 이벤트 바인딩)
@@ -31,10 +31,10 @@ export function Deposit() {
     // 단계 1: 금액 입력
     function StepAmountInput() {
       const container = document.createElement('div');
-      container.id = "screen-deposit-1";
+      container.id = "screen-withdraw-1";
       container.className = "transaction-container";
       container.innerHTML = `
-        <div class="subtitle transaction-title">입금</div>
+        <div class="subtitle transaction-title">출금</div>
         <div class="account-info">
           <div class="account-name">${localState.accountName}</div>
           <div class="account-id">${localState.accountId}</div>
@@ -84,23 +84,23 @@ export function Deposit() {
     // 단계 2: 확인
     function StepConfirm(amount) {
       const container = document.createElement('div');
-      container.id = "screen-deposit-2";
+      container.id = "screen-withdraw-2";
       container.className = "transaction-container";
       container.innerHTML = `
-        <div class="subtitle transaction-title">입금</div>
+        <div class="subtitle transaction-title">출금</div>
         <div class="account-info">
           <div class="account-name">${localState.accountName}</div>
           <div class="account-id">${localState.accountId}</div>
         </div>
         <div class="section-body">
           <div class="confirm-message">
-            <span class="bold-text">${localState.accountName}</span>로<br>
-            <span class="bold-text">${amount}원</span>을 입금합니다.
+            <span class="bold-text">${localState.accountName}</span>에서<br>
+            <span class="bold-text">${amount}원</span>을 출금합니다.
           </div>
         </div>
         <div class="btn-container">
           <div id="cancel" class="half-btn-light">취소</div>
-          <div id="submit" class="half-btn-dark">입금</div>
+          <div id="submit" class="half-btn-dark">출금</div>
         </div>
       `
 
@@ -119,11 +119,11 @@ export function Deposit() {
     // 단계 3: 완료
     function StepDone() {
       const container = document.createElement('div');
-      container.id = "screen-deposit-3";
+      container.id = "screen-withdraw-3";
       container.className = "transaction-container";
       container.innerHTML = `
         <div class="section-body">
-          <div class="bold-text">입금이 완료되었습니다.</div>
+          <div class="bold-text">출금이 완료되었습니다.</div>
         </div>
         <div id="done" class="single-btn-dark-box">
           <div class="single-btn-dark-text">확인</div>
@@ -138,8 +138,8 @@ export function Deposit() {
     }
 
     // 🌐 API 요청 함수
-    async function submitDeposit() {
-      const res = await fetch(`${API_BASE_URL}/api/transactions/deposit`, {
+    async function submitWithdraw() {
+      const res = await fetch(`${API_BASE_URL}/api/transactions/withdraw`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -152,13 +152,13 @@ export function Deposit() {
       
       try {
           if (data.success) {
-            document.getElementById("deposit-message").textContent = "입금 성공!";
+            document.getElementById("withdraw-message").textContent = "출금 성공!";
           } else {
-            document.getElementById("deposit-message").textContent = "입금 실패!";
+            document.getElementById("withdraw-message").textContent = "출금 실패!";
           }
       } catch {
           console.error(err);
-	      document.getElementById("deposit-message").textContent = "오류 발생!";
+          document.getElementById("withdraw-message").textContent = "오류 발생!";
       }
     }
     

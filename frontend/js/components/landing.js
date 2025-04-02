@@ -8,6 +8,7 @@ export function Landing() {
   el.innerHTML = `
     <h2>랜딩 페이지</h2>
     <button id="btn-go-deposit">입금하러 가기</button>
+    <button id="btn-go-withdraw">출금하러 가기</button>
   `;
 
   function init(props) {
@@ -16,7 +17,11 @@ export function Landing() {
 
   function bindEvents() {
     el.querySelector("#btn-go-deposit").addEventListener("click", () => {
-      goTo("deposit", { accountId: "333322233358212" });
+      goTo("deposit", { accountName: "저축 계좌", accountId: "333322233358212" });
+    });
+    el.querySelector("#btn-go-withdraw").addEventListener("click", () => {
+      goTo("withdraw", { accountName: "저축 계좌", accountId: "333322233358212" });
+    });
     });
   }
 

@@ -3,6 +3,8 @@ import { Login } from "./components/login.js";
 import { Landing } from "./components/landing.js";
 import { Account } from "./components/account.js";
 import { Deposit } from "./components/deposit.js";
+import { Withdraw } from "./components/withdraw.js";
+import { Transfer } from "./components/transfer.js";
 import { state } from './store.js';
 
 const routes = {
@@ -10,6 +12,9 @@ const routes = {
   landing: Landing,
   account: Account,
   deposit: Deposit,
+  withdraw: Withdraw,
+  transfer: Transfer,
+  
 };
 
 let currentScreen = null;
