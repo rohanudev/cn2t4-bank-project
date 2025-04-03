@@ -22,7 +22,6 @@ export function Landing() {
     el.querySelector("#btn-go-withdraw").addEventListener("click", () => {
       goTo("withdraw", { accountName: "저축 계좌", accountId: "333322233358212" });
     });
-    });
   }
 
   return { el, init };

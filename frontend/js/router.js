@@ -4,7 +4,8 @@ import { Landing } from "./components/landing.js";
 import { Account } from "./components/account.js";
 import { Deposit } from "./components/deposit.js";
 import { Withdraw } from "./components/withdraw.js";
-import { Transfer } from "./components/transfer.js";
+import { UserInfo } from "./components/userinfo.js";
+
 import { state } from './store.js';
 
 const routes = {
@@ -13,8 +14,8 @@ const routes = {
   account: Account,
   deposit: Deposit,
   withdraw: Withdraw,
-  transfer: Transfer,
-  
+  userInfo: UserInfo,
+
 };
 
 let currentScreen = null;
