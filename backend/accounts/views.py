@@ -32,8 +32,8 @@ class CreateAccountView(APIView):
         }, status=status.HTTP_201_CREATED)
 
 class UserAccountsView(APIView):
-    def get(self, request, user_id):
-        user = get_object_or_404(User, user_id=user_id)
+    def get(self, request, userId):
+        user = get_object_or_404(User, user_id=userId)
         accounts = Account.objects.filter(user=user)  # user_id 대신 user 사용
 
         account_data = [
