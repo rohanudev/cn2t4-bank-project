@@ -1,0 +1,97 @@
+/* Account Create */
+.subtitle {
+  text-align: center;
+  margin-top: 50px;
+}
+.info-input-box {
+  margin: 30px auto;
+}
+.single-btn-dark-box {
+  background: #3b3939;
+  border-radius: 15px;
+  width: 321px;
+  height: 61px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.single-btn-dark-text {
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+/* Account Create Complete */
+.account-summary-box {
+  background: #d9d9d9;
+  border-radius: 10px;
+  padding: 20px;
+  width: 90%;
+  max-width: 321px;
+  margin: 30px auto;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Account Detail */
+.balance-big {
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+  margin: 20px 0;
+}
+.transaction-list {
+  margin: 30px auto;
+  width: 90%;
+  max-width: 321px;
+  font-size: 16px;
+  font-family: "Inter-Regular", sans-serif;
+}
+.transaction-list div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.btn-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+.half-btn-light, .half-btn-dark {
+  width: 48%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  font-weight: 700;
+  color: #ffffff;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.half-btn-light {
+  background: #969696;
+}
+.half-btn-dark {
+  background: #3b3939;
+}
+
+/* Account Delete 1 */
+.subsubtitle {
+  text-align: center;
+  font-size: 16px;
+  margin-top: 50px;
+  margin-bottom: 60px;
+  line-height: 1.6;
+}
+
+/* Account Delete 2 */
+.subsubtitle.red {
+  color: red;
+}
+
+/* Account Delete 3 - override */
+.subsubtitle.large {
+  font-size: 18px;
+}
