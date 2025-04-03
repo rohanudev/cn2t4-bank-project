@@ -23,13 +23,18 @@
     cursor: pointer;
 }
 
+/* 추가된 부분: 모든 컨텐츠를 아래로 이동 */
+.content-wrapper {
+    margin-top: 40px; /* 원하는 만큼 조절 */
+    width: 100%;
+}
+
 .subtitle {
     font-size: 30px;
     font-weight: bold;
-    margin-top: 30px; /* back-btn 아래 10px 위치 */
+    margin-top: 30px;
     margin-bottom: 20px;
     position: relative;
-    top: 10px; /* back-btn 아래 10px 조정 */
     left: 0;
 }
 
@@ -70,4 +75,23 @@
     text-align: center;
     width: 100px;
     align-self: center;
+}
+
+
+
+#edit-userinfo
+
+.edit-userinfo,
+.edit-userinfo * {
+  box-sizing: border-box;
+}
+
+.edit-userinfo {
+  background: #ffffff;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
