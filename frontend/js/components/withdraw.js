@@ -8,6 +8,7 @@ export function Withdraw() {
       amount: 0,
       accountName: null,
       accountId: null,
+      accountBalance: 0,
     };
 
     // 📦 DOM 요소 생성
@@ -35,18 +36,23 @@ export function Withdraw() {
       container.className = "transaction-container";
       container.innerHTML = `
         <div class="subtitle transaction-title">출금</div>
-        <div class="account-info">
-          <div class="account-name">${localState.accountName}</div>
-          <div class="account-id">${localState.accountId}</div>
-        </div>
-        <div class="section-body">
-          <div class="amount-input-box">
-            <input id="amount" class="amount-input-text" placeholder="보낼 금액" />
-            <div class="unit-label">원</div>
+        <div class="transaction-body">
+          <div class="account-info-box" style="visibility: hidden;">
+            <div class="account-name">${localState.accountName}</div>
+            <div class="account-id">${localState.accountId}</div>
           </div>
-        </div>
-        <div id="next" class="single-btn-dark-box">
-          <div class="single-btn-dark-text">다음</div>
+          <div class="section-body">
+            <div class="amount-input-box">
+              <input id="amount" class="amount-input-text" placeholder="보낼 금액" />
+              <div class="unit-label">원</div>
+            </div>
+          </div>
+          <div class="account-info-box">
+            <div><span class="account-name">${localState.accountName}</span>(${localState.accountId.slice(-4)}): ${localState.accountBalance}원</div>
+          </div>
+          <div id="next" class="single-btn-dark-box">
+            <div class="single-btn-dark-text">다음</div>
+          </div>
         </div>
       `
 
@@ -88,19 +94,24 @@ export function Withdraw() {
       container.className = "transaction-container";
       container.innerHTML = `
         <div class="subtitle transaction-title">출금</div>
-        <div class="account-info">
-          <div class="account-name">${localState.accountName}</div>
-          <div class="account-id">${localState.accountId}</div>
-        </div>
-        <div class="section-body">
-          <div class="confirm-message">
-            <span class="bold-text">${localState.accountName}</span>에서<br>
-            <span class="bold-text">${amount}원</span>을 출금합니다.
+        <div class="transaction-body">
+          <div class="account-info-box" style="visibility: hidden;">
+            <div class="account-name">${localState.accountName}</div>
+            <div class="account-id">${localState.accountId}</div>
           </div>
-        </div>
-        <div class="btn-container">
-          <div id="cancel" class="half-btn-light">취소</div>
-          <div id="submit" class="half-btn-dark">출금</div>
+          <div class="section-body">
+            <div class="confirm-message">
+              <span class="bold-text">${localState.accountName}</span>에서<br>
+              <span class="bold-text">${amount}원</span>을 출금합니다.
+            </div>
+          </div>
+          <div class="account-info-box">
+            <div><span class="account-name">${localState.accountName}</span>(${localState.accountId.slice(-4)}): ${localState.accountBalance}원</div>
+          </div>
+          <div class="btn-container">
+            <div id="cancel" class="half-btn-light">취소</div>
+            <div id="submit" class="half-btn-dark">출금</div>
+          </div>
         </div>
       `
 
@@ -122,11 +133,13 @@ export function Withdraw() {
       container.id = "screen-withdraw-3";
       container.className = "transaction-container";
       container.innerHTML = `
-        <div class="section-body">
-          <div class="bold-text">출금이 완료되었습니다.</div>
-        </div>
-        <div id="done" class="single-btn-dark-box">
-          <div class="single-btn-dark-text">확인</div>
+        <div class="transaction-body">
+          <div class="section-body">
+            <div class="bold-text">출금이 완료되었습니다.</div>
+          </div>
+          <div id="done" class="single-btn-dark-box">
+            <div class="single-btn-dark-text">확인</div>
+          </div>
         </div>
       `
       container.querySelector('#done').addEventListener('click', () => {
