@@ -11,8 +11,8 @@ class CreateAccountView(APIView):
         nickname = request.data.get("nickname", "")
         balance = request.data.get("balance", 0)
 
-        # 유저 확인
-        user = get_object_or_404(User, id=user_id)
+        # 유저 확인 (user_id 기반 조회)
+        user = get_object_or_404(User, user_id=user_id)
 
         # 새로운 계좌 생성
         account = Account.objects.create(
@@ -25,7 +25,7 @@ class CreateAccountView(APIView):
         return Response({
             "account_id": str(account.account_id),
             "account_number": account.account_number,
-            "user_id": str(user.id),
+            "user_id": str(user.user_id),  # id → user_id
             "nickname": account.nickname,
             "balance": account.balance,
             "status": account.status
@@ -33,8 +33,8 @@ class CreateAccountView(APIView):
 
 class UserAccountsView(APIView):
     def get(self, request, user_id):
-        user = get_object_or_404(User, id=user_id)
-        accounts = Account.objects.filter(user=user)
+        user = get_object_or_404(User, user_id=user_id)
+        accounts = Account.objects.filter(user=user)  # user_id 대신 user 사용
 
         account_data = [
             {

@@ -11,7 +11,7 @@ class Account(models.Model):
 
     account_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     account_number = models.CharField(max_length=20, unique=True, blank=True)  # default 제거, blank=True 추가
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='accounts', db_column='user_id')  
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='accounts')  
     nickname = models.CharField(max_length=20, null=True, blank=True)  
     balance = models.IntegerField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='OPEN')
@@ -33,4 +33,4 @@ class Account(models.Model):
                 return number
 
     def __str__(self):
-        return f'Account {self.account_number} ({self.user_id}) - {self.nickname or "No Nickname"}'
+        return f'Account {self.account_number} ({self.user.user_id}) - {self.nickname or "No Nickname"}'
