@@ -7,13 +7,13 @@ from .models import Account
 
 class UserAccountsView(APIView):
     def get(self, request, user_id):
-        user = get_object_or_404(User, user_id=user_id)
-        accounts = Account.objects.filter(user=user)
+        user = get_object_or_404(User, user_id=user_id)  # UUID 기반 유저 조회
+        accounts = Account.objects.filter(user_id=user.user_id)  # UUID 기반 계좌 조회
         
         account_data = [
             {
                 "account_id": str(account.account_id),
-                "account_number": account.account_number,
+                "nickname": account.nickname,  # 계좌 별명 추가
                 "balance": account.balance
             }
             for account in accounts
