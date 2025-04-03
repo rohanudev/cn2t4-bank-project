@@ -5,15 +5,41 @@ from django.shortcuts import get_object_or_404
 from users.models import User
 from .models import Account
 
+class CreateAccountView(APIView):
+    def post(self, request):
+        user_id = request.data.get("user_id")
+        nickname = request.data.get("nickname", "")
+        balance = request.data.get("balance", 0)
+
+        # 유저 확인
+        user = get_object_or_404(User, id=user_id)
+
+        # 새로운 계좌 생성
+        account = Account.objects.create(
+            user=user,
+            nickname=nickname,
+            balance=balance,
+            status="OPEN"
+        )
+
+        return Response({
+            "account_id": str(account.account_id),
+            "account_number": account.account_number,
+            "user_id": str(user.id),
+            "nickname": account.nickname,
+            "balance": account.balance,
+            "status": account.status
+        }, status=status.HTTP_201_CREATED)
+
 class UserAccountsView(APIView):
     def get(self, request, user_id):
-        user = get_object_or_404(User, user_id=user_id)  # UUID 기반 유저 조회
-        accounts = Account.objects.filter(user_id=user.user_id)  # UUID 기반 계좌 조회
-        
+        user = get_object_or_404(User, id=user_id)
+        accounts = Account.objects.filter(user=user)
+
         account_data = [
             {
                 "account_id": str(account.account_id),
-                "nickname": account.nickname,  # 계좌 별명 추가
+                "nickname": account.nickname,
                 "balance": account.balance
             }
             for account in accounts
