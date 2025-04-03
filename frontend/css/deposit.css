@@ -51,22 +51,53 @@ html, body {
     align-self: flex-start;
 }
 
+.transaction-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 320px;
+  height: 100%;
+}
+
 /* body */
 .section-body {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
     width: 100%;
 }
 
-.account-info {
+.account-info-box {
+  width: 100%;
+  padding: 20px;
   margin-top: 20px;
-  margin-left: 4px;
-  align-self: flex-start;
   font-size: 16px;
   color: #5d5d5d;
+  background-color: #eee;
+  border-radius: 8px;
+  border-style: none;
+}
+
+.account-input-box {
+  width: 100%;
+  padding: 20px;
+  margin-top: 20px;
+  margin-bottom: 150px;
+  font-size: 16px;
+  color: #5d5d5d;
+  background-color: #eee;
+  border-radius: 8px;
+  border-style: none;
+}
+
+.account-input-box:focus {
+  outline: none;
+}
+
+.account-name {
+  font-weight: bold;;
 }
 
 .amount-input-box {
@@ -78,8 +109,8 @@ html, body {
 }
 
 .amount-input-text {
-    width: 60%;
-    font-size: 18px;
+    width: 80%;
+    font-size: 24px;
     text-align: center;
     padding: 8px;
     border: none;
@@ -102,4 +133,43 @@ html, body {
     margin-bottom: 150px;
     text-align: center;
     font-size: 18px;
+}
+
+/* 송금 확인 */
+.account-detail-box {
+  width: 100%;
+  padding: 20px;
+  margin-bottom: 40px;
+  color: #5d5d5d
+}
+
+.account-detail-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.account-detail-label {
+  font-weight: 500;
+}
+
+.account-detail-value {
+  font-weight: 500;
+}
+
+.memo-input-box {
+  width: 100%;
+  padding: 12px;
+  text-align: end;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  font-size: 16px;
+  margin-top: 4px;
+  color: #5d5d5d;
+}
+
+.memo-input-box:focus {
+  outline: none;
+  border-color: #5d5d5d;
 }
