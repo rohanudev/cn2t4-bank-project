@@ -20,7 +20,6 @@ export function AccountDelete() {
   }
 
   function renderStep1() {
-    console.log("🖌️ renderStep1 시작됨");
     el.innerHTML = `
       <div class="subtitle">계좌 삭제</div>
       <div class="subsubtitle">${state.accountName}(${state.accountId})를<br/>삭제하시겠습니까?</div>
