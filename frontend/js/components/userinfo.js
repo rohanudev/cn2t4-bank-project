@@ -61,8 +61,8 @@ export function UserInfo() {
             </div>
         </div>
         
-        <div class="edit-btn">수정</div>
     </div>
+    <div class="edit-btn">수정</div>
 `;
 
 
