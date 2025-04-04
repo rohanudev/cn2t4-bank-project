@@ -4,6 +4,7 @@ import { Landing } from "./components/landing.js";
 import { Account } from "./components/account.js";
 import { Deposit } from "./components/deposit.js";
 import { Withdraw } from "./components/withdraw.js";
+import { Transfer } from "./components/transfer.js";
 
 import { UserInfo } from "./components/userinfo.js";
 
@@ -16,6 +17,7 @@ const routes = {
   account: Account,
   deposit: Deposit,
   withdraw: Withdraw,
+  transfer: Transfer,
   userInfo: UserInfo,
   accountDelete: AccountDelete,
 
