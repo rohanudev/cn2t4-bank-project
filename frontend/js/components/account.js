@@ -9,6 +9,9 @@ export function Account() {
   el.innerHTML = `
     <h2>계좌 상세 페이지</h2>
     <button id="btn-go-landing">랜딩페이지 가기</button>
+    <button id="btn-go-deposit">입금하러 가기</button>
+    <button id="btn-go-withdraw">출금하러 가기</button>
+    <button id="btn-go-transfer">이체하러 가기</button>
   `;
 
   function init(props) {
@@ -18,6 +21,15 @@ export function Account() {
   function bindEvents() {
     el.querySelector("#btn-go-landing").addEventListener("click", () => {
       goTo("landing", {});
+    });
+    el.querySelector("#btn-go-deposit").addEventListener("click", () => {
+      goTo("deposit", { accountName: "저축 계좌", accountNumber: "333322233358212" });
+    });
+    el.querySelector("#btn-go-withdraw").addEventListener("click", () => {
+      goTo("withdraw", { accountName: "저축 계좌", accountNumber: "333322233358212" });
+    });
+    el.querySelector("#btn-go-transfer").addEventListener("click", () => {
+      goTo("transfer", { accountName: "저축 계좌", accountNumber: "333322233358212" });
     });
   }
 

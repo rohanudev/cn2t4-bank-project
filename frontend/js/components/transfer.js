@@ -7,10 +7,10 @@ export function Transfer() {
     let localState = {
       amount: 0,
       accountName: null,
-      accountId: null,
-      accountBalance: 0,
+      accountNumber: null,
+      accountBalance: 100000,
       toAccountUserName: '받는 사람 이름',
-      toAccountId: null,
+      toaccountNumber: null,
     };
 
     // 📦 DOM 요소 생성
@@ -21,7 +21,7 @@ export function Transfer() {
     // 🚀 컴포넌트 초기화 (초기 상태 세팅, 이벤트 바인딩)
     function init(props) {
       localState.accountName = props.accountName ?? null;
-      localState.accountId = props.accountId ?? null;
+      localState.accountNumber = props.accountNumber ?? null;
       
       render(StepAccountInput);
     }
@@ -37,6 +37,7 @@ export function Transfer() {
       container.id = "screen-transfer-1";
       container.className = "transaction-container";
       container.innerHTML = `
+        <div id="quit" class="transaction-quit">취소</div>
         <div class="subtitle transaction-title">이체</div>
         <div class="transaction-body">
           <div class="section-body">
@@ -49,16 +50,20 @@ export function Transfer() {
         </div>
       `
 
+      container.querySelector('#quit').addEventListener('click', () => {
+        goTo("account", {})
+      });
+
       container.querySelector('#to-account-input').addEventListener('input', (e) => {
         // 숫자만 추출
         const formatted = e.target.value.replace(/[^0-9]/g, "");
         e.target.value = formatted;
         // 상태값은 숫자 그대로 저장
-        localState.toAccountId = formatted;
+        localState.toaccountNumber = formatted;
       });
 
       container.querySelector('#next').addEventListener('click', () => {
-        if (localState.toAccountId == '' || localState.toAccountId == null) {
+        if (localState.toaccountNumber == '' || localState.toaccountNumber == null) {
           alert("계좌 번호를 입력해주세요.");
           return;
         }
@@ -75,11 +80,12 @@ export function Transfer() {
         container.id = "screen-transfer-2";
         container.className = "transaction-container";
         container.innerHTML = `
+          <div id="quit" class="transaction-quit">취소</div>
           <div class="subtitle transaction-title">이체</div>
           <div class="transaction-body">
             <div class="account-info-box">
               <div class="account-name">${localState.toAccountUserName}</div>
-              <div class="account-id">${localState.toAccountId}</div>
+              <div class="account-id">${localState.toaccountNumber}</div>
             </div>
             <div class="section-body">
               <div class="bold-text" style="align-self: start; margin-bottom: 40px;">얼마를 보낼까요?</div>
@@ -87,23 +93,33 @@ export function Transfer() {
                 <input id="amount" class="amount-input-text" placeholder="보낼 금액" />
                 <div class="unit-label">원</div>
               </div>
+              <div id="amount-warning" style="margin-top: 20px; display: none;">출금계좌 잔고 부족</div>
             </div>
             <div class="account-info-box">
-              <div><span class="account-name">${localState.accountName}</span>(${localState.accountId.slice(-4)}): ${localState.accountBalance}원</div>
+              <div><span class="account-name">${localState.accountName}</span>(${localState.accountNumber.slice(-4)}): ${localState.accountBalance.toLocaleString()}원</div>
             </div>
             <div id="next" class="single-btn-dark-box">
               <div class="single-btn-dark-text">다음</div>
             </div>
           </div>
         `
+
+        container.querySelector('#quit').addEventListener('click', () => {
+          goTo("account", {})
+        });
   
         container.querySelector('#amount').addEventListener('input', (e) => {
           // 숫자만 추출
           const rawValue = e.target.value.replace(/[^0-9]/g, "");
+          const warningEl = container.querySelector('#amount-warning');
+          const nextBtn = container.querySelector('#next');
+
           // 0원 또는 빈 값이면 초기화
           if (rawValue === "" || /^0+$/.test(rawValue)) {
             e.target.value = "";
             localState.amount = 0;
+            warningEl.style.display = 'none';
+            nextBtn.classList.remove("disabled");
             return;
           }
           // 쉼표 붙이기
@@ -112,9 +128,20 @@ export function Transfer() {
           e.target.value = formatted;
           // 상태값은 숫자 그대로 저장
           localState.amount = Number(rawValue);
+
+          if (localState.amount > localState.accountBalance) {
+            e.target.style.color = "#d33";
+            warningEl.style.display = 'block';
+            nextBtn.classList.add("disabled");
+          } else {
+            e.target.style.color = "#000";
+            warningEl.style.display = 'none';
+            nextBtn.classList.remove("disabled");
+          }
         });
   
-        container.querySelector('#next').addEventListener('click', () => {
+        container.querySelector('#next').addEventListener('click', (e) => {
+          if (e.target.classList.contains("disabled")) return;
           // 금액이 0원 이하일 경우 경고
           if (localState.amount <= 0) {
             alert("금액을 입력해주세요.");
@@ -140,19 +167,19 @@ export function Transfer() {
               <span class="bold-text">${localState.toAccountUserName}</span>님에게<br>
               <span class="bold-text">${amount}원</span>을 이체할까요?
             </div>
-            <div class="account-detail-box">
-              <div class="account-detail-line">
-                <span class="account-detail-label">받는 계좌</span>
-                <span class="account-detail-value">${localState.toAccountId}</span>
-              </div>
-              <div class="account-detail-line">
-                <span class="account-detail-label">출금 계좌</span>
-                <span class="account-detail-value">${localState.accountId}</span>
-              </div>
-              <div class="">
-                <label for="transfer-memo" class="account-detail-label">메모</label>
-                <input id="transfer-memo" class="memo-input-box" placeholder="최대 100자" />
-              </div>
+          </div>
+          <div class="account-detail-box">
+            <div class="account-detail-line">
+              <span class="account-detail-label">받는 계좌</span>
+              <span class="account-detail-value">${localState.toaccountNumber}</span>
+            </div>
+            <div class="account-detail-line">
+              <span class="account-detail-label">출금 계좌</span>
+              <span class="account-detail-value">${localState.accountNumber}</span>
+            </div>
+            <div class="">
+              <label for="transfer-memo" class="account-detail-label">메모</label>
+              <input id="transfer-memo" class="memo-input-box" placeholder="최대 100자" />
             </div>
           </div>
           <div class="btn-container">
@@ -206,7 +233,7 @@ export function Transfer() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          account_id: localState.accountId,
+          account_id: localState.accountNumber,
           amount: localState.amount,
         }),
       });

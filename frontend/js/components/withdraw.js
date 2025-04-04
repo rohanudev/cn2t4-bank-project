@@ -7,8 +7,8 @@ export function Withdraw() {
     let localState = {
       amount: 0,
       accountName: null,
-      accountId: null,
-      accountBalance: 0,
+      accountNumber: null,
+      accountBalance: 100000,
     };
 
     // 📦 DOM 요소 생성
@@ -19,7 +19,7 @@ export function Withdraw() {
     // 🚀 컴포넌트 초기화 (초기 상태 세팅, 이벤트 바인딩)
     function init(props) {
       localState.accountName = props.accountName ?? null;
-      localState.accountId = props.accountId ?? null;
+      localState.accountNumber = props.accountNumber ?? null;
       
       render(StepAmountInput);
     }
@@ -35,20 +35,22 @@ export function Withdraw() {
       container.id = "screen-withdraw-1";
       container.className = "transaction-container";
       container.innerHTML = `
+        <div id="quit" class="transaction-quit">취소</div>
         <div class="subtitle transaction-title">출금</div>
         <div class="transaction-body">
           <div class="account-info-box" style="visibility: hidden;">
             <div class="account-name">${localState.accountName}</div>
-            <div class="account-id">${localState.accountId}</div>
+            <div class="account-id">${localState.accountNumber}</div>
           </div>
           <div class="section-body">
             <div class="amount-input-box">
               <input id="amount" class="amount-input-text" placeholder="보낼 금액" />
               <div class="unit-label">원</div>
             </div>
+            <div id="amount-warning" style="margin-top: 20px; display: none;">출금계좌 잔고 부족</div>
           </div>
           <div class="account-info-box">
-            <div><span class="account-name">${localState.accountName}</span>(${localState.accountId.slice(-4)}): ${localState.accountBalance}원</div>
+            <div><span class="account-name">${localState.accountName}</span>(${localState.accountNumber.slice(-4)}): ${localState.accountBalance.toLocaleString()}원</div>
           </div>
           <div id="next" class="single-btn-dark-box">
             <div class="single-btn-dark-text">다음</div>
@@ -56,13 +58,22 @@ export function Withdraw() {
         </div>
       `
 
+      container.querySelector('#quit').addEventListener('click', () => {
+        goTo("account", {})
+      });
+
       container.querySelector('#amount').addEventListener('input', (e) => {
         // 숫자만 추출
         const rawValue = e.target.value.replace(/[^0-9]/g, "");
+        const warningEl = container.querySelector('#amount-warning');
+        const nextBtn = container.querySelector('#next');
+
         // 0원 또는 빈 값이면 초기화
         if (rawValue === "" || /^0+$/.test(rawValue)) {
           e.target.value = "";
           localState.amount = 0;
+          warningEl.style.display = 'none';
+          nextBtn.classList.remove("disabled");
           return;
         }
         // 쉼표 붙이기
@@ -71,9 +82,21 @@ export function Withdraw() {
         e.target.value = formatted;
         // 상태값은 숫자 그대로 저장
         localState.amount = Number(rawValue);
+
+        
+        if (localState.amount > localState.accountBalance) {
+          e.target.style.color = "#d33";
+          warningEl.style.display = 'block';
+          nextBtn.classList.add("disabled");
+        } else {
+          e.target.style.color = "#000";
+          warningEl.style.display = 'none';
+          nextBtn.classList.remove("disabled");
+        }
       });
 
-      container.querySelector('#next').addEventListener('click', () => {
+      container.querySelector('#next').addEventListener('click', (e) => {
+        if (e.target.classList.contains("disabled")) return;
         // 금액이 0원 이하일 경우 경고
         if (localState.amount <= 0) {
           alert("금액을 입력해주세요.");
@@ -93,11 +116,12 @@ export function Withdraw() {
       container.id = "screen-withdraw-2";
       container.className = "transaction-container";
       container.innerHTML = `
+        <div id="quit" class="transaction-quit" style="visibility: hidden;">취소</div>
         <div class="subtitle transaction-title">출금</div>
         <div class="transaction-body">
           <div class="account-info-box" style="visibility: hidden;">
             <div class="account-name">${localState.accountName}</div>
-            <div class="account-id">${localState.accountId}</div>
+            <div class="account-id">${localState.accountNumber}</div>
           </div>
           <div class="section-body">
             <div class="confirm-message">
@@ -105,8 +129,8 @@ export function Withdraw() {
               <span class="bold-text">${amount}원</span>을 출금합니다.
             </div>
           </div>
-          <div class="account-info-box">
-            <div><span class="account-name">${localState.accountName}</span>(${localState.accountId.slice(-4)}): ${localState.accountBalance}원</div>
+          <div class="account-info-box" style="visibility: hidden;">
+            <div><span class="account-name">${localState.accountName}</span>(${localState.accountNumber.slice(-4)}): ${localState.accountBalance.toLocaleString()}원</div>
           </div>
           <div class="btn-container">
             <div id="cancel" class="half-btn-light">취소</div>
@@ -156,7 +180,7 @@ export function Withdraw() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          account_id: localState.accountId,
+          account_id: localState.accountNumber,
           amount: localState.amount,
         }),
       });

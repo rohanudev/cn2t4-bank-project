@@ -7,7 +7,7 @@ export function Deposit() {
     let localState = {
       amount: 0,
       accountName: null,
-      accountId: null,
+      accountNumber: null,
       accountBalance: 0,
     };
 
@@ -19,7 +19,7 @@ export function Deposit() {
     // 🚀 컴포넌트 초기화 (초기 상태 세팅, 이벤트 바인딩)
     function init(props) {
       localState.accountName = props.accountName ?? null;
-      localState.accountId = props.accountId ?? null;
+      localState.accountNumber = props.accountNumber ?? null;
       
       render(StepAmountInput);
     }
@@ -35,11 +35,12 @@ export function Deposit() {
       container.id = "screen-deposit-1";
       container.className = "transaction-container";
       container.innerHTML = `
+        <div id="quit" class="transaction-quit">취소</div>
         <div class="subtitle transaction-title">입금</div>
         <div class="transaction-body">
           <div class="account-info-box">
             <div class="account-name">${localState.accountName}</div>
-            <div class="account-id">${localState.accountId}</div>
+            <div class="account-id">${localState.accountNumber}</div>
           </div>
           <div class="section-body">
             <div class="amount-input-box">
@@ -48,13 +49,16 @@ export function Deposit() {
             </div>
           </div>
           <div class="account-info-box" style="visibility: hidden;">
-            <div><span class="account-name">${localState.accountName}</span>(${localState.accountId.slice(-4)}): ${localState.accountBalance}원</div>
+            <div><span class="account-name">${localState.accountName}</span>(${localState.accountNumber.slice(-4)}): ${localState.accountBalance}원</div>
           </div>
           <div id="next" class="single-btn-dark-box">
             <div class="single-btn-dark-text">다음</div>
           </div>
         </div>
       `
+      container.querySelector('#quit').addEventListener('click', () => {
+        goTo("account", {})
+      });
 
       container.querySelector('#amount').addEventListener('input', (e) => {
         // 숫자만 추출
@@ -93,11 +97,12 @@ export function Deposit() {
       container.id = "screen-deposit-2";
       container.className = "transaction-container";
       container.innerHTML = `
+        <div id="quit" class="transaction-quit" style="visibility: hidden;">취소</div>
         <div class="subtitle transaction-title">입금</div>
         <div class="transaction-body">
           <div class="account-info-box">
             <div class="account-name">${localState.accountName}</div>
-            <div class="account-id">${localState.accountId}</div>
+            <div class="account-id">${localState.accountNumber}</div>
           </div>
           <div class="section-body">
             <div class="confirm-message">
@@ -106,7 +111,7 @@ export function Deposit() {
             </div>
           </div>
           <div class="account-info-box" style="visibility: hidden;">
-            <div><span class="account-name">${localState.accountName}</span>(${localState.accountId.slice(-4)}): ${localState.accountBalance}원</div>
+            <div><span class="account-name">${localState.accountName}</span>(${localState.accountNumber.slice(-4)}): ${localState.accountBalance}원</div>
           </div>
           <div class="btn-container">
             <div id="cancel" class="half-btn-light">취소</div>
@@ -156,7 +161,7 @@ export function Deposit() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          account_id: localState.accountId,
+          account_id: localState.accountNumber,
           amount: localState.amount,
         }),
       });
