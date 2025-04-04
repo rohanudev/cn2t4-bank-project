@@ -46,3 +46,42 @@ class UserAccountsView(APIView):
         ]
 
         return Response(account_data, status=status.HTTP_200_OK)
+
+
+
+class AccountDetailView(APIView):
+    def get(self, request, account_id):
+        account = get_object_or_404(Account, account_id=account_id)
+        return Response({
+            "account_id": str(account.account_id),
+            "account_number": account.account_number,
+            "user_id": str(account.user.user_id),
+            "nickname": account.nickname,
+            "balance": account.balance,
+            "status": account.status,
+            "created_at": account.created_at.strftime("%Y-%m-%d %H:%M:%S")
+        }, status=status.HTTP_200_OK)
+
+
+class AccountUpdateView(APIView):
+    def put(self, request, account_id):
+        account = get_object_or_404(Account, account_id=account_id)
+
+        account.nickname = request.data.get("nickname", account.nickname)
+        account.balance = request.data.get("balance", account.balance)
+        account.status = request.data.get("status", account.status)
+
+        account.save()
+        return Response({"message": "Account updated successfully"}, status=status.HTTP_200_OK)
+
+
+class AccountDeleteView(APIView):
+    def delete(self, request, account_id):
+        account = get_object_or_404(Account, account_id=account_id)
+
+        if account.status == "CLOSED":
+            return Response({"error": "Account already closed"}, status=status.HTTP_400_BAD_REQUEST)
+
+        account.status = "CLOSED"
+        account.save()
+        return Response({"message": "Account closed successfully"}, status=status.HTTP_200_OK)
