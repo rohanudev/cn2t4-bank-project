@@ -7,9 +7,10 @@ import { Withdraw } from "./components/withdraw.js";
 import { Transfer } from "./components/transfer.js";
 
 import { UserInfo } from "./components/userinfo.js";
+import { UserInfoEdit } from "./components/userinfoEdit.js";
+import { AccountDelete } from "./components/accountDelete.js";
 
 import { state } from './store.js';
-import { AccountDelete } from "./components/accountDelete.js";
 
 const routes = {
   login: Login,
@@ -19,6 +20,7 @@ const routes = {
   withdraw: Withdraw,
   transfer: Transfer,
   userInfo: UserInfo,
+  userInfoEdit: UserInfoEdit,
   accountDelete: AccountDelete,
 
 };
