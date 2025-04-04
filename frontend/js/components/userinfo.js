@@ -93,7 +93,9 @@ export function UserInfo() {
 
   // 🔄 수정 버튼 이벤트
   el.querySelector(".edit-btn").addEventListener("click", () => {
-    goTo("editUser", { userId: localState.userId });
+    //TBC
+    goTo("userInfoEdit", { userId: "bf7dfc9e-6e59-46e8-9ef4-efaabb2fe51b" });
+    //goTo("userInfoEdit", { userId: localState.userId });
   });
 
   return { el, init };
