@@ -113,7 +113,17 @@ export function Landing() {
   function bindEvents() {
     // 계좌 추가 버튼 이벤트
     el.querySelector(".add-account-btn").addEventListener("click", () => {
-      goTo("/add-account");
+      goTo("add-account");
+    });
+  
+    // 알림 버튼 클릭 시
+    el.querySelector(".noti-btn").addEventListener("click", () => {
+      goTo("noti"); // noti 페이지로 이동
+    });
+  
+    // 메뉴 버튼 클릭 시
+    el.querySelector(".menu-btn").addEventListener("click", () => {
+      goTo("menu"); // menu 페이지로 이동
     });
   }
 

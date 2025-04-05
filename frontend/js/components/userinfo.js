@@ -1,5 +1,5 @@
-import { API_BASE_URL } from "../config.js"; // API 주소
-import { goTo } from "../router.js"; // 라우터 이동
+import { API_BASE_URL } from "../config.js";
+import { goTo } from "../router.js";
 
 export function UserInfo() {
   let localState = {
@@ -15,6 +15,7 @@ export function UserInfo() {
     }
 
     fetchUserData();
+    bindEvents();
   }
 
   // 🌐 사용자 정보 불러오기 (GET 요청)
@@ -39,34 +40,52 @@ export function UserInfo() {
   el.innerHTML = `
     <img class="back-btn" src="../../assets/icons/back-btn.png" />
     
-    <div class="content-wrapper"> <!-- 추가 -->
-        <div class="subtitle">내 정보</div>
-        <div class="tiny-content-wrapper">
-            <div class="tiny-content">계정생성일</div>
-            <div class="tiny-content">2025년 03월 24일</div>
+    <div class="content-wrapper">
+      <div class="subtitle">내 정보</div>
+      <div class="tiny-content-wrapper">
+        <div class="tiny-content">계정생성일</div>
+        <div class="tiny-content" id="created-at">-</div>
+      </div>
+
+      <div class="info-list">
+        <div class="info-item">
+          <div class="info-list-subject">성명</div>
+          <div class="info-list-content" id="user-name">-</div>
         </div>
-        
-        <div class="info-list">
-            <div class="info-item">
-                <div class="info-list-subject">성명</div>
-                <div class="info-list-content">김구름</div>
-            </div>
-            <div class="info-item">
-                <div class="info-list-subject">연락처</div>
-                <div class="info-list-content">010-0000-0000</div>
-            </div>
-            <div class="info-item">
-                <div class="info-list-subject">이메일</div>
-                <div class="info-list-content">groom@naver.com</div>
-            </div>
+        <div class="info-item">
+          <div class="info-list-subject">연락처</div>
+          <div class="info-list-content" id="user-phone">-</div>
         </div>
-        
+        <div class="info-item">
+          <div class="info-list-subject">이메일</div>
+          <div class="info-list-content" id="user-email">-</div>
+        </div>
+      </div>
     </div>
+
     <div class="edit-btn">수정</div>
-`;
+  `;
 
+  // 📌 이벤트 바인딩
+  function bindEvents() {
+    const backBtn = el.querySelector(".back-btn");
+    const editBtn = el.querySelector(".edit-btn");
 
-  // 📌 UI 업데이트 함수
+    if (!backBtn || !editBtn) {
+      console.error("[ERROR] UI 요소 바인딩 실패");
+      return;
+    }
+
+    backBtn.addEventListener("click", () => {
+      goTo("landing", { userId: localState.userId });
+    });
+
+    editBtn.addEventListener("click", () => {
+      goTo("userInfoEdit", { userId: localState.userId });
+    });
+  }
+
+  // 📌 UI 업데이트
   function updateUI() {
     const nameElement = el.querySelector("#user-name");
     const phoneElement = el.querySelector("#user-phone");
@@ -74,15 +93,15 @@ export function UserInfo() {
     const createdAtElement = el.querySelector("#created-at");
 
     if (!nameElement || !phoneElement || !emailElement || !createdAtElement) {
-        console.error("[ERROR] UI 요소를 찾을 수 없음");
-        return;
+      console.error("[ERROR] UI 요소를 찾을 수 없음");
+      return;
     }
 
     nameElement.textContent = localState.userData?.name || "-";
     phoneElement.textContent = localState.userData?.phone || "-";
     emailElement.textContent = localState.userData?.email || "-";
     createdAtElement.textContent = formatDate(localState.userData?.created_at);
-}
+  }
 
   // 🗓️ 날짜 포맷 변환 함수
   function formatDate(isoString) {
@@ -90,13 +109,6 @@ export function UserInfo() {
     const date = new Date(isoString);
     return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
   }
-
-  // 🔄 수정 버튼 이벤트
-  el.querySelector(".edit-btn").addEventListener("click", () => {
-    //TBC
-    goTo("userInfoEdit", { userId: "bf7dfc9e-6e59-46e8-9ef4-efaabb2fe51b" });
-    //goTo("userInfoEdit", { userId: localState.userId });
-  });
 
   return { el, init };
 }

@@ -10,6 +10,8 @@ import { Transfer } from "./components/transfer.js";
 import { UserInfo } from "./components/userinfo.js";
 import { UserInfoEdit } from "./components/userinfoEdit.js";
 import { AccountDelete } from "./components/accountDelete.js";
+import { Menu } from "./components/menu.js";
+import { Settings } from "./components/settings.js";
 
 import { state } from './store.js';
 
@@ -24,7 +26,8 @@ const routes = {
   userInfo: UserInfo,
   userInfoEdit: UserInfoEdit,
   accountDelete: AccountDelete,
-
+  menu: Menu,
+  settings: Settings,
 };
 
 let currentScreen = null;

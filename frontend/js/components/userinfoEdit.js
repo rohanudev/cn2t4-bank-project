@@ -61,6 +61,8 @@ export function UserInfoEdit() {
         throw new Error(`HTTP error! Status: ${res.status}`);
       }
 
+      alert("수정이 완료되었습니다.");
+
       goTo("userInfo", { userId: localState.userId });
     } catch (error) {
       console.error("[ERROR] Failed to update user data:", error);
@@ -89,7 +91,7 @@ export function UserInfoEdit() {
     </div>
   `;
 
-  //TBC
+  //TBD
   //el.querySelector(".half-btn-light").addEventListener("click", () => goTo("userInfo", { userId: localState.userId }));
   el.querySelector(".half-btn-light").addEventListener("click", () => goTo("userInfo", { userId: "bf7dfc9e-6e59-46e8-9ef4-efaabb2fe51b" }));
   el.querySelector(".half-btn-dark").addEventListener("click", updateUser);
