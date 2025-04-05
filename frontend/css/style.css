@@ -93,9 +93,30 @@
     background: #3b3939;
 }
 
+.back-btn-wrapper {
+    margin-bottom: 40px;
+  }
+  
 .back-btn {
-  width: 30px;
-  height: 30px;
-  cursor: pointer;
-  margin-top: 20px; /* 위쪽 여백 */
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: block;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px; /* 이건 각 버튼 사이 간격 */
+    padding: 40px 20px;
+}
+
+.menu-list {
+    background: none;
+    border: none;
+    color: #000000;
+    font-family: "Inter-Bold", sans-serif;
+    font-size: 30px;
+    font-weight: 700;
 }
