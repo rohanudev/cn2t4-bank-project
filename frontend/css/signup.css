@@ -2,13 +2,12 @@
 .signup * {
   box-sizing: border-box;
 }
-
 .signup {
   background: #ffffff;
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
+  height: 780px;
   display: flex;
   flex-direction: column;
+  align-items: center; /* 가로 중앙 정렬 */
+  justify-content: center; /* 세로 중앙 정렬 (원하지 않으면 padding-top 사용) */
+  position: relative;
 }

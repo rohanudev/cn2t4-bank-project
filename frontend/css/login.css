@@ -1,44 +1,47 @@
-@import url('https://fonts.googleapis.com/css2?family=Lemon&display=swap');
-
-.title {
-    font-family: "Lemon", serif;
-}
-
-
 .login,
 .login * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
-
 .login {
-    background: #ffffff;
-    height: 852px;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  background: #ffffff;
+  height: 780px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 가로 중앙 정렬 */
+  justify-content: center; /* 세로 중앙 정렬 (원하지 않으면 padding-top 사용) */
+  position: relative;
 }
 
 .title {
-    color: #000000;
-    font-size: 40px;
-    font-weight: 400;
-    text-align: center;
-    margin-bottom: 30px;
+  color: #000000;
+  text-align: center;
+  font-family: "Lemon", serif;
+  font-size: 40px;
+  font-weight: 400;
+  margin-bottom: 40px; /* 아래 요소와 간격 */
 }
 
 .signup-btn {
-    color: #000000;
-    font-family: "Inter-Regular", sans-serif;
-    font-size: 15px;
-    font-weight: 400;
-    text-align: center;
-    margin-top: 20px;
+  color: #000000;
+  text-align: center;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  margin-top: 20px; /* 로그인 버튼과의 간격 */
 }
 
+.signup-btn-span {
+  color: #000000;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+}
 .signup-btn-span2 {
-    text-decoration: underline;
-    cursor: pointer;
+  background: none;
+  border: none;
+  color: #000000;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  text-decoration: underline;
 }
