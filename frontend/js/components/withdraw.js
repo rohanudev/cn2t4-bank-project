@@ -6,9 +6,9 @@ export function Withdraw() {
     // 내부 상태
     let localState = {
       amount: 0,
-      accountName: null,
-      accountNumber: null,
-      accountBalance: 100000,
+      accountName: "테스트 계좌 1",
+      accountNumber: "1234567890001",
+      accountBalance: 10000,
     };
 
     // 📦 DOM 요소 생성
@@ -18,8 +18,8 @@ export function Withdraw() {
 
     // 🚀 컴포넌트 초기화 (초기 상태 세팅, 이벤트 바인딩)
     function init(props) {
-      localState.accountName = props.accountName ?? null;
-      localState.accountNumber = props.accountNumber ?? null;
+      // localState.accountName = props.accountName ?? null;
+      // localState.accountNumber = props.accountNumber ?? null;
       
       render(StepAmountInput);
     }
@@ -143,9 +143,8 @@ export function Withdraw() {
         render(StepAmountInput)
       });
     
-      container.querySelector('#submit').addEventListener('click', () => {
-        // submitDeposit();
-        render(StepDone)
+      container.querySelector('#submit').addEventListener('click', async () => {
+        await submitWithdraw();
       });
 
       return container;
@@ -180,22 +179,23 @@ export function Withdraw() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          account_id: localState.accountNumber,
+          account_number: localState.accountNumber,
           amount: localState.amount,
+          memo: "출금"
         }),
       });
     
       const data = await res.json();
       
       try {
-          if (data.success) {
-            document.getElementById("withdraw-message").textContent = "출금 성공!";
-          } else {
-            document.getElementById("withdraw-message").textContent = "출금 실패!";
-          }
-      } catch {
-          console.error(err);
-          document.getElementById("withdraw-message").textContent = "오류 발생!";
+        if (data.success) {
+          render(StepDone);
+        } else {
+          alert(data.message || "출금 실패!");
+        }
+      } catch (err){
+        console.error(err);
+        alert("오류 발생!");
       }
     }
     

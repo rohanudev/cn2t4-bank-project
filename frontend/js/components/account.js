@@ -23,13 +23,13 @@ export function Account() {
       goTo("landing", {});
     });
     el.querySelector("#btn-go-deposit").addEventListener("click", () => {
-      goTo("deposit", { accountName: "저축 계좌", accountNumber: "333322233358212" });
+      goTo("deposit", {});
     });
     el.querySelector("#btn-go-withdraw").addEventListener("click", () => {
-      goTo("withdraw", { accountName: "저축 계좌", accountNumber: "333322233358212" });
+      goTo("withdraw", {});
     });
     el.querySelector("#btn-go-transfer").addEventListener("click", () => {
-      goTo("transfer", { accountName: "저축 계좌", accountNumber: "333322233358212" });
+      goTo("transfer", {});
     });
   }
 
