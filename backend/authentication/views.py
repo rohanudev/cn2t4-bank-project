@@ -100,3 +100,17 @@ def login(request):
         return JsonResponse({'error': '이메일 인증이 필요합니다.'}, status=403)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)    
+    
+from .auth import jwt_required
+
+@csrf_exempt
+@jwt_required
+def user_info(request):
+    user = request.user  # 데코레이터에서 주입됨
+
+    return JsonResponse({
+        "email": user.email,
+        "name": user.name,
+        "phone": user.phone,
+        "birthdate": user.birthdate,
+    })    
