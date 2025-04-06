@@ -6,9 +6,9 @@ export function Deposit() {
     // 내부 상태
     let localState = {
       amount: 0,
-      accountName: null,
-      accountNumber: null,
-      accountBalance: 0,
+      accountName: "테스트 계좌 1",
+      accountNumber: "1234567890001",
+      accountBalance: 100000,
     };
 
     // 📦 DOM 요소 생성
@@ -18,8 +18,8 @@ export function Deposit() {
 
     // 🚀 컴포넌트 초기화 (초기 상태 세팅, 이벤트 바인딩)
     function init(props) {
-      localState.accountName = props.accountName ?? null;
-      localState.accountNumber = props.accountNumber ?? null;
+      // localState.accountName = props.accountName ?? null;
+      // localState.accountNumber = props.accountNumber ?? null;
       
       render(StepAmountInput);
     }
@@ -124,9 +124,8 @@ export function Deposit() {
         render(StepAmountInput)
       });
     
-      container.querySelector('#submit').addEventListener('click', () => {
-        // submitDeposit();
-        render(StepDone)
+      container.querySelector('#submit').addEventListener('click', async () => {
+        await submitDeposit();
       });
 
       return container;
@@ -161,8 +160,9 @@ export function Deposit() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          account_id: localState.accountNumber,
+          account_number: localState.accountNumber,
           amount: localState.amount,
+          memo: "입금"
         }),
       });
     
@@ -170,13 +170,13 @@ export function Deposit() {
       
       try {
           if (data.success) {
-            document.getElementById("deposit-message").textContent = "입금 성공!";
+            render(StepDone);
           } else {
-            document.getElementById("deposit-message").textContent = "입금 실패!";
+            alert("입금 실패!");
           }
-      } catch {
-          console.error(err);
-	      document.getElementById("deposit-message").textContent = "오류 발생!";
+      } catch (err){
+        console.error(err);
+	      alert("오류 발생!");
       }
     }
     

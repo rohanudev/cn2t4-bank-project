@@ -6,10 +6,10 @@ export function Transfer() {
     // 내부 상태
     let localState = {
       amount: 0,
-      accountName: null,
-      accountNumber: null,
+      accountName: "테스트 계좌 1",
+      accountNumber: "1234567890001",
       accountBalance: 100000,
-      toAccountUserName: '받는 사람 이름',
+      toAccountUserName: null,
       toaccountNumber: null,
     };
 
@@ -20,8 +20,8 @@ export function Transfer() {
 
     // 🚀 컴포넌트 초기화 (초기 상태 세팅, 이벤트 바인딩)
     function init(props) {
-      localState.accountName = props.accountName ?? null;
-      localState.accountNumber = props.accountNumber ?? null;
+      // localState.accountName = props.accountName ?? null;
+      // localState.accountNumber = props.accountNumber ?? null;
       
       render(StepAccountInput);
     }
@@ -62,12 +62,16 @@ export function Transfer() {
         localState.toaccountNumber = formatted;
       });
 
-      container.querySelector('#next').addEventListener('click', () => {
+      container.querySelector('#next').addEventListener('click', async () => {
         if (localState.toaccountNumber == '' || localState.toaccountNumber == null) {
           alert("계좌 번호를 입력해주세요.");
           return;
         }
-        // API 요청 필요 : 계좌번호 유효성 검사
+        // 계좌번호 유효성 검사
+        const accountInfo = await validateAccountNumber(localState.toaccountNumber);
+        if (!accountInfo) return;
+
+        localState.toAccountUserName = accountInfo.owner;
         render(StepAmountInput);
       });
     
@@ -194,8 +198,7 @@ export function Transfer() {
       });
     
       container.querySelector('#submit').addEventListener('click', () => {
-        // API 요청 : 이체
-        render(StepDone)
+        submitTransfer()
       });
 
       return container;
@@ -228,27 +231,53 @@ export function Transfer() {
     }
 
     // 🌐 API 요청 함수
-    async function submitDeposit() {
-      const res = await fetch(`${API_BASE_URL}/api/transactions/deposit`, {
+    async function validateAccountNumber(accountNumber) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/transactions/validate_account`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            account_number: accountNumber
+          }),
+        });
+    
+        const data = await res.json();
+    
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || "계좌 확인 실패");
+        }
+    
+        return data.account; // { account_number, owner }
+      } catch (err) {
+        console.error(err);
+        alert("계좌번호 확인 중 오류가 발생했습니다.");
+        return null;
+      }
+    }
+    
+    async function submitTransfer() {
+      const res = await fetch(`${API_BASE_URL}/api/transactions/transfer`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          account_id: localState.accountNumber,
+          from_account: localState.accountNumber,
+          to_account: localState.toaccountNumber,
           amount: localState.amount,
+          memo: document.getElementById('transfer-memo').value || '송금'
         }),
       });
     
       const data = await res.json();
       
       try {
-          if (data.success) {
-            document.getElementById("deposit-message").textContent = "이체 성공!";
-          } else {
-            document.getElementById("deposit-message").textContent = "이체 실패!";
-          }
-      } catch {
-          console.error(err);
-          document.getElementById("deposit-message").textContent = "오류 발생!";
+        if (data.success) {
+          render(StepDone);
+        } else {
+          data.message || "이체 실패!"
+        }
+      } catch (err){
+        console.error(err);
+        alert("오류 발생!");
       }
     }
     

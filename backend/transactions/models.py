@@ -29,4 +29,4 @@ class Transaction(models.Model):
         db_table = 'transactions'
 
     def __str__(self):
-        return f'{self.type} : {self.amount} (from {self.sender_account} to {self.receiver_account})'
+        return f'{self.type} : {self.amount} (from {self.from_account} to {self.to_account})'
