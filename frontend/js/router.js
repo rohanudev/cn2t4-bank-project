@@ -13,7 +13,7 @@ import { UserInfoEdit } from "./components/userinfoEdit.js";
 import { AccountDelete } from "./components/accountDelete.js";
 import { Menu } from "./components/menu.js";
 import { Settings } from "./components/settings.js";
-import { AccountDetail } from "./components/accountDetail.js";
+
 import { state } from './store.js';
 
 const routes = {
@@ -29,7 +29,6 @@ const routes = {
   accountDelete: AccountDelete,
   menu: Menu,
   settings: Settings,
-
 };
 
 let currentScreen = null;
