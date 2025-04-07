@@ -6,9 +6,9 @@ export function Withdraw() {
     // 내부 상태
     let localState = {
       amount: 0,
-      accountName: "테스트 계좌 1",
-      accountNumber: "1234567890001",
-      accountBalance: 10000,
+      accountName: null,
+      accountNumber: null,
+      accountBalance: 0,
     };
 
     // 📦 DOM 요소 생성
@@ -17,10 +17,15 @@ export function Withdraw() {
     el.className = "screen";
 
     // 🚀 컴포넌트 초기화 (초기 상태 세팅, 이벤트 바인딩)
-    function init(props) {
-      // localState.accountName = props.accountName ?? null;
-      // localState.accountNumber = props.accountNumber ?? null;
-      
+    async function init(props) {
+      localState.accountNumber = props.accountNumber ?? "1234567890001";
+      const accountInfo = await validateAccountNumber(localState.accountNumber);
+      if (!accountInfo) return;
+
+      localState.accountName = accountInfo.owner;
+      localState.accountBalance = accountInfo.balance;
+
+      if (!localState.accountNumber || !localState.accountName) return;
       render(StepAmountInput);
     }
 
@@ -174,6 +179,30 @@ export function Withdraw() {
     }
 
     // 🌐 API 요청 함수
+    async function validateAccountNumber(accountNumber) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/transactions/validate_account`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            account_number: accountNumber
+          }),
+        });
+    
+        const data = await res.json();
+    
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || "계좌 확인 실패");
+        }
+    
+        return data.account; // { account_number, owner }
+      } catch (err) {
+        console.error(err);
+        alert("계좌번호 확인 중 오류가 발생했습니다.");
+        return null;
+      }
+    }
+
     async function submitWithdraw() {
       const res = await fetch(`${API_BASE_URL}/api/transactions/withdraw`, {
         method: "POST",
