@@ -30,7 +30,7 @@ export function AccountDetail() {
 
     // 계좌 상세 정보 fetching
     try {
-      const response = await fetch(`${API_BASE_URL}/accounts/detail/${localState.accountId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/accounts/${localState.accountId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

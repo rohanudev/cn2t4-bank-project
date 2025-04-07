@@ -41,6 +41,11 @@ export function Menu() {
 
     logoutBtn.addEventListener("click", () => {
       alert("로그아웃 되었습니다.");
+
+      //TBD
+
+      //정빈: cognito
+
       goTo("login");
     });
   }

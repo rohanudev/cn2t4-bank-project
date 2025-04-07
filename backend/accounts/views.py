@@ -11,10 +11,8 @@ class CreateAccountView(APIView):
         nickname = request.data.get("nickname", "")
         balance = request.data.get("balance", 0)
 
-        # 유저 확인 (user_id 기반 조회)
         user = get_object_or_404(User, user_id=user_id)
 
-        # 새로운 계좌 생성
         account = Account.objects.create(
             user=user,
             nickname=nickname,
@@ -25,16 +23,17 @@ class CreateAccountView(APIView):
         return Response({
             "account_id": str(account.account_id),
             "account_number": account.account_number,
-            "user_id": str(user.user_id),  # id → user_id
+            "user_id": str(user.user_id),
             "nickname": account.nickname,
             "balance": account.balance,
             "status": account.status
         }, status=status.HTTP_201_CREATED)
 
+
 class UserAccountsView(APIView):
     def get(self, request, userId):
         user = get_object_or_404(User, user_id=userId)
-        accounts = Account.objects.filter(user=user)  # user_id 대신 user 사용
+        accounts = Account.objects.filter(user=user)
 
         account_data = [
             {
@@ -48,10 +47,9 @@ class UserAccountsView(APIView):
         return Response(account_data, status=status.HTTP_200_OK)
 
 
-
 class AccountDetailView(APIView):
-    def get(self, request, account_id):
-        account = get_object_or_404(Account, account_id=account_id)
+    def get(self, request, accountId):
+        account = get_object_or_404(Account, account_id=accountId)
         return Response({
             "account_id": str(account.account_id),
             "account_number": account.account_number,
@@ -62,10 +60,8 @@ class AccountDetailView(APIView):
             "created_at": account.created_at.strftime("%Y-%m-%d %H:%M:%S")
         }, status=status.HTTP_200_OK)
 
-
-class AccountUpdateView(APIView):
-    def put(self, request, account_id):
-        account = get_object_or_404(Account, account_id=account_id)
+    def put(self, request, accountId):
+        account = get_object_or_404(Account, account_id=accountId)
 
         account.nickname = request.data.get("nickname", account.nickname)
         account.balance = request.data.get("balance", account.balance)
@@ -74,10 +70,8 @@ class AccountUpdateView(APIView):
         account.save()
         return Response({"message": "Account updated successfully"}, status=status.HTTP_200_OK)
 
-
-class AccountDeleteView(APIView):
-    def delete(self, request, account_id):
-        account = get_object_or_404(Account, account_id=account_id)
+    def delete(self, request, accountId):
+        account = get_object_or_404(Account, account_id=accountId)
 
         if account.status == "CLOSED":
             return Response({"error": "Account already closed"}, status=status.HTTP_400_BAD_REQUEST)
