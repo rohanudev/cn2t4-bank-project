@@ -58,7 +58,9 @@ export function Login() {
 
       const data = await res.json();
       console.log("[INFO] 로그인 성공:", data);
-      goTo("userInfo", { userId: data.userId });
+      
+      goTo("landing", { userId: data.user.user_id });
+
     } catch (error) {
       console.error("[ERROR] 로그인 실패:", error);
       alert("로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해주세요.");
