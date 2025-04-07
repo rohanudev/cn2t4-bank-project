@@ -23,12 +23,12 @@ export function Deposit() {
       const accountInfo = await validateAccountNumber(localState.accountId);
       if (!accountInfo) return;
 
-
       localState.accountNumber = accountInfo.account_number;
       localState.accountName = accountInfo.account_name;
       localState.accountBalance = accountInfo.balance;
       localState.userName = accountInfo.owner;
       
+      if (!localState.accountNumber || !localState.accountName) return;
       render(StepAmountInput);
     }
 
