@@ -1,24 +1,26 @@
 [
-    {
-      "model": "accounts.account",
-      "fields": {
-        "account_number": "1234567890001",
-        "user": "1228f80782f04d758a44c9a50689dcdd",
-        "nickname": "테스트 계좌 1",
-        "balance": 100000,
-        "status": "OPEN",
-        "created_at": "2024-01-01T00:00:00Z"
-      }
-    },
-    {
-      "model": "accounts.account",
-      "fields": {
-        "account_number": "1234567890002",
-        "user": "6c4ffbad04af4204b94576fccab9eae9",
-        "nickname": "테스트 계좌 2",
-        "balance": 200000,
-        "status": "OPEN",
-        "created_at": "2024-01-01T00:00:00Z"
-      }
+  {
+    "model": "accounts.account",
+    "pk": "2657ba5f-c78f-4031-991c-94687abb0e98",
+    "fields": {
+      "account_number": "1234567890001",
+      "user": "1228f80782f04d758a44c9a50689dcdd",
+      "nickname": "테스트 계좌 1",
+      "balance": 100000,
+      "status": "OPEN",
+      "created_at": "2024-01-01T00:00:00Z"
     }
-  ]
+  },
+  {
+    "model": "accounts.account",
+    "pk": "3a5b7c8d-e9f0-4321-aaaa-bbbbccccdddd",
+    "fields": {
+      "account_number": "1234567890002",
+      "user": "6c4ffbad04af4204b94576fccab9eae9",
+      "nickname": "테스트 계좌 2",
+      "balance": 200000,
+      "status": "OPEN",
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  }
+]
