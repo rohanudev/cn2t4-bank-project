@@ -6,7 +6,7 @@ COGNITO_REGION = 'ap-northeast-2'
 COGNITO_USER_POOL_ID = 'ap-northeast-2_soUv5mWct'
 
 # Cognito에서 발급한 JWT의 iss값 → 공개 키 가져올 때 사용
-JWT_ISSUER = f"https://cognito-idp.ap-northeast-2.amazonaws.com/ap-northeast-2_soUv5mWct/.well-known/jwks.json"
+JWT_ISSUER = f"https://cognito-idp.ap-northeast-2.amazonaws.com/ap-northeast-2_Xg2ntQOxX/.well-known/jwks.json"
 
 def jwt_required(view_func):
     def wrapper(request, *args, **kwargs):
