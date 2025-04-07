@@ -9,6 +9,7 @@ export function Deposit() {
       accountName: null,
       accountNumber: null,
       accountBalance: 0,
+      userName: null,
     };
 
     // 📦 DOM 요소 생성
@@ -22,8 +23,9 @@ export function Deposit() {
       const accountInfo = await validateAccountNumber(localState.accountNumber);
       if (!accountInfo) return;
 
-      localState.accountName = accountInfo.owner;
+      localState.accountName = accountInfo.account_name;
       localState.accountBalance = accountInfo.balance;
+      localState.userName = accountInfo.owner;
       
       if (!localState.accountNumber || !localState.accountName) return;
       render(StepAmountInput);
