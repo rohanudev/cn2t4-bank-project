@@ -5,11 +5,10 @@ import traceback
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from users.models import User
+from django.conf import settings
 
-REGION = 'ap-northeast-2'
-CLIENT_ID = '155u00i0o1sum2a4dmphpuu54a'
 
-client = boto3.client('cognito-idp', region_name=REGION)
+client = boto3.client('cognito-idp', settings.AWS_REGION)
 
 @csrf_exempt
 def login(request):
@@ -31,7 +30,7 @@ def login(request):
                 'USERNAME': email,
                 'PASSWORD': password,
             },
-            ClientId=CLIENT_ID
+            ClientId=settings.COGNITO_CLIENT_ID
         )
 
         auth_result = response.get('AuthenticationResult', {})
