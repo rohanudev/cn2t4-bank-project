@@ -1,76 +1,92 @@
-import { goTo } from '../router.js';
-import { API_BASE_URL } from '../config.js';
-import { state } from '../store.js';
+import { API_BASE_URL } from "../config.js";
+import { goTo } from "../router.js";
 
 export function AccountCreate() {
-  const el = document.createElement("div");
-  el.className = "screen";
-  el.id = "screen-account-create";
+  let localState = {
+    userId: null,
+    nickname: "",
+  };
 
   function init(props) {
-    renderCreateForm();
+    localState.userId = props?.userId ?? null;
+
+    if (!localState.userId) {
+      console.error("[ERROR] userId is missing");
+      return;
+    }
+
+    bindEvents();
   }
 
-  function renderCreateForm() {
-    el.innerHTML = `
-      <div class="account-create-container">
-        <h2>새 계좌 개설</h2>
-        <div class="form-group">
-          <label for="nickname">계좌 별칭</label>
-          <input 
-            type="text" 
-            id="nickname" 
-            placeholder="계좌 별칭을 입력하세요" 
-            maxlength="20"
-          >
-        </div>
-        <button id="create-account-btn" class="single-btn-dark-box">
-          계좌 개설
-        </button>
-      </div>
-    `;
+  // 🔗 이벤트 바인딩
+  function bindEvents() {
+    const nicknameInput = el.querySelector("#account-nickname");
+    const cancelBtn = el.querySelector("#account-cancel-button");
+    const submitBtn = el.querySelector("#account-submit-button");
 
-    const createBtn = el.querySelector('#create-account-btn');
-    createBtn.addEventListener('click', createAccount);
+    if (!nicknameInput || !cancelBtn || !submitBtn) {
+      console.error("[ERROR] 계좌 생성 화면 UI 요소를 찾을 수 없습니다");
+      return;
+    }
+
+    nicknameInput.addEventListener("input", (e) => {
+      localState.nickname = e.target.value;
+    });
+
+    cancelBtn.addEventListener("click", () => {
+      goTo("landing", { userId: localState.userId });
+    });
+
+    submitBtn.addEventListener("click", handleCreateAccount);
   }
 
-  async function createAccount() {
-    const nicknameInput = el.querySelector('#nickname');
-    const nickname = nicknameInput.value.trim();
+  // 📝 계좌 생성 처리
+  async function handleCreateAccount() {
+    const { nickname, userId } = localState;
 
-    // 입력 검증
-    if (nickname.length === 0) {
-      alert('계좌 별칭을 입력해주세요.');
-      nicknameInput.focus();
+    if (!nickname || nickname.trim().length === 0) {
+      alert("계좌 별칭을 입력해주세요.");
       return;
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/accounts/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+      const res = await fetch(`${API_BASE_URL}/api/accounts/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          user_id: state.userId,
-          nickname: nickname,
-          balance: 0
-        })
+          user_id: userId,
+          nickname: nickname.trim(),
+          balance: 0,
+        }),
       });
 
-      const data = await response.json();
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
-      if (response.ok) {
-        alert('계좌가 성공적으로 개설되었습니다.');
-        goTo('landing'); // 랜딩 페이지로 이동
-      } else {
-        alert(data.error || '계좌 개설에 실패했습니다.');
-      }
+      const data = await res.json();
+      console.log("[INFO] 계좌 생성 성공:", data);
+      alert("계좌가 성공적으로 개설되었습니다.");
+      goTo("landing", { userId }); // userId 넘겨서 다시 돌아가기
     } catch (error) {
-      console.error('계좌 개설 오류:', error);
-      alert('네트워크 오류로 계좌 개설에 실패했습니다.');
+      console.error("[ERROR] 계좌 생성 실패:", error);
+      alert("계좌 개설에 실패했습니다. 다시 시도해주세요.");
     }
   }
+
+  // 🏗️ DOM 생성
+  const el = document.createElement("div");
+  el.className = "account-create";
+  el.innerHTML = `
+    <div class="subtitle">새 계좌 개설</div>
+
+    <div class="info-input-box">
+      <input id="account-nickname" type="text" class="info-input-text" placeholder="계좌 별칭 입력" maxlength="20">
+    </div>
+
+    <div class="btn-container">
+      <div id="account-cancel-button" class="half-btn-light">취소</div>
+      <div id="account-submit-button" class="half-btn-dark">생성</div>
+    </div>
+  `;
 
   return { el, init };
 }
