@@ -14,12 +14,14 @@ import { AccountCreate } from "./components/accountCreate.js";
 import { AccountDelete } from "./components/accountDelete.js";
 import { Menu } from "./components/menu.js";
 import { Settings } from "./components/settings.js";
+import { VerifyEmail } from "./components/verifyEmail.js"
 
 import { state } from './store.js';
 
 const routes = {
   login: Login,
   signup: Signup,
+  verifyEmail: VerifyEmail,
   landing: Landing,
   deposit: Deposit,
   withdraw: Withdraw,
