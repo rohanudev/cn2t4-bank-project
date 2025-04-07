@@ -1,0 +1,59 @@
+{
+    "transactions": [
+        {
+            "transaction_id" : "47def5bf03d24527b47c5a213e38369c",
+            "amount" : 1000,
+            "type" : "TRANSFER",
+            "status" : "SUCCESS",
+            "memo" : "송금",
+            "created_at" : "2025-04-06 16:22:46.640093",
+            "from_account_id" : "d296e475e4484d7da5c18fbcedc75153",
+            "to_account_id" : "8e738360951f4dfbb4ed6b97557f78ca",
+            "balance_after" : 449000
+        },
+        {
+            "transaction_id" : "0c387a776ce1485ca9f88f40505a4ef4",
+            "amount" : 1000,
+            "type" : "TRANSFER",
+            "status" : "SUCCESS",
+            "memo" : "송금",
+            "created_at" : "2025-04-07 02:06:32.160742",
+            "from_account_id" : "d296e475e4484d7da5c18fbcedc75153",
+            "to_account_id" : "8e738360951f4dfbb4ed6b97557f78ca",
+            "balance_after" : 448000
+        },
+        {
+            "transaction_id" : "be8d8fd9cf814d25b4fb88aecac37b01",
+            "amount" : 1000,
+            "type" : "DEPOSIT",
+            "status" : "SUCCESS",
+            "memo" : "입금",
+            "created_at" : "2025-04-07 05:03:24.837230",
+            "from_account_id" : null,
+            "to_account_id" : "d296e475e4484d7da5c18fbcedc75153",
+            "balance_after" : 449000
+        },
+        {
+            "transaction_id" : "2646f6ae81f44347a6d0a78a0a710a83",
+            "amount" : 1000,
+            "type" : "WITHDRAWAL",
+            "status" : "SUCCESS",
+            "memo" : "출금",
+            "created_at" : "2025-04-07 05:04:01.433168",
+            "from_account_id" : "d296e475e4484d7da5c18fbcedc75153",
+            "to_account_id" : null,
+            "balance_after" : 448000
+        },
+        {
+            "transaction_id" : "b65034887d804834badb471c1898c246",
+            "amount" : 1000,
+            "type" : "TRANSFER",
+            "status" : "SUCCESS",
+            "memo" : "송금",
+            "created_at" : "2025-04-07 05:04:29.283477",
+            "from_account_id" : "d296e475e4484d7da5c18fbcedc75153",
+            "to_account_id" : "8e738360951f4dfbb4ed6b97557f78ca",
+            "balance_after" : 447000
+        }
+    ]}
+    

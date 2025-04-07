@@ -6,9 +6,10 @@ export function Transfer() {
     // 내부 상태
     let localState = {
       amount: 0,
-      accountName: "테스트 계좌 1",
-      accountNumber: "1234567890001",
-      accountBalance: 100000,
+      accountName: null,
+      accountNumber: null,
+      accountBalance: 0,
+      userName: null,
       toAccountUserName: null,
       toaccountNumber: null,
     };
@@ -24,8 +25,9 @@ export function Transfer() {
       const accountInfo = await validateAccountNumber(localState.accountNumber);
       if (!accountInfo) return;
 
-      localState.accountName = accountInfo.owner;
+      localState.accountName = accountInfo.account_name;
       localState.accountBalance = accountInfo.balance;
+      localState.userName = accountInfo.owner;
 
       if (!localState.accountNumber || !localState.accountName) return;
       render(StepAccountInput);

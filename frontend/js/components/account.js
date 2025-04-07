@@ -23,13 +23,13 @@ export function Account() {
       goTo("landing", {});
     });
     el.querySelector("#btn-go-deposit").addEventListener("click", () => {
-      goTo("deposit", {});
+      goTo("deposit", {accountNumber: "1234567890001"});
     });
     el.querySelector("#btn-go-withdraw").addEventListener("click", () => {
-      goTo("withdraw", {});
+      goTo("withdraw", {accountNumber: "1234567890001"});
     });
     el.querySelector("#btn-go-transfer").addEventListener("click", () => {
-      goTo("transfer", {});
+      goTo("transfer", {accountNumber: "1234567890001"});
     });
   }
 
