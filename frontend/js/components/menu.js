@@ -3,15 +3,17 @@ import { goTo } from "../router.js";
 export function Menu() {
   let localState = {
     userId: null,
+    email: "",
   };
 
   function init(props) {
-    if (!props?.userId) {
-      console.error("[ERROR] Menu 페이지에 userId가 전달되지 않았습니다.");
-      return;
+    if (!props?.userId || !props?.email) {
+        console.error("[ERROR] Menu 페이지에 userId 또는 email이 전달되지 않았습니다.");
+        return;
     }
 
     localState.userId = props.userId;
+    localState.email = props.email;
     bindEvents();
   }
 
@@ -28,7 +30,10 @@ export function Menu() {
     }
 
     backBtn.addEventListener("click", () => {
-      goTo("landing", { userId: localState.userId });
+        goTo("landing", {
+            userId: localState.userId,
+            email: localState.email,
+          });
     });
 
     infoBtn.addEventListener("click", () => {
@@ -36,7 +41,10 @@ export function Menu() {
     });
 
     settingsBtn.addEventListener("click", () => {
-      goTo("settings", { userId: localState.userId });
+        goTo("settings", {
+            userId: localState.userId,
+            email: localState.email,
+          });
     });
 
     logoutBtn.addEventListener("click", () => {
