@@ -9,14 +9,20 @@ export function Landing() {
   };
 
   function init(props) {
-    localState.userId = props.userId ?? null;
+
+    localState = {
+      userId: props?.userId ?? null,
+      userName: "-",
+      accounts: [],
+    };
+  
     if (!localState.userId) {
       console.error("[ERROR] userId is missing");
       return;
     }
-
-    fetchUserData();  // 사용자 정보 불러오기
-    fetchAccounts();   // 계좌 목록 불러오기
+  
+    fetchUserData();
+    fetchAccounts();
     bindEvents();
   }
 
@@ -123,7 +129,7 @@ export function Landing() {
   
     // 메뉴 버튼 클릭 시
     el.querySelector(".menu-btn").addEventListener("click", () => {
-      goTo("menu"); // menu 페이지로 이동
+      goTo("menu", { userId: localState.userId }); // menu 페이지로 이동
     });
   }
 

@@ -59,6 +59,8 @@ export function Login() {
       const data = await res.json();
       console.log("[INFO] 로그인 성공:", data);
       
+      console.log("Redirecting to landing with userId:", data.user.user_id);
+      //goTo("userInfo", { userId: data.user.user_id });
       goTo("landing", { userId: data.user.user_id });
 
     } catch (error) {

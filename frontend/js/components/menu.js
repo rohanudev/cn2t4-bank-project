@@ -1,7 +1,17 @@
 import { goTo } from "../router.js";
 
 export function Menu() {
-  function init() {
+  let localState = {
+    userId: null,
+  };
+
+  function init(props) {
+    if (!props?.userId) {
+      console.error("[ERROR] Menu 페이지에 userId가 전달되지 않았습니다.");
+      return;
+    }
+
+    localState.userId = props.userId;
     bindEvents();
   }
 
@@ -18,19 +28,18 @@ export function Menu() {
     }
 
     backBtn.addEventListener("click", () => {
-      goTo("landing", { userId: "bf7dfc9e-6e59-46e8-9ef4-efaabb2fe51b" });
+      goTo("landing", { userId: localState.userId });
     });
 
     infoBtn.addEventListener("click", () => {
-      goTo("userInfo", { userId: "bf7dfc9e-6e59-46e8-9ef4-efaabb2fe51b" });
+      goTo("userInfo", { userId: localState.userId });
     });
 
     settingsBtn.addEventListener("click", () => {
-      goTo("settings");
+      goTo("settings", { userId: localState.userId });
     });
 
     logoutBtn.addEventListener("click", () => {
-      // 로그아웃 로직 추가 가능
       alert("로그아웃 되었습니다.");
       goTo("login");
     });
