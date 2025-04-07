@@ -24,15 +24,6 @@ export function AccountCreate() {
             maxlength="20"
           >
         </div>
-        <div class="form-group">
-          <label for="initial-balance">초기 입금액</label>
-          <input 
-            type="number" 
-            id="initial-balance" 
-            placeholder="0" 
-            min="0"
-          >
-        </div>
         <button id="create-account-btn" class="single-btn-dark-box">
           계좌 개설
         </button>
@@ -45,10 +36,7 @@ export function AccountCreate() {
 
   async function createAccount() {
     const nicknameInput = el.querySelector('#nickname');
-    const balanceInput = el.querySelector('#initial-balance');
-    
     const nickname = nicknameInput.value.trim();
-    const balance = 0;
 
     // 입력 검증
     if (nickname.length === 0) {
@@ -64,9 +52,9 @@ export function AccountCreate() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          user_id: state.userId, // store에서 현재 사용자 ID 가져오기
+          user_id: state.userId,
           nickname: nickname,
-          balance: balance
+          balance: 0
         })
       });
 
