@@ -186,13 +186,19 @@ def validate_account(request):
 
     try:
         data = json.loads(request.body)
+        account_id = data.get("account_id")
         account_number = data.get("account_number")
 
-        if not account_number:
+
+        if not account_id and not account_number:
             return JsonResponse({"success": False, "message": "[ERROR] Missing account number"}, status=400)
 
         try:
-            account = Account.objects.get(account_number=account_number)
+            if account_id:
+                account = Account.objects.get(account_id=account_id)
+            else:
+                account = Account.objects.get(account_number=account_number)
+                
             return JsonResponse({
                 "success": True,
                 "account": {

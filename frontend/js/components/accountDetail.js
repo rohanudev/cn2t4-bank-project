@@ -12,13 +12,32 @@ export function AccountDetail() {
       <div><span>03.21 CU</span><span>-15,700원</span></div>
     </div>
     <div class="btn-container">
-      <div class="half-btn-dark">입금</div>
-      <div class="half-btn-light">출금</div>
+      <div id="btn-go-deposit" class="half-btn-dark">입금</div>
+      <div id="btn-go-withdraw" class="half-btn-light">출금</div>
     </div>
-    <div class="single-btn-dark-box">
+    <div id="btn-go-transfer" class="single-btn-dark-box">
       <div class="single-btn-dark-text">이체하기</div>
     </div>
   `;
+
+  function init(props) {
+    bindEvents();
+  }
+
+  function bindEvents() {
+      el.querySelector("#btn-go-landing").addEventListener("click", () => {
+        goTo("landing", {});
+      });
+      el.querySelector("#btn-go-deposit").addEventListener("click", () => {
+        goTo("deposit", {accountId});
+      });
+      el.querySelector("#btn-go-withdraw").addEventListener("click", () => {
+        goTo("withdraw", {accountId});
+      });
+      el.querySelector("#btn-go-transfer").addEventListener("click", () => {
+        goTo("transfer", {accountId});
+      });
+    }
 
   function init() {}
   return { el, init };

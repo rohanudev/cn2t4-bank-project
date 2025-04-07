@@ -104,7 +104,7 @@ export function Landing() {
             <div class="money-unit">원</div>
           </div>
         </div>
-        <div class="transfer-btn">
+        <div id="btn-go-transfer" class="transfer-btn">
           <div class="transfer-text">이체</div>
         </div>
       `;
@@ -139,7 +139,7 @@ export function Landing() {
       btn.addEventListener("click", (event) => {
         const accountCard = event.target.closest(".account-info-card");
         const accountId = accountCard.dataset.accountId;
-        goTo(`/transfer`);
+        goTo(`transfer`, {accountId});
       });
     });
   }
