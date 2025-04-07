@@ -65,6 +65,36 @@ class UserCreateView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class UserConfirmView(APIView):
+    def post(self, request):
+        data = request.data
+        email = data.get('email')
+        confirmation_code = data.get('confirmation_code')
+
+        if not email or not confirmation_code:
+            return Response({'error': '이메일과 인증 코드를 모두 입력해주세요.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Cognito 인증 코드 확인
+            client.confirm_sign_up(
+                ClientId=CLIENT_ID,
+                Username=email,
+                ConfirmationCode=confirmation_code,
+            )
+
+            return Response({'message': '사용자 인증이 완료되었습니다.'}, status=status.HTTP_200_OK)
+
+        except client.exceptions.CodeMismatchException:
+            return Response({'error': '인증 코드가 올바르지 않습니다.'}, status=status.HTTP_400_BAD_REQUEST)
+        except client.exceptions.ExpiredCodeException:
+            return Response({'error': '인증 코드가 만료되었습니다.'}, status=status.HTTP_400_BAD_REQUEST)
+        except client.exceptions.UserNotFoundException:
+            return Response({'error': '해당 사용자를 찾을 수 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
+        except client.exceptions.NotAuthorizedException:
+            return Response({'error': '이미 인증이 완료된 사용자입니다.'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class UserDetailView(APIView):
     def get(self, request, userId):
