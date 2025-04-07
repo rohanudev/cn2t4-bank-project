@@ -19,10 +19,15 @@ export function Transfer() {
     el.className = "screen";
 
     // 🚀 컴포넌트 초기화 (초기 상태 세팅, 이벤트 바인딩)
-    function init(props) {
-      // localState.accountName = props.accountName ?? null;
-      // localState.accountNumber = props.accountNumber ?? null;
-      
+    async function init(props) {
+      localState.accountNumber = props.accountNumber ?? "1234567890001";
+      const accountInfo = await validateAccountNumber(localState.accountNumber);
+      if (!accountInfo) return;
+
+      localState.accountName = accountInfo.owner;
+      localState.accountBalance = accountInfo.balance;
+
+      if (!localState.accountNumber || !localState.accountName) return;
       render(StepAccountInput);
     }
 

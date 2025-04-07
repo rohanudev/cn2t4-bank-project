@@ -197,7 +197,8 @@ def validate_account(request):
                 "success": True,
                 "account": {
                     "account_number": account.account_number,
-                    "owner": account.user.name  # 또는 account.user.username 등
+                    "owner": account.user.name,  # 또는 account.user.username 등
+                    "balance": account.balance
                 }
             })
         except Account.DoesNotExist:
