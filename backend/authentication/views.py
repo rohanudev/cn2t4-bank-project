@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from .models import User
 
 REGION = 'ap-northeast-2'
-CLIENT_ID = 'ap-northeast-2_soUv5mWct'
+CLIENT_ID = 'ap-northeast-2_Xg2ntQOxX'
 
 client = boto3.client('cognito-idp', region_name=REGION)
 
