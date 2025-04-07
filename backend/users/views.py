@@ -95,6 +95,29 @@ class UserConfirmView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class UserDeactivateView(APIView):
+    def post(self, request):
+        email = request.data.get("email")
+        if not email:
+            return Response({"error": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            client = boto3.client(
+                'cognito-idp',
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                region_name=settings.AWS_REGION
+            )
+
+            response = client.admin_disable_user(
+                UserPoolId=settings.COGNITO_USER_POOL_ID,
+                Username=email
+            )
+            return Response({"message": "User has been deactivated."}, status=status.HTTP_200_OK)
+        except client.exceptions.UserNotFoundException:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class UserDetailView(APIView):
     def get(self, request, userId):
@@ -111,6 +134,22 @@ class UserDetailView(APIView):
         return Response({"error": "[ERROR] Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, userId):
+        # DB에서 사용자 삭제
         user = get_object_or_404(User, user_id=userId)
-        user.delete()
-        return Response({"message": "User deleted successfully"}, status=status.HTTP_200_OK)
+
+        try:
+            # Cognito에서 사용자 삭제
+            response = client.admin_delete_user(
+                UserPoolId=settings.COGNITO_USER_POOL_ID,
+                Username=user.email  # 이메일을 사용하여 삭제
+            )
+
+            # DB에서 사용자 정보 삭제
+            user.delete()
+
+            return Response({"message": "User deleted successfully from both database and Cognito."}, status=status.HTTP_200_OK)
+        
+        except client.exceptions.UserNotFoundException:
+            return Response({"error": "User not found in Cognito."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

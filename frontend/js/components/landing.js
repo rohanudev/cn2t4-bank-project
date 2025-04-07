@@ -5,12 +5,14 @@ export function Landing() {
   let localState = {
     userId: null,
     userName: "-",
+    email: "",
     accounts: [],
   };
 
   function init(props) {
     localState = {
       userId: props?.userId ?? null,
+      email: props?.email ?? "",
       userName: "-",
       accounts: [],
     };
@@ -120,7 +122,7 @@ export function Landing() {
     });
 
     el.querySelector(".menu-btn").addEventListener("click", () => {
-      goTo("menu", { userId: localState.userId });
+      goTo("menu", { userId: localState.userId, email: localState.email });
     });
   }
 
