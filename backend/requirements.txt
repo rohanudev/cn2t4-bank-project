@@ -4,3 +4,4 @@ django-cors-headers
 mysqlclient
 boto3
 PyJWT>=2.4.0
+python-dotenv

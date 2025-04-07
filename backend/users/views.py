@@ -11,7 +11,7 @@ from django.conf import settings
 REGION = 'ap-northeast-2'
 CLIENT_ID = '155u00i0o1sum2a4dmphpuu54a'
 
-client = boto3.client('cognito-idp', region_name=REGION)
+client = boto3.client('cognito-idp', region_name=settings.AWS_REGION)
 
 
 class UserCreateView(APIView):
@@ -34,7 +34,7 @@ class UserCreateView(APIView):
         try:
             # Cognito에 회원가입 요청
             response = client.sign_up(
-                ClientId=CLIENT_ID,
+                ClientId=settings.COGNITO_CLIENT_ID,
                 Username=email,
                 Password=password,
                 UserAttributes=[
@@ -77,7 +77,7 @@ class UserConfirmView(APIView):
         try:
             # Cognito 인증 코드 확인
             client.confirm_sign_up(
-                ClientId=CLIENT_ID,
+                ClientId=settings.COGNITO_CLIENT_ID,
                 Username=email,
                 ConfirmationCode=confirmation_code,
             )
