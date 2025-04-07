@@ -119,7 +119,7 @@ export function Landing() {
   function bindEvents() {
     // 계좌 추가 버튼 이벤트
     el.querySelector(".add-account-btn").addEventListener("click", () => {
-      goTo("add-account");
+      goTo("accountCreate");
     });
   
     // 알림 버튼 클릭 시

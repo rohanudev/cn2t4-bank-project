@@ -8,4 +8,5 @@ urlpatterns = [
     path('detail/<uuid:account_id>', AccountDetailView.as_view(), name='account-detail'),
     path('<uuid:account_id>', AccountUpdateView.as_view(), name='account-update'),
     path('<uuid:account_id>', AccountDeleteView.as_view(), name='account-delete'),
+    
 ]

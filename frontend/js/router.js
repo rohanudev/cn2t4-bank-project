@@ -10,6 +10,7 @@ import { Transfer } from "./components/transfer.js";
 
 import { UserInfo } from "./components/userinfo.js";
 import { UserInfoEdit } from "./components/userinfoEdit.js";
+import { AccountCreate } from "./components/accountCreate.js";
 import { AccountDelete } from "./components/accountDelete.js";
 import { Menu } from "./components/menu.js";
 import { Settings } from "./components/settings.js";
@@ -26,6 +27,7 @@ const routes = {
   transfer: Transfer,
   userInfo: UserInfo,
   userInfoEdit: UserInfoEdit,
+  accountCreate: AccountCreate,
   accountDelete: AccountDelete,
   menu: Menu,
   settings: Settings,
