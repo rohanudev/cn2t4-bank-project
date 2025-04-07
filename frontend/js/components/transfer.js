@@ -6,6 +6,7 @@ export function Transfer() {
     // 내부 상태
     let localState = {
       amount: 0,
+      accountId: null,
       accountName: null,
       accountNumber: null,
       accountBalance: 0,
@@ -21,10 +22,11 @@ export function Transfer() {
 
     // 🚀 컴포넌트 초기화 (초기 상태 세팅, 이벤트 바인딩)
     async function init(props) {
-      localState.accountNumber = props.accountNumber ?? "1234567890001";
-      const accountInfo = await validateAccountNumber(localState.accountNumber);
+      localState.accountId = props.accountId;
+      const accountInfo = await validateAccountNumber(localState.accountId) ;
       if (!accountInfo) return;
-
+      
+      localState.accountNumber = accountInfo.account_number;
       localState.accountName = accountInfo.account_name;
       localState.accountBalance = accountInfo.balance;
       localState.userName = accountInfo.owner;
@@ -75,7 +77,7 @@ export function Transfer() {
           return;
         }
         // 계좌번호 유효성 검사
-        const accountInfo = await validateAccountNumber(localState.toaccountNumber);
+        const accountInfo = await validateAccountNumber(null, localState.toaccountNumber);
         if (!accountInfo) return;
 
         localState.toAccountUserName = accountInfo.owner;
@@ -238,12 +240,13 @@ export function Transfer() {
     }
 
     // 🌐 API 요청 함수
-    async function validateAccountNumber(accountNumber) {
+    async function validateAccountNumber(accountId, accountNumber) {
       try {
         const res = await fetch(`${API_BASE_URL}/api/transactions/validate_account`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            account_id: accountId,
             account_number: accountNumber
           }),
         });
