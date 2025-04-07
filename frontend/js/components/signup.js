@@ -83,7 +83,7 @@ export function Signup() {
     }
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/signup`, {
+        const res = await fetch(`${API_BASE_URL}/api/users/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, name, phone, birthdate }),
@@ -135,7 +135,7 @@ export function Signup() {
       </div>
 
       <div class="info-input-box">
-        <input id="signup-birthdate" type="text" class="info-input-text" placeholder="생년월일(ex.YYMMDD)">
+        <input id="signup-birthdate" type="text" class="info-input-text" placeholder="생년월일(ex.YYYY-MM-DD)">
       </div>
     </div>
 
