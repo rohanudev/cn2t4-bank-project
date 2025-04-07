@@ -21,7 +21,6 @@ const routes = {
   login: Login,
   signup: Signup,
   landing: Landing,
-  account: AccountDetail,
   deposit: Deposit,
   withdraw: Withdraw,
   transfer: Transfer,
@@ -29,6 +28,7 @@ const routes = {
   userInfoEdit: UserInfoEdit,
   accountCreate: AccountCreate,
   accountDelete: AccountDelete,
+  accountDetail: AccountDetail,
   menu: Menu,
   settings: Settings,
 };
