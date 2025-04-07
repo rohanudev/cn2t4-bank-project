@@ -93,8 +93,10 @@ export function Signup() {
 
       const data = await res.json();
       console.log("[INFO] 회원가입 성공:", data);
-      alert("회원가입이 완료되었습니다. 로그인해주세요.");
-      goTo("login");
+      alert("회원가입이 완료되었습니다. 이메일 인증 후 사용해 주세요.");
+      
+      goTo("verifyEmail", {email});
+
     } catch (error) {
       console.error("[ERROR] 회원가입 실패:", error);
       alert("회원가입에 실패했습니다. 다시 시도해주세요.");
