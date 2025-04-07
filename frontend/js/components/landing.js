@@ -133,7 +133,7 @@ export function Landing() {
       btn.addEventListener("click", (event) => {
         const accountCard = event.target.closest(".account-info-card");
         const accountId = accountCard.dataset.accountId;
-        goTo(`/transfer?accountId=${accountId}`);
+        goTo(`/transfer`);
       });
     });
   }
