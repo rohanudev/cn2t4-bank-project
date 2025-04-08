@@ -102,7 +102,7 @@ export function Landing() {
       accountCard.addEventListener("click", (event) => {
         if (!event.target.closest(".transfer-btn")) {
           console.log("[INFO] 계좌상세이동:", account.account_id);
-          goTo("accountDetail", { accountId: account.account_id });
+          goTo("accountDetail", { userId: localState.userId, accountId: account.account_id });
         }
       });
 
