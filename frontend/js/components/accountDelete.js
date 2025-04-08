@@ -54,8 +54,29 @@ export function AccountDelete() {
         <div class="half-btn-dark" id="btn-delete">삭제</div>
       </div>
     `;
+  
     el.querySelector("#btn-back").addEventListener("click", () => renderStep1());
-    el.querySelector("#btn-delete").addEventListener("click", () => renderStep4());
+  
+    el.querySelector("#btn-delete").addEventListener("click", async () => {
+      try {
+        const response = await fetch(`/account/${state.accountId}/`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+  
+        if (response.ok) {
+          renderStep4(); // 삭제 성공 시 완료 화면으로 이동
+        } else {
+          const errorData = await response.json();
+          alert(errorData.error || "계좌 삭제에 실패했습니다.");
+        }
+      } catch (err) {
+        console.error("삭제 중 오류 발생:", err);
+        alert("서버 오류로 삭제에 실패했습니다.");
+      }
+    });
   }
 
   function renderStep4() {
@@ -67,7 +88,7 @@ export function AccountDelete() {
       </div>
     `;
     el.querySelector("#btn-confirm").addEventListener("click", () => {
-      goTo("landing", []);
+      goTo("landing", );
     });
   }
 

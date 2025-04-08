@@ -4,6 +4,7 @@ import { API_BASE_URL } from '../config.js';
 export function AccountDetail() {
   // 내부 상태 관리
   let localState = {
+    userId: null,               
     accountId: null,
     accountNumber: null,
     nickname: null,
@@ -27,6 +28,7 @@ export function AccountDetail() {
     }
 
     localState.accountId = props.accountId;
+    localState.userId = props.userId ?? null;
 
     // 계좌 상세 정보 fetching
     try {
@@ -45,6 +47,7 @@ export function AccountDetail() {
       
       // 상태 업데이트
       localState = {
+        ...localState,
         accountId: accountData.account_id,
         accountNumber: accountData.account_number,
         nickname: accountData.nickname,
@@ -152,7 +155,7 @@ export function AccountDetail() {
 
           if (response.ok) {
             alert('계좌가 성공적으로 해지되었습니다.');
-            goTo('landing');
+            goTo('landing', { userId: localState.userId });
           } else {
             const errorData = await response.json();
             alert(errorData.error || '계좌 해지에 실패했습니다.');
