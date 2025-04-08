@@ -146,7 +146,7 @@ export function AccountDetail() {
     el.querySelector('#delete-btn').addEventListener('click', async () => {
       if (confirm('정말로 이 계좌를 해지하시겠습니까?')) {
         try {
-          const response = await fetch(`${API_BASE_URL}/accounts/${localState.accountId}`, {
+          const response = await fetch(`${API_BASE_URL}/api/accounts/${localState.accountId}`, {
             method: 'DELETE'
           });
 

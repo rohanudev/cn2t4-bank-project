@@ -232,6 +232,8 @@ export function Transfer() {
         </div>
       `
       container.querySelector('#done').addEventListener('click', () => {
+
+        //TBD: SNS
         // 랜딩 페이지로 이동
         goTo("landing", {userId: state.userId});
       });
