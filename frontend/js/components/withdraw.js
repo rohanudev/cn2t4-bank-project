@@ -68,7 +68,7 @@ export function Withdraw() {
       `
 
       container.querySelector('#quit').addEventListener('click', () => {
-        goTo("account", {})
+        goTo("landing", {userId: state.userId})
       });
 
       container.querySelector('#amount').addEventListener('input', (e) => {
@@ -176,7 +176,7 @@ export function Withdraw() {
       `
       container.querySelector('#done').addEventListener('click', () => {
         // 랜딩 페이지로 이동
-        goTo("landing", []);
+        goTo("landing", {userId: state.userId});
       });
 
       return container;
@@ -189,7 +189,7 @@ export function Withdraw() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            account_number: accountId
+            account_id: accountId
           }),
         });
     

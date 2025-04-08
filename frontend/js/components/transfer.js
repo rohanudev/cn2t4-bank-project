@@ -60,7 +60,7 @@ export function Transfer() {
       `
 
       container.querySelector('#quit').addEventListener('click', () => {
-        goTo("account", {})
+        goTo("landing", {userId: state.userId})
       });
 
       container.querySelector('#to-account-input').addEventListener('input', (e) => {
@@ -118,7 +118,7 @@ export function Transfer() {
         `
 
         container.querySelector('#quit').addEventListener('click', () => {
-          goTo("account", {})
+          goTo("landing", {userId: state.userId})
         });
   
         container.querySelector('#amount').addEventListener('input', (e) => {
@@ -233,7 +233,7 @@ export function Transfer() {
       `
       container.querySelector('#done').addEventListener('click', () => {
         // 랜딩 페이지로 이동
-        goTo("landing", []);
+        goTo("landing", {userId: state.userId});
       });
 
       return container;
