@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "../config.js";
 import { goTo } from "../router.js";
+import { state } from "../store.js";
 
 export function Login() {
   let localState = {
@@ -58,6 +59,7 @@ export function Login() {
 
       const data = await res.json();
       console.log("[INFO] 로그인 성공:", data);
+      state.userId = data.user.user_id;
     
       goTo("landing", { userId: data.user.user_id, email: localState.email });
 
