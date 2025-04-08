@@ -12,6 +12,7 @@ import { UserInfo } from "./components/userinfo.js";
 import { UserInfoEdit } from "./components/userinfoEdit.js";
 import { AccountCreate } from "./components/accountCreate.js";
 import { AccountDelete } from "./components/accountDelete.js";
+import { AccountEdit } from "./components/accountEdit.js";
 import { Menu } from "./components/menu.js";
 import { Settings } from "./components/settings.js";
 import { VerifyEmail } from "./components/verifyEmail.js"
@@ -31,6 +32,7 @@ const routes = {
   accountCreate: AccountCreate,
   accountDelete: AccountDelete,
   accountDetail: AccountDetail,
+  accountEdit: AccountEdit,
   menu: Menu,
   settings: Settings,
 };
