@@ -26,7 +26,7 @@ export function AccountEdit() {
 
   async function fetchAccountDetails() {
     try {
-      const response = await fetch(`${API_BASE_URL}/accounts/detail/${localState.accountId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/accounts/${localState.accountId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -100,7 +100,7 @@ export function AccountEdit() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/accounts/${localState.accountId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/accounts/${localState.accountId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
