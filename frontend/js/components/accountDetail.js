@@ -80,6 +80,7 @@ export function AccountDetail() {
 
   // UI 렌더링 함수
   function renderAccountDetail() {
+    loadAccountDetailCSS();
     el.innerHTML = `
       <div class="account-detail-container">
         <div class="account-header">
@@ -208,6 +209,15 @@ export function AccountDetail() {
         }
       }
     });
+  }
+
+  function loadAccountDetailCSS() {
+    if (!document.querySelector('link[href*="account-feature.css"]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = '../../css/account-feature.css'; // 실제 경로
+      document.head.appendChild(link);
+    }
   }
 
   return { el, init };
