@@ -105,9 +105,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mydatabase',
-        'USER': 'myuser',
-        'PASSWORD': 'mypassword',
-        'HOST': 'db', # EC2 퍼블릭 IP 또는 로컬의 컨테이너 사용하려면 'db' 입력
+        'USER': 'admin',
+        'PASSWORD': os.getenv("DB_PASSWORD"),
+        'HOST': 'cn2t4-db.cluster-cxmoyywwc77u.ap-northeast-2.rds.amazonaws.com',
         'PORT': '3306',
         'OPTIONS': {
             'charset': 'utf8mb4',
