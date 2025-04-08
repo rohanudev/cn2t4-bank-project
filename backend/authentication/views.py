@@ -40,7 +40,6 @@ def login(request):
 
         # JWT 디코딩해서 sub(UUID) 추출
         decoded = jwt.decode(id_token, options={"verify_signature": False})
-        print("[DEBUG] JWT 디코드 결과:", decoded)
 
         user_sub = decoded['sub']
 
