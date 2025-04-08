@@ -143,7 +143,7 @@ export function Signup() {
 
     <div class="btn-container">
       <div id="signup-cancel-button" class="half-btn-light">취소</div>
-      <div id="signup-submit-button" class="half-btn-dark">생성</div>
+      <div id="signup-submit-button" class="half-btn-dark">가입</div>
     </div>
   `;
 
