@@ -1,4 +1,3 @@
-# views.py
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -213,5 +212,45 @@ def validate_account(request):
 
     except json.JSONDecodeError:
         return JsonResponse({"success": False, "message": "[ERROR] Invalid JSON"}, status=400)
+    except Exception as e:
+        return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
+    
+def transaction_history(request, account_number):
+    try:
+        account = Account.objects.get(account_number=account_number)
+        transactions = Transaction.objects.filter(
+            from_account=account
+        ) | Transaction.objects.filter(
+            to_account=account
+        )
+        transactions = transactions.order_by('-created_at')[:50]  # 최근 50개만
+
+        history = []
+        for tx in transactions:
+            if tx.type == 'TRANSFER':
+                if tx.from_account == account:
+                    counterparty_name = tx.to_account.user.name if tx.to_account and tx.to_account.user else "알 수 없음"
+                else:
+                    counterparty_name = tx.from_account.user.name if tx.from_account and tx.from_account.user else "알 수 없음"
+            else:
+                counterparty_name = None
+
+            history.append({
+                "transaction_id": str(tx.transaction_id),
+                "type": tx.type,
+                "amount": tx.amount,
+                "balance_after": tx.balance_after,
+                "timestamp": tx.created_at.isoformat(),
+                "memo": tx.memo,
+                "status": tx.status,
+                "from_account": tx.from_account.account_number if tx.from_account else None,
+                "to_account": tx.to_account.account_number if tx.to_account else None,
+                "counterparty_name": counterparty_name
+            })
+
+        return JsonResponse({"success": True, "history": history}, json_dumps_params={'ensure_ascii': False})
+
+    except Account.DoesNotExist:
+        return JsonResponse({"success": False, "message": "[ERROR] Account not found"}, status=404)
     except Exception as e:
         return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
