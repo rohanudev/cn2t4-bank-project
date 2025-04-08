@@ -83,8 +83,8 @@ export function Login() {
       <input id="login-password" type="password" class="info-input-text" placeholder="비밀번호" />
     </div>
 
-    <div class="single-btn-dark-box">
-      <div id="login-button" class="single-btn-dark-text">로그인</div>
+    <div id="login-button" class="single-btn-dark-box">
+      <div id="login-text" class="single-btn-dark-text">로그인</div>
     </div>
 
     <div class="signup-btn">
