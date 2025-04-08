@@ -10,7 +10,8 @@ export function AccountDetail() {
     nickname: null,
     balance: 0,
     status: null,
-    createdAt: null
+    createdAt: null,
+    transactions: []
   };
 
   // DOM 요소 생성
@@ -56,6 +57,12 @@ export function AccountDetail() {
         createdAt: accountData.created_at
       };
 
+      const txRes = await fetch(`${API_BASE_URL}/api/accounts/${localState.accountNumber}/history`);
+      if (txRes.ok) {
+        const txData = await txRes.json();
+        localState.transactions = txData.history;
+      }
+
       // UI 렌더링
       renderAccountDetail();
     } catch (error) {
@@ -95,7 +102,42 @@ export function AccountDetail() {
             <span>${localState.createdAt}</span>
           </div>
         </div>
-        
+
+        <div class="account-transactions">
+          <h3 style="margin: 20px 0;">거래 내역</h3>
+          <div class="scrollable-transactions">
+            ${
+              localState.transactions.length === 0
+                ? '<p class="no-transaction">거래 내역이 없습니다.</p>'
+                : `<ul class="transaction-history">
+                    ${localState.transactions.map(tx => {
+                      const isSent = tx.from_account === localState.accountNumber;
+                      const isTransfer = tx.type === 'TRANSFER';
+                      const amountSign = isTransfer ? (isSent ? '-' : '+') : (tx.type === 'WITHDRAWAL' ? '-' : '+');
+                      const counterpartyLabel = isTransfer ? `${tx.counterparty_name || '상대방 정보 없음'}` : '';
+
+                      return `
+                        <li class="transaction-item ${tx.type.toLowerCase()}">
+                          <div class="tx-header">
+                            <span class="tx-type-label">
+                              ${tx.type === 'DEPOSIT' ? '입금' : tx.type === 'WITHDRAWAL' ? '출금' : counterpartyLabel}
+                            </span>
+                                                        <span class="tx-amount ${amountSign === '+' ? 'incoming' : 'outgoing'}">
+                              ${amountSign}${tx.amount.toLocaleString()}원
+                            </span>
+                          </div>
+                          <div class="tx-details">
+                            <span class="tx-time">${new Date(tx.timestamp).toLocaleString()}</span>
+                            ${tx.memo ? `<span class="tx-memo">메모: ${tx.memo}</span>` : ''}
+                          </div>
+                        </li>
+                      `;
+                    }).join('')}
+                  </ul>`
+            }
+          </div>
+        </div>
+      
         <div class="transaction-buttons">
           <button id="deposit-btn" class="transaction-btn">입금</button>
           <button id="withdraw-btn" class="transaction-btn">출금</button>
