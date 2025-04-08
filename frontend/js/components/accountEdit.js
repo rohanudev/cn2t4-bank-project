@@ -20,17 +20,31 @@ export function AccountEdit() {
     }
 
     localState.accountId = props.accountId;
-    localState.accountNumber = props.accountNumber;
-
+    localState.accountNumber = props.accountNumber || '';
     fetchAccountDetails();
   }
 
   async function fetchAccountDetails() {
     try {
-      const response = await fetch(`${API_BASE_URL}/accounts/detail/${localState.accountId}`);
+      const response = await fetch(`${API_BASE_URL}/accounts/detail/${localState.accountId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      if (!response.ok) {
+        throw new Error('계좌 정보를 불러오는 데 실패했습니다.');
+      }
+  
       const accountData = await response.json();
       
+      // localState 업데이트
       localState.nickname = accountData.nickname;
+      localState.balance = accountData.balance;
+      localState.status = accountData.status;
+  
+      // UI 렌더링
       renderEditForm();
     } catch (error) {
       console.error('계좌 정보 불러오기 실패:', error);
