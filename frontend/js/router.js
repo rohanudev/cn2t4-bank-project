@@ -2,7 +2,6 @@
 import { Login } from "./components/login.js";
 import { Signup } from "./components/signup.js";
 import { Landing } from "./components/landing.js";
-import { Account } from "./components/account.js";
 import { AccountDetail } from "./components/accountDetail.js";
 import { Deposit } from "./components/deposit.js";
 import { Withdraw } from "./components/withdraw.js";
