@@ -55,34 +55,36 @@ export function AccountEdit() {
 
   function renderEditForm() {
     el.innerHTML = `
-      <div class="account-edit-container">
-        <h2>계좌 정보 수정</h2>
-        <div class="form-group">
-          <label for="account-number">계좌번호</label>
-          <input 
-            type="text" 
-            id="account-number" 
-            value="${localState.accountNumber}" 
-            disabled
-          >
-        </div>
-        <div class="form-group">
-          <label for="nickname">계좌 별칭</label>
+      <div class="subtitle">계좌 정보 수정</div>
+
+      <div class="info-horizontal">
+        <div class="info-label">계좌번호:</div>
+        <div class="info-static-text">${localState.accountNumber}</div>
+      </div>
+  
+      <div class="account-edit-wrapper">
+        <div class="info-input-box">
           <input 
             type="text" 
             id="nickname" 
+            class="info-input-text"
             value="${localState.nickname}"
             placeholder="계좌 별칭을 입력하세요"
             maxlength="20"
           >
         </div>
-        <button id="save-btn" class="save-button">저장</button>
-        <button id="cancel-btn" class="cancel-button">취소</button>
+  
+        <div class="btn-container">
+          <div id="cancel-btn" class="half-btn-light">취소</div>
+          <div id="save-btn" class="half-btn-dark">저장</div>
+        </div>
       </div>
     `;
-
+  
     setupEventListeners();
   }
+  
+  
 
   function setupEventListeners() {
     el.querySelector('#save-btn').addEventListener('click', saveAccountChanges);
