@@ -30,10 +30,7 @@ export function Menu() {
     }
 
     backBtn.addEventListener("click", () => {
-        goTo("landing", {
-            userId: localState.userId,
-            email: localState.email,
-          });
+        goTo("landing", {});
     });
 
     infoBtn.addEventListener("click", () => {

@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from .models import User
 from .serializers import UserDetailSerializer
 from django.conf import settings
+from authentication.auth import jwt_required
 
 REGION = 'ap-northeast-2'
 CLIENT_ID = '155u00i0o1sum2a4dmphpuu54a'
@@ -15,6 +16,7 @@ client = boto3.client('cognito-idp', region_name=settings.AWS_REGION)
 
 
 class UserCreateView(APIView):
+    @jwt_required
     def post(self, request):
         data = request.data
 
@@ -66,6 +68,7 @@ class UserCreateView(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class UserConfirmView(APIView):
+    @jwt_required
     def post(self, request):
         data = request.data
         email = data.get('email')
@@ -96,6 +99,7 @@ class UserConfirmView(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class UserDeactivateView(APIView):
+    @jwt_required
     def post(self, request):
         email = request.data.get("email")
         if not email:
@@ -120,11 +124,13 @@ class UserDeactivateView(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class UserDetailView(APIView):
+    @jwt_required
     def get(self, request, userId):
         user = get_object_or_404(User, user_id=userId)
         serializer = UserDetailSerializer(user)  # 모든 필드 포함된 Serializer 사용
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @jwt_required
     def put(self, request, userId):
         user = get_object_or_404(User, user_id=userId)
         serializer = UserDetailSerializer(user, data=request.data, partial=True)  # 업데이트도 전체 필드 포함된 Serializer 사용
@@ -133,6 +139,7 @@ class UserDetailView(APIView):
             return Response({"message": "User updated successfully"}, status=status.HTTP_200_OK)
         return Response({"error": "[ERROR] Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
 
+    @jwt_required
     def delete(self, request, userId):
         # DB에서 사용자 삭제
         user = get_object_or_404(User, user_id=userId)

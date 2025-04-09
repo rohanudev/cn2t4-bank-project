@@ -60,8 +60,16 @@ export function Login() {
       const data = await res.json();
       console.log("[INFO] 로그인 성공:", data);
       state.userId = data.user.user_id;
+      state.userEmail = data.user.email;
+      state.userName = data.user.name;
+      sessionStorage.setItem("access_token", data.access_token);
+      sessionStorage.setItem("id_token", data.id_token);
+      sessionStorage.setItem("refresh_token", data.refresh_token);
+      sessionStorage.setItem("user_id", data.user.user_id);
+      sessionStorage.setItem("user_name", data.user.name);
+      sessionStorage.setItem("user_email", data.user.email);
     
-      goTo("landing", { userId: data.user.user_id, email: localState.email });
+      goTo("landing", {});
 
     } catch (error) {
       console.error("[ERROR] 로그인 실패:", error);

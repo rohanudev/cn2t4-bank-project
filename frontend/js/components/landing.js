@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "../config.js"; // API 주소
 import { goTo } from "../router.js"; // 라우터 이동
+import { state } from "../store.js"; // 상태 관리
 
 export function Landing() {
   let localState = {
@@ -11,9 +12,9 @@ export function Landing() {
 
   function init(props) {
     localState = {
-      userId: props?.userId ?? null,
-      email: props?.email ?? "",
-      userName: "-",
+      userId: state.userId,
+      email: state.userEmail,
+      userName: state.userName,
       accounts: [],
     };
 
