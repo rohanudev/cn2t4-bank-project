@@ -123,3 +123,13 @@
   height: 20px;
   cursor: pointer;
 }
+
+/*계좌 생성 페이지*/
+.account-create-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 수평 가운데 정렬 */
+  justify-content: center; /* 수직 가운데 정렬 (부모에 높이가 있을 경우) */
+  gap: 5px; /* 요소 사이 간격 */
+  margin-top: 30px; /* 필요 시 위쪽 여백 */
+}
