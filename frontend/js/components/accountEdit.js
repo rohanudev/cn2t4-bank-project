@@ -88,7 +88,7 @@ export function AccountEdit() {
 
   function setupEventListeners() {
     el.querySelector('#save-btn').addEventListener('click', saveAccountChanges);
-    el.querySelector('#cancel-btn').addEventListener('click', () => goTo('account', { accountId: localState.accountId }));
+    el.querySelector('#cancel-btn').addEventListener('click', () => goTo('accountDetail', { accountId: localState.accountId }));
   }
 
   async function saveAccountChanges() {
