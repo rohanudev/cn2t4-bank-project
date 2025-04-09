@@ -133,3 +133,20 @@
   gap: 5px; /* 요소 사이 간격 */
   margin-top: 30px; /* 필요 시 위쪽 여백 */
 }
+
+/*계좌 수정 페이지*/
+.account-edit-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  margin-top: 30px;
+}
+
+.info-horizontal {
+  display: flex;
+  justify-content: flex-start; /* 왼쪽 정렬 */
+  align-items: flex-start;     /* 위쪽 정렬로 */
+  gap: 8px;
+  margin-bottom: 16px;
+}
