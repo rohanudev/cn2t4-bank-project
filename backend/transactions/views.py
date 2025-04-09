@@ -5,9 +5,10 @@ from accounts.models import Account
 from transactions.models import Transaction
 from django.utils.timezone import now
 from django.db import transaction as db_transaction
-
+from authentication.auth import jwt_required
 
 @csrf_exempt
+@jwt_required
 def deposit(request):
     if request.method != "POST":
         return JsonResponse({"success": False, "message": "[ERROR] Method Not Allowed"}, status=405)
@@ -58,8 +59,8 @@ def deposit(request):
     except Exception as e:
         return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
 
-    
 @csrf_exempt
+@jwt_required
 def withdraw(request):
     if request.method != "POST":
         return JsonResponse({"success": False, "message": "[ERROR] Method Not Allowed"}, status=405)
@@ -113,8 +114,8 @@ def withdraw(request):
     except Exception as e:
         return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
 
-    
 @csrf_exempt
+@jwt_required
 def transfer(request):
     if request.method != "POST":
         return JsonResponse({"success": False, "message": "[ERROR] Method Not Allowed"}, status=405)
@@ -177,8 +178,9 @@ def transfer(request):
         return JsonResponse({"success": False, "message": "[ERROR] Invalid JSON"}, status=400)
     except Exception as e:
         return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
-    
-@csrf_exempt
+
+@csrf_exempt  
+@jwt_required
 def validate_account(request):
     if request.method != "POST":
         return JsonResponse({"success": False, "message": "[ERROR] Method Not Allowed"}, status=405)
@@ -214,7 +216,9 @@ def validate_account(request):
         return JsonResponse({"success": False, "message": "[ERROR] Invalid JSON"}, status=400)
     except Exception as e:
         return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
-    
+
+@csrf_exempt
+@jwt_required
 def transaction_history(request, account_number):
     try:
         account = Account.objects.get(account_number=account_number)

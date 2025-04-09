@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "../config.js";
 import { goTo } from "../router.js";
+import { authorizedFetch } from "../utils.js";
 
 export function VerifyEmail() {
   let localState = {
@@ -67,7 +68,7 @@ export function VerifyEmail() {
     }
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/users/confirm`, {
+      const res = await authorizedFetch(`${API_BASE_URL}/api/users/confirm`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

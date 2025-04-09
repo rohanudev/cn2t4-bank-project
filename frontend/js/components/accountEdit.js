@@ -1,5 +1,6 @@
 import { goTo } from '../router.js';
 import { API_BASE_URL } from '../config.js';
+import { authorizedFetch } from "../utils.js";
 
 export function AccountEdit() {
   let localState = {
@@ -26,7 +27,7 @@ export function AccountEdit() {
 
   async function fetchAccountDetails() {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/accounts/${localState.accountId}`, {
+      const response = await authorizedFetch(`${API_BASE_URL}/api/accounts/${localState.accountId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -102,7 +103,7 @@ export function AccountEdit() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/accounts/${localState.accountId}`, {
+      const response = await authorizedFetch(`${API_BASE_URL}/api/accounts/${localState.accountId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

@@ -1,5 +1,7 @@
 import { API_BASE_URL } from "../config.js"; // API 주소
 import { goTo } from "../router.js"; // 라우터 이동
+import { state } from "../store.js"; // 상태 관리
+import { authorizedFetch } from "../utils.js";
 
 export function Landing() {
   let localState = {
@@ -11,9 +13,9 @@ export function Landing() {
 
   function init(props) {
     localState = {
-      userId: props?.userId ?? null,
-      email: props?.email ?? "",
-      userName: "-",
+      userId: state.userId,
+      email: state.userEmail,
+      userName: state.userName,
       accounts: [],
     };
 
@@ -29,7 +31,7 @@ export function Landing() {
 
   async function fetchUserData() {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/users/${localState.userId}`);
+      const res = await authorizedFetch(`${API_BASE_URL}/api/users/${localState.userId}`);
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
       const data = await res.json();
       localState.userName = data.name;
@@ -41,7 +43,7 @@ export function Landing() {
 
   async function fetchAccounts() {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/accounts/user/${localState.userId}`);
+      const res = await authorizedFetch(`${API_BASE_URL}/api/accounts/user/${localState.userId}`);
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
       const data = await res.json();
       localState.accounts = data;
