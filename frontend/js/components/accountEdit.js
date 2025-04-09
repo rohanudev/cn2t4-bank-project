@@ -114,7 +114,7 @@ export function AccountEdit() {
 
       if (response.ok) {
         alert('계좌 정보가 성공적으로 수정되었습니다.');
-        goTo('account', { accountId: localState.accountId });
+        goTo('accountDetail', { accountId: localState.accountId });
       } else {
         const errorData = await response.json();
         alert(errorData.error || '계좌 정보 수정에 실패했습니다.');
