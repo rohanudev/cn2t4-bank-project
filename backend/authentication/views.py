@@ -97,7 +97,7 @@ def refresh_token_view(request):
 
     try:
         response = requests.post(
-            f"{"https://ap-northeast-2xg2ntqoxx.auth.ap-northeast-2.amazoncognito.com"}/oauth2/token",
+            "https://ap-northeast-2xg2ntqoxx.auth.ap-northeast-2.amazoncognito.com/oauth2/token",
             data=payload,
             headers=headers
         )
