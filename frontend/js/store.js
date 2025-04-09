@@ -1,6 +1,7 @@
 // store.js
 export const state = {
     userId: null,
-    userEmail: null,
-    userName: null,
+    isLoggedIn: false,
+    selectedAccountId: null,
+    balance: 0,
   };
