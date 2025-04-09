@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from .models import User
 
 COGNITO_REGION = 'ap-northeast-2'
-COGNITO_USER_POOL_ID = 'ap-northeast-2_soUv5mWct'
+COGNITO_USER_POOL_ID = '155u00i0o1sum2a4dmphpuu54a'
 
 # Cognito에서 발급한 JWT의 iss값 → 공개 키 가져올 때 사용
 JWT_ISSUER = f"https://cognito-idp.ap-northeast-2.amazonaws.com/ap-northeast-2_Xg2ntQOxX/.well-known/jwks.json"
