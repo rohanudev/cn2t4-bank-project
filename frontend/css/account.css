@@ -1,0 +1,125 @@
+/* Account Create Complete */
+.account-summary-box {
+  background: #d9d9d9;
+  border-radius: 10px;
+  padding: 20px;
+  width: 90%;
+  max-width: 321px;
+  margin: 30px auto;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Account Detail */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px; 
+}
+
+.account-delete {
+  height: 30px;
+  line-height: 30px;
+  font-size: 20px;
+  color: #d5d5d5;
+  cursor: pointer;
+  text-align: right;
+  display: block; /* 또는 inline-block */
+}
+
+.account-delete:hover {
+  color: #000;
+}
+
+.account-detail-container {
+  margin-top: 0px; /* 기존보다 아래로 충분히 내림 */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.account-balance {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.balance-big {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #333;
+}
+
+.transaction-list {
+  margin: 30px auto;
+  width: 90%;
+  max-width: 321px;
+  font-size: 16px;
+  font-family: "Inter-Regular", sans-serif;
+}
+.transaction-list div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.transaction-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0px;
+}
+
+/* Account Delete 추가 스타일 */
+.subsubtitle.red {
+  color: red;
+}
+
+.subsubtitle.large {
+  font-size: 18px;
+}
+
+/* 거래 내역 스타일 */
+.transaction-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+.tx-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+.tx-details {
+  font-size: 0.85em;
+  color: #555;
+  margin-top: 2px;
+  display: flex;
+  justify-content: space-between;
+}
+.tx-amount.incoming {
+  color: green;
+}
+.tx-amount.outgoing {
+  color: red;
+}
+.scrollable-transactions {
+  height: 200px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.transaction-history {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.account-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* 텍스트와 아이콘 사이 간격 */
+}
+
+.pencil-btn {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}

@@ -80,17 +80,28 @@ export function AccountDetail() {
 
   // UI 렌더링 함수
   function renderAccountDetail() {
-    loadAccountDetailCSS();
+    //loadAccountDetailCSS();
     el.innerHTML = `
+      <div class="top-bar">
+        <div class="back-btn-wrapper">
+          <img class="back-btn" src="../../assets/icons/back-btn.png" />
+        </div>
+        <div id="delete-btn" class="account-delete">삭제</div>
+      </div>
+
+
       <div class="account-detail-container">
         <div class="account-header">
-          <h2>${localState.nickname || '계좌'}</h2>
+          <div class="account-title-row">
+            <h2>${localState.nickname || '계좌'}</h2>
+            <img id="edit-btn" class="pencil-btn" src="../../assets/icons/pencil-btn.png" alt="수정" />
+          </div>
           <p class="account-number">계좌번호: ${localState.accountNumber}</p>
         </div>
+
         
         <div class="account-balance">
-          <h3>현재 잔액</h3>
-          <p class="balance">${localState.balance.toLocaleString()}원</p>
+          <p class="balance-big">${localState.balance.toLocaleString()}원</p>
         </div>
         
         <div class="account-info">
@@ -123,7 +134,7 @@ export function AccountDetail() {
                             <span class="tx-type-label">
                               ${tx.type === 'DEPOSIT' ? '입금' : tx.type === 'WITHDRAWAL' ? '출금' : counterpartyLabel}
                             </span>
-                                                        <span class="tx-amount ${amountSign === '+' ? 'incoming' : 'outgoing'}">
+                            <span class="tx-amount ${amountSign === '+' ? 'incoming' : 'outgoing'}">
                               ${amountSign}${tx.amount.toLocaleString()}원
                             </span>
                           </div>
@@ -138,17 +149,16 @@ export function AccountDetail() {
             }
           </div>
         </div>
-      
-        <div class="transaction-buttons">
-          <button id="deposit-btn" class="transaction-btn">입금</button>
-          <button id="withdraw-btn" class="transaction-btn">출금</button>
-          <button id="transfer-btn" class="transaction-btn">이체</button>
-        </div>
-        
-        <div class="account-actions">
-          <button id="edit-btn">계좌 정보 수정</button>
-          <button id="delete-btn">계좌 해지</button>
-        </div>
+      </div>
+
+      <div class="transaction-buttons">
+          <div class="btn-container">
+            <div id="deposit-btn" class="half-btn-light">입금</div>
+            <div id="withdraw-btn" class="half-btn-dark">출금</div>
+          </div>
+          <div id="transfer-btn" class="single-btn-dark-box">
+            <span class="single-btn-dark-text">이체</span>
+          </div>
       </div>
     `;
 
@@ -158,6 +168,13 @@ export function AccountDetail() {
 
   // 이벤트 리스너 설정
   function setupEventListeners() {
+    //뒤로가기 버튼 이벤트
+    el.querySelector(".back-btn").addEventListener("click", () => {
+      goTo("landing", {
+        userId: localState.userId,
+      });
+    });
+
     // 거래 버튼 이벤트
     el.querySelector('#deposit-btn').addEventListener('click', () => {
       goTo('deposit', { 
