@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config.js";
 import { goTo } from "../router.js";
 
 export function Menu() {
