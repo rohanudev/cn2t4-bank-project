@@ -65,7 +65,7 @@ export function Deposit() {
         </div>
       `
       container.querySelector('#quit').addEventListener('click', () => {
-        goTo("landing", {userId: state.userId})
+        goTo("landing", {})
       });
 
       container.querySelector('#amount').addEventListener('input', (e) => {
@@ -156,7 +156,7 @@ export function Deposit() {
       `
       container.querySelector('#done').addEventListener('click', () => {
         // 랜딩 페이지로 이동
-        goTo("landing", {userId: state.userId});
+        goTo("landing", {});
       });
 
       return container;

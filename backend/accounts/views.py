@@ -4,8 +4,10 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from users.models import User
 from .models import Account
+from authentication.auth import jwt_required
 
 class CreateAccountView(APIView):
+    @jwt_required
     def post(self, request):
         user_id = request.data.get("user_id")
         nickname = request.data.get("nickname", "")
@@ -31,6 +33,7 @@ class CreateAccountView(APIView):
 
 
 class UserAccountsView(APIView):
+    @jwt_required
     def get(self, request, userId):
         user = get_object_or_404(User, user_id=userId)
         accounts = Account.objects.filter(user=user)
@@ -48,6 +51,7 @@ class UserAccountsView(APIView):
 
 
 class AccountDetailView(APIView):
+    @jwt_required
     def get(self, request, accountId):
         account = get_object_or_404(Account, account_id=accountId)
         return Response({
@@ -60,6 +64,7 @@ class AccountDetailView(APIView):
             "created_at": account.created_at.strftime("%Y-%m-%d %H:%M:%S")
         }, status=status.HTTP_200_OK)
 
+    @jwt_required
     def put(self, request, accountId):
         account = get_object_or_404(Account, account_id=accountId)
 
@@ -70,6 +75,7 @@ class AccountDetailView(APIView):
         account.save()
         return Response({"message": "Account updated successfully"}, status=status.HTTP_200_OK)
 
+    @jwt_required
     def delete(self, request, accountId):
         account = get_object_or_404(Account, account_id=accountId)
 

@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "../config.js";
 import { goTo } from "../router.js";
+import { state } from "../store.js";
 
 export function UserInfo() {
   let localState = {
@@ -8,7 +9,7 @@ export function UserInfo() {
   };
 
   function init(props) {
-    localState.userId = props.userId ?? null;
+    localState.userId = state.userId
     if (!localState.userId) {
       console.error("[ERROR] userId is missing");
       return;
@@ -77,7 +78,7 @@ export function UserInfo() {
     }
 
     backBtn.addEventListener("click", () => {
-      goTo("landing", { userId: localState.userId });
+      goTo("landing", {});
     });
 
     editBtn.addEventListener("click", () => {

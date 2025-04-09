@@ -60,7 +60,7 @@ export function Transfer() {
       `
 
       container.querySelector('#quit').addEventListener('click', () => {
-        goTo("landing", {userId: state.userId})
+        goTo("landing", {})
       });
 
       container.querySelector('#to-account-input').addEventListener('input', (e) => {
@@ -118,7 +118,7 @@ export function Transfer() {
         `
 
         container.querySelector('#quit').addEventListener('click', () => {
-          goTo("landing", {userId: state.userId})
+          goTo("landing", {})
         });
   
         container.querySelector('#amount').addEventListener('input', (e) => {
@@ -235,7 +235,7 @@ export function Transfer() {
 
         //TBD: SNS
         // 랜딩 페이지로 이동
-        goTo("landing", {userId: state.userId});
+        goTo("landing", {});
       });
 
       return container;
