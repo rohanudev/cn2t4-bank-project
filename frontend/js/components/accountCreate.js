@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "../config.js";
 import { goTo } from "../router.js";
+import { state } from "../store.js";
 
 export function AccountCreate() {
   let localState = {
@@ -8,7 +9,7 @@ export function AccountCreate() {
   };
 
   function init(props) {
-    localState.userId = props?.userId ?? null;
+    localState.userId = state.userId
 
     if (!localState.userId) {
       console.error("[ERROR] userId is missing");
@@ -34,7 +35,7 @@ export function AccountCreate() {
     });
 
     cancelBtn.addEventListener("click", () => {
-      goTo("landing", { userId: localState.userId });
+      goTo("landing", {});
     });
 
     submitBtn.addEventListener("click", handleCreateAccount);
@@ -65,7 +66,7 @@ export function AccountCreate() {
       const data = await res.json();
       console.log("[INFO] 계좌 생성 성공:", data);
       alert("계좌가 성공적으로 개설되었습니다.");
-      goTo("landing", { userId }); // userId 넘겨서 다시 돌아가기
+      goTo("landing", {}); // userId 넘겨서 다시 돌아가기
     } catch (error) {
       console.error("[ERROR] 계좌 생성 실패:", error);
       alert("계좌 개설에 실패했습니다. 다시 시도해주세요.");
@@ -78,13 +79,15 @@ export function AccountCreate() {
   el.innerHTML = `
     <div class="subtitle">새 계좌 개설</div>
 
-    <div class="info-input-box">
-      <input id="account-nickname" type="text" class="info-input-text" placeholder="계좌 별칭 입력" maxlength="20">
-    </div>
+    <div class="account-create-wrapper">
+      <div class="info-input-box">
+        <input id="account-nickname" type="text" class="info-input-text" placeholder="계좌 별칭 입력" maxlength="20">
+      </div>
 
-    <div class="btn-container">
-      <div id="account-cancel-button" class="half-btn-light">취소</div>
-      <div id="account-submit-button" class="half-btn-dark">생성</div>
+      <div class="btn-container">
+        <div id="account-cancel-button" class="half-btn-light">취소</div>
+        <div id="account-submit-button" class="half-btn-dark">생성</div>
+      </div>
     </div>
   `;
 
