@@ -1,6 +1,5 @@
 import { API_BASE_URL } from "../config.js";
 import { goTo } from "../router.js";
-import { state } from "../store.js";
 
 export function AccountCreate() {
   let localState = {
@@ -9,7 +8,7 @@ export function AccountCreate() {
   };
 
   function init(props) {
-    localState.userId = state.userId
+    localState.userId = props?.userId ?? null;
 
     if (!localState.userId) {
       console.error("[ERROR] userId is missing");
@@ -35,7 +34,7 @@ export function AccountCreate() {
     });
 
     cancelBtn.addEventListener("click", () => {
-      goTo("landing", {});
+      goTo("landing", { userId: localState.userId });
     });
 
     submitBtn.addEventListener("click", handleCreateAccount);
@@ -66,7 +65,7 @@ export function AccountCreate() {
       const data = await res.json();
       console.log("[INFO] 계좌 생성 성공:", data);
       alert("계좌가 성공적으로 개설되었습니다.");
-      goTo("landing", {}); // userId 넘겨서 다시 돌아가기
+      goTo("landing", { userId }); // userId 넘겨서 다시 돌아가기
     } catch (error) {
       console.error("[ERROR] 계좌 생성 실패:", error);
       alert("계좌 개설에 실패했습니다. 다시 시도해주세요.");

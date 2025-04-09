@@ -10,7 +10,7 @@ from django.conf import settings
 
 client = boto3.client('cognito-idp', settings.AWS_REGION)
 
-
+@csrf_exempt
 def login(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Invalid request method'}, status=405)
