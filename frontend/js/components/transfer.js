@@ -1,6 +1,7 @@
 import { state } from '../store.js';
 import { goTo } from '../router.js';
 import { API_BASE_URL } from '../config.js';
+import { authorizedFetch } from "../utils.js";
 
 export function Transfer() {
     // 내부 상태
@@ -60,7 +61,7 @@ export function Transfer() {
       `
 
       container.querySelector('#quit').addEventListener('click', () => {
-        goTo("landing", {userId: state.userId})
+        goTo("landing", {})
       });
 
       container.querySelector('#to-account-input').addEventListener('input', (e) => {
@@ -118,7 +119,7 @@ export function Transfer() {
         `
 
         container.querySelector('#quit').addEventListener('click', () => {
-          goTo("landing", {userId: state.userId})
+          goTo("landing", {})
         });
   
         container.querySelector('#amount').addEventListener('input', (e) => {
@@ -235,7 +236,7 @@ export function Transfer() {
 
         //TBD: SNS
         // 랜딩 페이지로 이동
-        goTo("landing", {userId: state.userId});
+        goTo("landing", {});
       });
 
       return container;
@@ -244,7 +245,7 @@ export function Transfer() {
     // 🌐 API 요청 함수
     async function validateAccountNumber(accountId, accountNumber) {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/transactions/validate_account`, {
+        const res = await authorizedFetch(`${API_BASE_URL}/api/transactions/validate_account`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -268,7 +269,7 @@ export function Transfer() {
     }
     
     async function submitTransfer() {
-      const res = await fetch(`${API_BASE_URL}/api/transactions/transfer`, {
+      const res = await authorizedFetch(`${API_BASE_URL}/api/transactions/transfer`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

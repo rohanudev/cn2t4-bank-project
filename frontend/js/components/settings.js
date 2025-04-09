@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "../config.js"; // API 주소
 import { goTo } from "../router.js"; // 라우터 이동
+import { authorizedFetch } from "../utils.js";
 
 export function Settings() {
 
@@ -47,7 +48,7 @@ export function Settings() {
             if (!confirm("정말로 휴면 전환하시겠습니까?")) return;
 
             try {
-                const res = await fetch(`${API_BASE_URL}/api/users/deactivate`, {
+                const res = await authorizedFetch(`${API_BASE_URL}/api/users/deactivate`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email: localState.email }),
@@ -70,7 +71,7 @@ export function Settings() {
             if (!confirm("정말로 회원을 탈퇴하시겠습니까?")) return;
 
             try {
-                const res = await fetch(`${API_BASE_URL}/api/users/${localState.userId}`, {
+                const res = await authorizedFetch(`${API_BASE_URL}/api/users/${localState.userId}`, {
                     method: "DELETE",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email: localState.email }),

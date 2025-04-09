@@ -7,13 +7,15 @@ from django.shortcuts import get_object_or_404
 from .models import User
 from .serializers import UserDetailSerializer
 from django.conf import settings
+from authentication.auth import jwt_required
+from django.utils.decorators import method_decorator
 
 REGION = 'ap-northeast-2'
 CLIENT_ID = '155u00i0o1sum2a4dmphpuu54a'
 
 client = boto3.client('cognito-idp', region_name=settings.AWS_REGION)
 
-
+@method_decorator(jwt_required, name="post")
 class UserCreateView(APIView):
     def post(self, request):
         data = request.data
@@ -65,6 +67,7 @@ class UserCreateView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@method_decorator(jwt_required, name="post")
 class UserConfirmView(APIView):
     def post(self, request):
         data = request.data
@@ -95,6 +98,7 @@ class UserConfirmView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@method_decorator(jwt_required, name="post")
 class UserDeactivateView(APIView):
     def post(self, request):
         email = request.data.get("email")
@@ -119,6 +123,9 @@ class UserDeactivateView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@method_decorator(jwt_required, name="get")
+@method_decorator(jwt_required, name="put")
+@method_decorator(jwt_required, name="delete")
 class UserDetailView(APIView):
     def get(self, request, userId):
         user = get_object_or_404(User, user_id=userId)

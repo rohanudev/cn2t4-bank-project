@@ -1,5 +1,6 @@
 import { goTo } from '../router.js';
 import { API_BASE_URL } from '../config.js';
+import { authorizedFetch } from "../utils.js";
 
 export function AccountDetail() {
   // 내부 상태 관리
@@ -33,7 +34,7 @@ export function AccountDetail() {
 
     // 계좌 상세 정보 fetching
     try {
-      const response = await fetch(`${API_BASE_URL}/api/accounts/${localState.accountId}`, {
+      const response = await authorizedFetch(`${API_BASE_URL}/api/accounts/${localState.accountId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -57,7 +58,7 @@ export function AccountDetail() {
         createdAt: accountData.created_at
       };
 
-      const txRes = await fetch(`${API_BASE_URL}/api/accounts/${localState.accountNumber}/history`);
+      const txRes = await authorizedFetch(`${API_BASE_URL}/api/accounts/${localState.accountNumber}/history`);
       if (txRes.ok) {
         const txData = await txRes.json();
         localState.transactions = txData.history;
@@ -209,7 +210,7 @@ export function AccountDetail() {
     el.querySelector('#delete-btn').addEventListener('click', async () => {
       if (confirm('정말로 이 계좌를 해지하시겠습니까?')) {
         try {
-          const response = await fetch(`${API_BASE_URL}/api/accounts/${localState.accountId}`, {
+          const response = await authorizedFetch(`${API_BASE_URL}/api/accounts/${localState.accountId}`, {
             method: 'DELETE'
           });
 

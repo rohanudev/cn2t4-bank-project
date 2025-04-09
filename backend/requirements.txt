@@ -5,3 +5,5 @@ mysqlclient
 boto3
 PyJWT>=2.4.0
 python-dotenv
+requests>=2.0.0
+cryptography>=42.0.0

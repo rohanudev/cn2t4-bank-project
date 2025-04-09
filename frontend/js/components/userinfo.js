@@ -1,5 +1,7 @@
 import { API_BASE_URL } from "../config.js";
 import { goTo } from "../router.js";
+import { state } from "../store.js";
+import { authorizedFetch } from "../utils.js";
 
 export function UserInfo() {
   let localState = {
@@ -8,7 +10,7 @@ export function UserInfo() {
   };
 
   function init(props) {
-    localState.userId = props.userId ?? null;
+    localState.userId = state.userId
     if (!localState.userId) {
       console.error("[ERROR] userId is missing");
       return;
@@ -21,7 +23,7 @@ export function UserInfo() {
   // 🌐 사용자 정보 불러오기 (GET 요청)
   async function fetchUserData() {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/users/${localState.userId}`);
+      const res = await authorizedFetch(`${API_BASE_URL}/api/users/${localState.userId}`);
       if (!res.ok) {
         throw new Error(`HTTP error! Status: ${res.status}`);
       }
@@ -77,7 +79,7 @@ export function UserInfo() {
     }
 
     backBtn.addEventListener("click", () => {
-      goTo("landing", { userId: localState.userId });
+      goTo("landing", {});
     });
 
     editBtn.addEventListener("click", () => {

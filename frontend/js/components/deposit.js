@@ -1,6 +1,7 @@
 import { state } from '../store.js';
 import { goTo } from '../router.js';
 import { API_BASE_URL } from '../config.js';
+import { authorizedFetch } from "../utils.js";
 
 export function Deposit() {
     // 내부 상태
@@ -65,7 +66,7 @@ export function Deposit() {
         </div>
       `
       container.querySelector('#quit').addEventListener('click', () => {
-        goTo("landing", {userId: state.userId})
+        goTo("landing", {})
       });
 
       container.querySelector('#amount').addEventListener('input', (e) => {
@@ -156,7 +157,7 @@ export function Deposit() {
       `
       container.querySelector('#done').addEventListener('click', () => {
         // 랜딩 페이지로 이동
-        goTo("landing", {userId: state.userId});
+        goTo("landing", {});
       });
 
       return container;
@@ -165,7 +166,7 @@ export function Deposit() {
     // 🌐 API 요청 함수
     async function validateAccountNumber(accountId) {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/transactions/validate_account`, {
+        const res = await authorizedFetch(`${API_BASE_URL}/api/transactions/validate_account`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -188,7 +189,7 @@ export function Deposit() {
     }
 
     async function submitDeposit() {
-      const res = await fetch(`${API_BASE_URL}/api/transactions/deposit`, {
+      const res = await authorizedFetch(`${API_BASE_URL}/api/transactions/deposit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

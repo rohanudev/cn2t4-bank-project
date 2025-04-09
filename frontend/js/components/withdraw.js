@@ -1,6 +1,7 @@
 import { state } from '../store.js';
 import { goTo } from '../router.js';
 import { API_BASE_URL } from '../config.js';
+import { authorizedFetch } from "../utils.js";
 
 export function Withdraw() {
     // 내부 상태
@@ -68,7 +69,7 @@ export function Withdraw() {
       `
 
       container.querySelector('#quit').addEventListener('click', () => {
-        goTo("landing", {userId: state.userId})
+        goTo("landing", {})
       });
 
       container.querySelector('#amount').addEventListener('input', (e) => {
@@ -176,7 +177,7 @@ export function Withdraw() {
       `
       container.querySelector('#done').addEventListener('click', () => {
         // 랜딩 페이지로 이동
-        goTo("landing", {userId: state.userId});
+        goTo("landing", {});
       });
 
       return container;
@@ -185,7 +186,7 @@ export function Withdraw() {
     // 🌐 API 요청 함수
     async function validateAccountNumber(accountId) {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/transactions/validate_account`, {
+        const res = await authorizedFetch(`${API_BASE_URL}/api/transactions/validate_account`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -208,7 +209,7 @@ export function Withdraw() {
     }
 
     async function submitWithdraw() {
-      const res = await fetch(`${API_BASE_URL}/api/transactions/withdraw`, {
+      const res = await authorizedFetch(`${API_BASE_URL}/api/transactions/withdraw`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

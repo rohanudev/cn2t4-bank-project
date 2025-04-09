@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "../config.js";
 import { goTo } from "../router.js";
+import { authorizedFetch } from "../utils.js";
 
 export function Signup() {
   let localState = {
@@ -83,7 +84,7 @@ export function Signup() {
     }
 
     try {
-        const res = await fetch(`${API_BASE_URL}/api/users/signup`, {
+        const res = await authorizedFetch(`${API_BASE_URL}/api/users/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, name, phone, birthdate }),

@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "../config.js";
 import { goTo } from "../router.js";
+import { authorizedFetch } from "../utils.js";
 
 export function UserInfoEdit() {
   let localState = {
@@ -19,7 +20,7 @@ export function UserInfoEdit() {
 
   async function fetchUserData() {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/users/${localState.userId}`);
+      const res = await authorizedFetch(`${API_BASE_URL}/api/users/${localState.userId}`);
       if (!res.ok) {
         throw new Error(`HTTP error! Status: ${res.status}`);
       }
@@ -51,7 +52,7 @@ export function UserInfoEdit() {
     }
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/users/${localState.userId}`, {
+      const res = await authorizedFetch(`${API_BASE_URL}/api/users/${localState.userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedData),

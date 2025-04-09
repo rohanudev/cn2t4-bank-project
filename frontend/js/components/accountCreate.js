@@ -1,6 +1,8 @@
 import { API_BASE_URL } from "../config.js";
 import { goTo } from "../router.js";
 import { state } from "../store.js";
+import { authorizedFetch } from "../utils.js";
+
 
 export function AccountCreate() {
   let localState = {
@@ -51,9 +53,11 @@ export function AccountCreate() {
     }
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/accounts/`, {
+      const res = await authorizedFetch(`${API_BASE_URL}/api/accounts/`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+         },
         body: JSON.stringify({
           user_id: userId,
           nickname: nickname.trim(),
