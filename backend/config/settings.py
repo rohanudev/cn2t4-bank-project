@@ -41,6 +41,9 @@ ALLOWED_HOSTS = ['*']
 
 CORS_ALLOWED_ORIGINS = [
     "https://tikklemoa.com",
+    "http://tikklemoa.com",
+    "https://www.tikklemoa.com",
+    "http://www.tikklemoa.com",
     "http://localhost",
 ]
 
