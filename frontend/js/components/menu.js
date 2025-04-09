@@ -44,14 +44,28 @@ export function Menu() {
           });
     });
 
-    logoutBtn.addEventListener("click", () => {
+    logoutBtn.addEventListener("click", async () => {
+      const accessToken = localStorage.getItem("access_token");
+      
+      try {
+        // 1. 서버에 로그아웃 요청 (옵션)
+        await fetch(`${API_BASE_URL}/api/authentication/logout`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+    
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("id_token");
+      localStorage.removeItem("refresh_token");
+      
       alert("로그아웃 되었습니다.");
-
-      //TBD
-
-      //정빈: cognito
-
       goTo("login");
+      } catch (error) {
+        console.error("로그아웃 중 오류 발생:", error);
+        alert("로그아웃 중 오류가 발생했습니다.");
+      }
     });
   }
 
