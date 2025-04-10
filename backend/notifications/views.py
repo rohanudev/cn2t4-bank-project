@@ -42,12 +42,16 @@ class NotificationTransferMoneyView(APIView):
 
     def post(self, request):
         amount = request.data.get("amount")
-        access_token = request.headers.get("Authorization").split()[1]
-        user_email = self.get_user_email_from_cognito(access_token)
+        # toAccountUserEmail = request.data.get("toAccountUserEmail")
+        userEmail = request.data.get("userEmail")
+        # access_token = request.headers.get("Authorization").split()[1]
+        # user_email = self.get_user_email_from_cognito(access_token)
 
-        if user_email:
-            subject = "송금 알림"
-            body = f"{amount}원이 성공적으로 이체되었습니다."
-            self.send_email(user_email, subject, body)
+        # if user_email:
+        subject = "송금 알림"
+        body = f"{amount}원이 성공적으로 이체되었습니다."
+        print(userEmail)
+        # self.send_email(userEmail, subject, body)
+        # self.send_email(toAccountUserEmail, subject, body)
 
         return Response({"message": "송금 및 이메일 알림 완료"})

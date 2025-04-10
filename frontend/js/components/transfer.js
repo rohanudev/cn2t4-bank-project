@@ -289,7 +289,11 @@ export function Transfer() {
     try {
       const res = await authorizedFetch(`${API_BASE_URL}/api/notifications/`, {
         method: "POST",
-        body: JSON.stringify({ amount }),
+        body: JSON.stringify({
+          amount: localState.amount,
+          userEmail: localState.userEmail,
+          toAccountUserEmail: localState.toAccountUserEmail,
+        }),
       });
 
       if (!res.ok) {
