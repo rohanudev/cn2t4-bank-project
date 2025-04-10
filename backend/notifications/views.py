@@ -1,3 +1,53 @@
+import boto3
+import json
 from django.shortcuts import render
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from django.conf import settings
 
+from django.shortcuts import get_object_or_404
+from authentication.auth import jwt_required
+from django.utils.decorators import method_decorator
+
+REGION = 'ap-northeast-2'
+SES_SENDER_EMAIL = '0119299@naver.com'
 # Create your views here.
+# 여기다가 코드 작성할 것
+
+ses = boto3.client('ses', region_name=settings.AWS_REGION)
+client = boto3.client('cognito-idp', region_name=settings.AWS_REGION)
+
+class NotificationTransferMoneyView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def send_email(to_email, subject, body):
+        response = ses.send_email(
+            Source = settings.SES_SENDER_EMAIL,
+            Destination = {'ToAddresses': [to_email]},
+            Message = {
+                'Subject': {'Data': subject},
+                'Body': {'Text': {'Data': body}},
+            }
+        )
+        return response
+    
+    def get_user_email_from_cognito(access_token):
+        response = client.get_user(AccessToken=access_token)
+
+        for attr in response['UserAttributes']:
+            if attr['Name'] == 'email':
+                return attr['Value']
+        return None
+
+    def post(self, request):
+        amount = request.data.get("amount")
+        access_token = request.headers.get("Authorization").split()[1]
+        user_email = self.get_user_email_from_cognito(access_token)
+
+        if user_email:
+            subject = "송금 알림"
+            body = f"{amount}원이 성공적으로 이체되었습니다."
+            self.send_email(user_email, subject, body)
+
+        return Response({"message": "송금 및 이메일 알림 완료"})
