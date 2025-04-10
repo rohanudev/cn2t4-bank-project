@@ -77,50 +77,6 @@ export function Login() {
     }
   }
 
-  async function apiRequestWithAutoRefresh(url, options = {}) {
-    let accessToken = localStorage.getItem("access_token");
-    let refreshToken = localStorage.getItem("refresh_token");
-
-    // 기본 헤더 설정
-    options.headers = {
-      ...(options.headers || {}),
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json'
-  };
-
-  let response = await fetch(url, options);
-
-  // access_token 만료됐을 경우
-  if (response.status === 401 && refreshToken) {
-    // refresh token으로 새 access_token 요청
-    const refreshRes = await fetch('/api/refresh', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refresh_token: refreshToken })
-    });
-
-    const refreshData = await refreshRes.json();
-
-    if (refreshRes.ok && refreshData.access_token) {
-      // 새 access_token 저장
-      localStorage.setItem('access_token', refreshData.access_token);
-      if (refreshData.id_token) {
-        localStorage.setItem('id_token', refreshData.id_token);
-      }
-
-      // 원래 요청 재시도
-      options.headers['Authorization'] = `Bearer ${refreshData.access_token}`;
-      return fetch(url, options);
-    } else {
-      // refresh 실패 → 로그아웃 처리
-      alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-      localStorage.clear();
-      goTo("login");
-    }
-  }
-  return response;
-  }
-
   // 🏗️ DOM 생성
   const el = document.createElement("div");
   el.className = "login";
