@@ -96,10 +96,10 @@
   justify-content: space-between;
 }
 .tx-amount.incoming {
-  color: green;
+  color: #0091ea;
 }
 .tx-amount.outgoing {
-  color: red;
+  color: #d32f2f;
 }
 .scrollable-transactions {
   height: 200px;
