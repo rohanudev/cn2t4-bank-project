@@ -54,7 +54,10 @@ export async function authorizedFetch(url, options = {}) {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || `API 호출 실패: ${response.status}`);
+    const err = new Error(errorData.message || `API 호출 실패: ${response.status}`);
+    err.status = response.status;
+    err.messageFromServer = errorData.message;
+    throw err;
   }
 
   return response;
