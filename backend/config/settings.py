@@ -26,7 +26,7 @@ COGNITO_CLIENT_ID = os.getenv("COGNITO_CLIENT_ID")
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 COGNITO_USER_POOL_ID = os.getenv("COGNITO_USER_POOL_ID")
-
+SES_SENDER_EMAIL = os.getenv("SES_SENDER_EMAIL")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
