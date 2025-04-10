@@ -12,7 +12,9 @@ export function Transfer() {
     accountNumber: null,
     accountBalance: 0,
     userName: null,
+    userEmail: null,
     toAccountUserName: null,
+    toAccountUserEmail: null,
     toaccountNumber: null,
   };
 
@@ -31,6 +33,7 @@ export function Transfer() {
     localState.accountName = accountInfo.account_name;
     localState.accountBalance = accountInfo.balance;
     localState.userName = accountInfo.owner;
+    localState.userEmail = accountInfo.owner_email;
 
     if (!localState.accountNumber || !localState.accountName) return;
     render(StepAccountInput);
@@ -90,6 +93,7 @@ export function Transfer() {
       if (!accountInfo) return;
 
       localState.toAccountUserName = accountInfo.owner;
+      localState.toAccountUserEmail = accountInfo.owner_email;
       render(StepAmountInput);
     });
 
@@ -285,10 +289,6 @@ export function Transfer() {
     try {
       const res = await authorizedFetch(`${API_BASE_URL}/api/notifications/`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ amount }),
       });
 
