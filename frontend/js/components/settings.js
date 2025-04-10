@@ -1,18 +1,16 @@
 import { API_BASE_URL } from "../config.js"; // API 주소
 import { goTo } from "../router.js"; // 라우터 이동
 import { authorizedFetch } from "../utils.js";
+import { state } from "../store.js"; // 상태 관리
 
 export function Settings() {
 
     let localState = {
-        userId: null,
-        email: "",
+        userId: state.userId,
+        email: state.userEmail,
       };
     
       function init(props) {
-        localState.userId = props?.userId ?? null;
-        localState.email = props?.email ?? "";
-    
         if (!localState.userId || !localState.email) {
           console.error("[ERROR] userId 또는 email이 누락되었습니다");
           return;

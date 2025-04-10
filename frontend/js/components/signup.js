@@ -96,7 +96,7 @@ export function Signup() {
       console.log("[INFO] 회원가입 성공:", data);
       alert("회원가입이 완료되었습니다. 이메일 인증 후 사용해 주세요.");
       
-      goTo("verifyEmail", {email});
+      goTo("verifyEmail", {});
 
     } catch (error) {
       console.error("[ERROR] 회원가입 실패:", error);

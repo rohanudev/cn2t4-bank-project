@@ -5,12 +5,11 @@ import { authorizedFetch } from "../utils.js";
 
 export function UserInfo() {
   let localState = {
-    userId: null,
+    userId: state.userId,
     userData: {},
   };
 
   function init(props) {
-    localState.userId = state.userId
     if (!localState.userId) {
       console.error("[ERROR] userId is missing");
       return;
@@ -83,7 +82,7 @@ export function UserInfo() {
     });
 
     editBtn.addEventListener("click", () => {
-      goTo("userInfoEdit", { userId: localState.userId });
+      goTo("userInfoEdit", {});
     });
   }
 

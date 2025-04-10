@@ -6,12 +6,11 @@ import { authorizedFetch } from "../utils.js";
 
 export function AccountCreate() {
   let localState = {
-    userId: null,
+    userId: state.userId,
     nickname: "",
   };
 
   function init(props) {
-    localState.userId = state.userId
 
     if (!localState.userId) {
       console.error("[ERROR] userId is missing");
