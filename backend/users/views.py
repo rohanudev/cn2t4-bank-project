@@ -67,6 +67,7 @@ class UserCreateView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+# E-mail 인증 Backend Code
 @method_decorator(jwt_required, name="post")
 class UserConfirmView(APIView):
     def post(self, request):
