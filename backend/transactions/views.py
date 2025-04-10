@@ -199,6 +199,9 @@ def validate_account(request):
                 account = Account.objects.get(account_id=account_id)
             else:
                 account = Account.objects.get(account_number=account_number)
+            
+            if account.status == "CLOSED":
+                return JsonResponse({"success": False, "message": "[ERROR] 계좌가 비활성되어 있습니다."}, status=400)
                 
             return JsonResponse({
                 "success": True,

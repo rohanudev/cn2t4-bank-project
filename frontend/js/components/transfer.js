@@ -262,9 +262,12 @@ export function Transfer() {
     
         return data.account; // { account_number, owner }
       } catch (err) {
-        console.error(err);
-        alert("계좌번호 확인 중 오류가 발생했습니다.");
-        return null;
+        if (err.messageFromServer === "[ERROR] 계좌가 비활성되어 있습니다.") {
+          alert("입력하신 계좌는 비활성된 상태입니다.");
+          goTo("landing", {});
+        } else {
+          alert(err.messageFromServer || "요청 처리 중 오류가 발생했습니다.");
+        }
       }
     }
     
