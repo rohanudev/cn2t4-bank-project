@@ -28,9 +28,14 @@ export function Signup() {
     const submitBtn = el.querySelector("#signup-submit-button");
 
     if (
-      !emailInput || !passwordInput || !confirmPasswordInput ||
-      !nameInput || !phoneInput || !birthdateInput ||
-      !cancelBtn || !submitBtn
+      !emailInput ||
+      !passwordInput ||
+      !confirmPasswordInput ||
+      !nameInput ||
+      !phoneInput ||
+      !birthdateInput ||
+      !cancelBtn ||
+      !submitBtn
     ) {
       console.error("[ERROR] 회원가입 화면 UI 요소를 찾을 수 없습니다");
       return;
@@ -69,11 +74,17 @@ export function Signup() {
 
   // 📝 회원가입 처리
   async function handleSignup() {
-    const {
-      email, password, confirmPassword, name, phone, birthdate
-    } = localState;
+    const { email, password, confirmPassword, name, phone, birthdate } =
+      localState;
 
-    if (!email || !password || !confirmPassword || !name || !phone || !birthdate) {
+    if (
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !name ||
+      !phone ||
+      !birthdate
+    ) {
       alert("모든 항목을 입력해주세요.");
       return;
     }
@@ -84,7 +95,7 @@ export function Signup() {
     }
 
     try {
-        const res = await authorizedFetch(`${API_BASE_URL}/api/users/signup`, {
+      const res = await authorizedFetch(`${API_BASE_URL}/api/users/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, name, phone, birthdate }),
@@ -97,7 +108,6 @@ export function Signup() {
       alert("회원가입이 완료되었습니다. 이메일 인증 후 사용해 주세요.");
       
       goTo("verifyEmail", {});
-
     } catch (error) {
       console.error("[ERROR] 회원가입 실패:", error);
       alert("회원가입에 실패했습니다. 다시 시도해주세요.");

@@ -209,6 +209,7 @@ def validate_account(request):
                     "account_number": account.account_number,
                     "account_name": account.nickname,
                     "owner": account.user.name,  # 또는 account.user.username 등
+                    "owner_email": account.user.email,  # 또는 account.user.email 등
                     "balance": account.balance
                 }
             })
