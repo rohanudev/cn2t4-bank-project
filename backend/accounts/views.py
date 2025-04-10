@@ -5,7 +5,9 @@ from django.shortcuts import get_object_or_404
 from users.models import User
 from .models import Account
 from authentication.auth import jwt_required
+from django.utils.decorators import method_decorator
 
+@method_decorator(jwt_required, name="post")
 class CreateAccountView(APIView):
     def post(self, request):
         user_id = request.data.get("user_id")
@@ -30,7 +32,7 @@ class CreateAccountView(APIView):
             "status": account.status
         }, status=status.HTTP_201_CREATED)
 
-
+@method_decorator(jwt_required, name="get")
 class UserAccountsView(APIView):
     def get(self, request, userId):
         user = get_object_or_404(User, user_id=userId)
@@ -47,7 +49,9 @@ class UserAccountsView(APIView):
 
         return Response(account_data, status=status.HTTP_200_OK)
 
-
+@method_decorator(jwt_required, name="get")
+@method_decorator(jwt_required, name="put")
+@method_decorator(jwt_required, name="delete")
 class AccountDetailView(APIView):
     def get(self, request, accountId):
         account = get_object_or_404(Account, account_id=accountId)

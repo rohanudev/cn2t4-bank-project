@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "../config.js";
 import { goTo } from "../router.js";
+import { authorizedFetch } from "../utils.js";
 
 export function Menu() {
   let localState = {
@@ -46,20 +47,24 @@ export function Menu() {
     });
 
     logoutBtn.addEventListener("click", async () => {
-      const accessToken = localStorage.getItem("access_token");
+      const accessToken = sessionStorage.getItem("access_token");
+      const refreshToken = sessionStorage.getItem("refresh_token");
       
       try {
         // 1. 서버에 로그아웃 요청 (옵션)
-        await fetch(`${API_BASE_URL}/api/authentication/logout`, {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-          }
+        await authorizedFetch(`${API_BASE_URL}/api/authentication/logout`, {
+          method: "POST",
+          body: JSON.stringify({
+            refresh_token: refreshToken
+          })
         });
     
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("id_token");
-      localStorage.removeItem("refresh_token");
+      sessionStorage.removeItem("access_token");
+      sessionStorage.removeItem("id_token");
+      sessionStorage.removeItem("refresh_token");
+      sessionStorage.removeItem("user_id");
+      sessionStorage.removeItem("user_name");
+      sessionStorage.removeItem("user_email");
       
       alert("로그아웃 되었습니다.");
       goTo("login");

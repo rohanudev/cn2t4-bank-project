@@ -76,37 +76,6 @@ def login(request):
         return JsonResponse({'error': str(e)}, status=500)
     
 @csrf_exempt
-def refresh_token_view(request):
-    if request.method != "POST":
-        return JsonResponse({"error": "Only POST allowed"}, status=405)
-
-    # refresh_token을 프론트에서 직접 받거나 세션/쿠키 등에서 가져옴
-    refresh_token = request.POST.get("refresh_token")
-    if not refresh_token:
-        return JsonResponse({"error": "Missing refresh token"}, status=400)
-
-    payload = {
-        "grant_type": "refresh_token",
-        "client_id": CLIENT_ID,
-        "refresh_token": refresh_token
-    }
-
-    headers = {
-        "Content-Type": "application/x-www-form-urlencoded"
-    }
-
-    try:
-        response = requests.post(
-            "https://ap-northeast-2xg2ntqoxx.auth.ap-northeast-2.amazoncognito.com/oauth2/token",
-            data=payload,
-            headers=headers
-        )
-        response.raise_for_status()
-        return JsonResponse(response.json())
-    except requests.exceptions.RequestException as e:
-        return JsonResponse({"error": str(e)}, status=400)
-    
-@csrf_exempt
 def refresh_token(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Invalid request method'}, status=405)
@@ -150,21 +119,18 @@ def logout(request):
         auth_header = request.headers.get('Authorization')
         access_token = auth_header.split(' ')[1] if auth_header else None
 
-        if access_token:
-            # 토큰 폐기 (옵션)
+        data = json.loads(request.body)
+        refresh_token = data.get('refresh_token')
+
+        if refresh_token:
             client.revoke_token(
-                Token=access_token,
+                Token=refresh_token,
                 ClientId=settings.COGNITO_CLIENT_ID
             )
 
         response = JsonResponse({'message': '로그아웃 완료'})
-
-        # 쿠키 기반이면 여전히 제거
-        response.delete_cookie('access_token')
-        response.delete_cookie('id_token')
-        response.delete_cookie('refresh_token')
-
         return response
+    
     except Exception as e:
         print("[ERROR] 로그아웃 처리 실패:", e)
         return JsonResponse({'error': '로그아웃 실패'}, status=500)
