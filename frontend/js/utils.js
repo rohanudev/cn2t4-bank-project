@@ -40,7 +40,17 @@ export async function authorizedFetch(url, options = {}) {
 
         // Retry original request with new token
         config.headers.Authorization = `Bearer ${refreshData.access_token}`;
-        response = await fetch(url, config);
+        const retryResponse = await fetch(url, config);
+
+        if (!retryResponse.ok) {
+          const errorData = await retryResponse.json().catch(() => ({}));
+          const err = new Error(errorData.message || `API 재시도 실패: ${retryResponse.status}`);
+          err.status = retryResponse.status;
+          err.messageFromServer = errorData.message;
+          throw err;
+        }
+
+        return retryResponse;
       } else {
         throw new Error("토큰 갱신 실패");
       }
