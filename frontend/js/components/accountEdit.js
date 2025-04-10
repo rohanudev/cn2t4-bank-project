@@ -16,7 +16,7 @@ export function AccountEdit() {
   function init(props) {
     if (!props || !props.accountId) {
       console.error('계좌 ID가 제공되지 않았습니다.');
-      goTo('landing');
+      goTo("landing");
       return;
     }
 
@@ -50,7 +50,7 @@ export function AccountEdit() {
     } catch (error) {
       console.error('계좌 정보 불러오기 실패:', error);
       alert('계좌 정보를 불러올 수 없습니다.');
-      goTo('landing');
+      goTo("landing");
     }
   }
 

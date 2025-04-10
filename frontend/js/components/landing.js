@@ -5,24 +5,19 @@ import { authorizedFetch } from "../utils.js";
 
 export function Landing() {
   let localState = {
-    userId: null,
-    userName: "-",
-    email: "",
+    userId: state.userId,
+    email: state.userEmail,
+    userName: state.userName,
     accounts: [],
   };
 
   function init(props) {
-    localState = {
-      userId: state.userId,
-      email: state.userEmail,
-      userName: state.userName,
-      accounts: [],
-    };
-
     if (!localState.userId) {
       console.error("[ERROR] userId is missing");
       return;
     }
+
+    sessionStorage.removeItem("selected_account_id");
 
     fetchUserData();
     fetchAccounts();
@@ -59,7 +54,7 @@ export function Landing() {
   el.innerHTML = `
     <div class="landing">
       <div class="header-container">
-        <div class="user-name" id="user-name">-</div>
+        <div class="user-name" id="user-name">${localState.userName}</div>
         <div class="icons">
           <img src="../../assets/icons/noti-btn.png" class="noti-btn" />
           <img src="../../assets/icons/menu-btn.png" class="menu-btn" />
@@ -75,11 +70,6 @@ export function Landing() {
   `;
 
   function updateUI() {
-    const userNameElement = el.querySelector("#user-name");
-    if (userNameElement) {
-      userNameElement.textContent = localState.userName || "-";
-    }
-
     const accountListContainer = el.querySelector(".account-list-container");
     accountListContainer.innerHTML = "";
 
@@ -104,7 +94,7 @@ export function Landing() {
       accountCard.addEventListener("click", (event) => {
         if (!event.target.closest(".transfer-btn")) {
           console.log("[INFO] 계좌상세이동:", account.account_id);
-          goTo("accountDetail", { userId: localState.userId, accountId: account.account_id });
+          goTo("accountDetail", { accountId: account.account_id });
         }
       });
 
@@ -116,7 +106,7 @@ export function Landing() {
 
   function bindEvents() {
     el.querySelector(".add-account-btn").addEventListener("click", () => {
-      goTo("accountCreate", { userId: localState.userId });
+      goTo("accountCreate", {});
     });
 
     el.querySelector(".noti-btn").addEventListener("click", () => {
@@ -124,7 +114,7 @@ export function Landing() {
     });
 
     el.querySelector(".menu-btn").addEventListener("click", () => {
-      goTo("menu", { userId: localState.userId, email: localState.email });
+      goTo("menu", {});
     });
   }
 

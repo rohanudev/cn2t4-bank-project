@@ -1,15 +1,15 @@
 import { API_BASE_URL } from "../config.js";
 import { goTo } from "../router.js";
 import { authorizedFetch } from "../utils.js";
+import { state } from "../store.js";
 
 export function VerifyEmail() {
   let localState = {
-    email: "",
+    email: state.userEmail,
     code: "",
   };
 
   function init(props) {
-    localState.email = props?.email ?? "";
     if (!localState.email) {
       console.error("[ERROR] 이메일 정보가 없습니다.");
       return;

@@ -1,11 +1,12 @@
 import { goTo } from '../router.js';
 import { API_BASE_URL } from '../config.js';
 import { authorizedFetch } from "../utils.js";
+import { state } from '../store.js';
 
 export function AccountDetail() {
   // 내부 상태 관리
   let localState = {
-    userId: null,               
+    userId: state.userId,               
     accountId: null,
     accountNumber: null,
     nickname: null,
@@ -25,12 +26,12 @@ export function AccountDetail() {
     // props에서 accountId 추출
     if (!props || !props.accountId) {
       console.error('계좌 ID가 제공되지 않았습니다.');
-      goTo('landing');
+      goTo("landing");
       return;
     }
-
+    
     localState.accountId = props.accountId;
-    localState.userId = props.userId ?? null;
+    sessionStorage.setItem("selected_account_id", props.accountId);
 
     // 계좌 상세 정보 fetching
     try {
@@ -171,36 +172,31 @@ export function AccountDetail() {
   function setupEventListeners() {
     //뒤로가기 버튼 이벤트
     el.querySelector(".back-btn").addEventListener("click", () => {
-      goTo("landing", {
-        userId: localState.userId,
-      });
+      goTo("landing", {});
     });
 
     // 거래 버튼 이벤트
     el.querySelector('#deposit-btn').addEventListener('click', () => {
-      goTo('deposit', { 
-        accountId: localState.accountId,
-        accountNumber: localState.accountNumber 
+      goTo("deposit", { 
+        accountId: localState.accountId
       });
     });
 
     el.querySelector('#withdraw-btn').addEventListener('click', () => {
-      goTo('withdraw', { 
+      goTo("withdraw", { 
         accountId: localState.accountId,
-        accountNumber: localState.accountNumber 
       });
     });
 
     el.querySelector('#transfer-btn').addEventListener('click', () => {
-      goTo('transfer', { 
+      goTo("transfer", { 
         accountId: localState.accountId,
-        accountNumber: localState.accountNumber 
       });
     });
 
     // 계좌 정보 수정 버튼
     el.querySelector('#edit-btn').addEventListener('click', () => {
-      goTo('accountEdit', { 
+      goTo("accountEdit", { 
         accountId: localState.accountId,
         accountNumber: localState.accountNumber 
       });
@@ -216,7 +212,7 @@ export function AccountDetail() {
 
           if (response.ok) {
             alert('계좌가 성공적으로 해지되었습니다.');
-            goTo('landing', { userId: localState.userId });
+            goTo("landing", {});
           } else {
             const errorData = await response.json();
             alert(errorData.error || '계좌 해지에 실패했습니다.');

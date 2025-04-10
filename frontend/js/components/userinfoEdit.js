@@ -1,15 +1,15 @@
 import { API_BASE_URL } from "../config.js";
 import { goTo } from "../router.js";
 import { authorizedFetch } from "../utils.js";
+import { state } from "../store.js";
 
 export function UserInfoEdit() {
   let localState = {
-    userId: null,
+    userId: state.userId,
     userData: {},
   };
 
   function init(props) {
-    localState.userId = props.userId ?? null;
     if (!localState.userId) {
       console.error("[ERROR] userId is missing");
       return;
@@ -64,7 +64,13 @@ export function UserInfoEdit() {
 
       alert("수정이 완료되었습니다.");
 
-      goTo("userInfo", { userId: localState.userId });
+      state.userName = updatedData.name;
+      state.userEmail = updatedData.email;
+
+      sessionStorage.setItem("user_name", updatedData.name);
+      sessionStorage.setItem("user_email", updatedData.email);
+
+      goTo("userInfo", {});
     } catch (error) {
       console.error("[ERROR] Failed to update user data:", error);
     }
@@ -94,7 +100,7 @@ export function UserInfoEdit() {
 
   //TBD
   //el.querySelector(".half-btn-light").addEventListener("click", () => goTo("userInfo", { userId: localState.userId }));
-  el.querySelector(".half-btn-light").addEventListener("click", () => goTo("userInfo", { userId: "bf7dfc9e-6e59-46e8-9ef4-efaabb2fe51b" }));
+  el.querySelector(".half-btn-light").addEventListener("click", () => goTo("userInfo"));
   el.querySelector(".half-btn-dark").addEventListener("click", updateUser);
 
   return { el, init };

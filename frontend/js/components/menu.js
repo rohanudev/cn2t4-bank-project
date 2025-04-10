@@ -1,21 +1,20 @@
 import { API_BASE_URL } from "../config.js";
 import { goTo } from "../router.js";
+import { state } from "../store.js";
 import { authorizedFetch } from "../utils.js";
 
 export function Menu() {
   let localState = {
-    userId: null,
-    email: "",
+    userId: state.userId,
+    email: state.userEmail,
   };
 
   function init(props) {
-    if (!props?.userId || !props?.email) {
+    if (!localState.userId || !localState.email) {
         console.error("[ERROR] Menu 페이지에 userId 또는 email이 전달되지 않았습니다.");
         return;
     }
 
-    localState.userId = props.userId;
-    localState.email = props.email;
     bindEvents();
   }
 
@@ -36,14 +35,11 @@ export function Menu() {
     });
 
     infoBtn.addEventListener("click", () => {
-      goTo("userInfo", { userId: localState.userId });
+      goTo("userInfo", {});
     });
 
     settingsBtn.addEventListener("click", () => {
-        goTo("settings", {
-            userId: localState.userId,
-            email: localState.email,
-          });
+        goTo("settings", {});
     });
 
     logoutBtn.addEventListener("click", async () => {
