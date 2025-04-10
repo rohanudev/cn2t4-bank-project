@@ -18,8 +18,9 @@ SES_SENDER_EMAIL = '0119299@naver.com'
 ses = boto3.client('ses', region_name=settings.AWS_REGION)
 client = boto3.client('cognito-idp', region_name=settings.AWS_REGION)
 
+@method_decorator(jwt_required, name="post")
 class NotificationTransferMoneyView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     
     def send_email(to_email, subject, body):
         response = ses.send_email(
@@ -51,7 +52,7 @@ class NotificationTransferMoneyView(APIView):
         subject = "송금 알림"
         body = f"{amount}원이 성공적으로 이체되었습니다."
         print(userEmail)
-        # self.send_email(userEmail, subject, body)
+        self.send_email(userEmail, subject, body)
         # self.send_email(toAccountUserEmail, subject, body)
 
         return Response({"message": "송금 및 이메일 알림 완료"})
