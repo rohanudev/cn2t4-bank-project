@@ -33,7 +33,16 @@ export function AccountDetail() {
     localState.accountId = props.accountId;
     sessionStorage.setItem("selected_account_id", props.accountId);
 
-    // 계좌 상세 정보 fetching
+    // 계좌 정보를 가져오고 렌더링
+    await fetchAccountDetail();
+    renderAccountDetail();
+
+    // 거래 내역을 가져오고 렌더링
+    await fetchTransactionHistory();
+    renderTransactionHistory();
+  }
+
+  async function fetchAccountDetail() {
     try {
       const response = await authorizedFetch(`${API_BASE_URL}/api/accounts/${localState.accountId}`, {
         method: 'GET',
@@ -48,7 +57,6 @@ export function AccountDetail() {
 
       const accountData = await response.json();
       
-      // 상태 업데이트
       localState = {
         ...localState,
         accountId: accountData.account_id,
@@ -59,30 +67,34 @@ export function AccountDetail() {
         createdAt: accountData.created_at
       };
 
-      const txRes = await authorizedFetch(`${API_BASE_URL}/api/accounts/${localState.accountNumber}/history`);
-      if (txRes.ok) {
-        const txData = await txRes.json();
-        localState.transactions = txData.history;
-      }
-
-      // UI 렌더링
-      renderAccountDetail();
     } catch (error) {
       console.error('계좌 정보 불러오기 실패:', error);
-      el.innerHTML = `
-        <div class="error-message">
-          계좌 정보를 불러올 수 없습니다. 다시 시도해주세요.
-          <button id="retry-btn">다시 시도</button>
-        </div>
-      `;
+    }
+  }
 
-      el.querySelector('#retry-btn').addEventListener('click', () => init(props));
+  async function fetchTransactionHistory() {
+    try {
+      const response = await authorizedFetch(`${API_BASE_URL}/api/accounts/${localState.accountNumber}/history`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('거래 내역을 불러오는 데 실패했습니다.');
+      }
+
+      const transactionData = await response.json();
+      localState.transactions = transactionData.history;
+
+    } catch (error) {
+      console.error('거래 내역 불러오기 실패:', error);
     }
   }
 
   // UI 렌더링 함수
   function renderAccountDetail() {
-    //loadAccountDetailCSS();
     el.innerHTML = `
       <div class="top-bar">
         <div class="back-btn-wrapper">
@@ -120,35 +132,19 @@ export function AccountDetail() {
         <div class="account-transactions">
           <h3 style="margin: 20px 0;">거래 내역</h3>
           <div class="scrollable-transactions">
-            ${
-              localState.transactions.length === 0
-                ? '<p class="no-transaction">거래 내역이 없습니다.</p>'
-                : `<ul class="transaction-history">
-                    ${localState.transactions.map(tx => {
-                      const isSent = tx.from_account === localState.accountNumber;
-                      const isTransfer = tx.type === 'TRANSFER';
-                      const amountSign = isTransfer ? (isSent ? '-' : '+') : (tx.type === 'WITHDRAWAL' ? '-' : '+');
-                      const counterpartyLabel = isTransfer ? `${tx.counterparty_name || '상대방 정보 없음'}` : '';
-
-                      return `
-                        <li class="transaction-item ${tx.type.toLowerCase()}">
-                          <div class="tx-header">
-                            <span class="tx-type-label">
-                              ${tx.type === 'DEPOSIT' ? '입금' : tx.type === 'WITHDRAWAL' ? '출금' : counterpartyLabel}
-                            </span>
-                            <span class="tx-amount ${amountSign === '+' ? 'incoming' : 'outgoing'}">
-                              ${amountSign}${tx.amount.toLocaleString()}원
-                            </span>
-                          </div>
-                          <div class="tx-details">
-                            <span class="tx-time">${new Date(tx.timestamp).toLocaleString()}</span>
-                            ${tx.memo ? `<span class="tx-memo">메모: ${tx.memo}</span>` : ''}
-                          </div>
-                        </li>
-                      `;
-                    }).join('')}
-                  </ul>`
-            }
+            <ul class="transaction-history skeleton">
+              ${Array.from({ length: 5 }).map(() => `
+                <li class="transaction-item skeleton-item">
+                  <div class="tx-header">
+                    <span class="tx-type-label skeleton-box" style="width: 80px; height: 16px;"></span>
+                    <span class="tx-amount skeleton-box" style="width: 60px; height: 16px;"></span>
+                  </div>
+                  <div class="tx-details">
+                    <span class="tx-time skeleton-box" style="width: 100px; height: 12px;"></span>
+                    <span class="tx-memo skeleton-box" style="width: 150px; height: 12px;"></span>
+                  </div>
+                </li>`).join('')}
+            </ul>
           </div>
         </div>
       </div>
@@ -166,6 +162,47 @@ export function AccountDetail() {
 
     // 버튼 이벤트 리스너 추가
     setupEventListeners();
+  }
+
+  function renderTransactionHistory() {
+    const container = el.querySelector(".scrollable-transactions");
+
+    if (!container) return;
+
+    if (localState.transactions.length === 0) {
+      container.innerHTML = `<p class="no-transaction">거래 내역이 없습니다.</p>`;
+      return;
+    }
+
+    container.innerHTML = `
+      <ul class="transaction-history">
+        ${localState.transactions.map(tx => {
+          const isSent = tx.from_account === localState.accountNumber;
+          const isTransfer = tx.type === 'TRANSFER';
+          const amountSign = isTransfer
+            ? (isSent ? '-' : '+')
+            : (tx.type === 'WITHDRAWAL' ? '-' : '+');
+          const counterpartyLabel = isTransfer ? `${tx.counterparty_name || '상대방 정보 없음'}` : '';
+
+          return `
+            <li class="transaction-item ${tx.type.toLowerCase()}">
+              <div class="tx-header">
+                <span class="tx-type-label">
+                  ${tx.type === 'DEPOSIT' ? '입금' : tx.type === 'WITHDRAWAL' ? '출금' : counterpartyLabel}
+                </span>
+                <span class="tx-amount ${amountSign === '+' ? 'incoming' : 'outgoing'}">
+                  ${amountSign}${tx.amount.toLocaleString()}원
+                </span>
+              </div>
+              <div class="tx-details">
+                <span class="tx-time">${new Date(tx.timestamp).toLocaleString()}</span>
+                ${tx.memo ? `<span class="tx-memo">메모: ${tx.memo}</span>` : ''}
+              </div>
+            </li>
+          `;
+        }).join('')}
+      </ul>
+    `;
   }
 
   // 이벤트 리스너 설정
@@ -223,15 +260,6 @@ export function AccountDetail() {
         }
       }
     });
-  }
-
-  function loadAccountDetailCSS() {
-    if (!document.querySelector('link[href*="account-feature.css"]')) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = '../../css/account-feature.css'; // 실제 경로
-      document.head.appendChild(link);
-    }
   }
 
   return { el, init };

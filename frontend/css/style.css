@@ -120,3 +120,38 @@
     font-size: 30px;
     font-weight: 700;
 }
+
+/* 로딩 스켈레톤 */
+/* 공통 애니메이션 */
+@keyframes pulse {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  /* 박스 뼈대 */
+  .skeleton-box {
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    display: inline-block;
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+  
+  /* 리스트 아이템 감싸는 틀 */
+  .skeleton-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  /* 전체 리스트에 적용되는 느낌 */
+  .transaction-history.skeleton {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }

@@ -42,7 +42,8 @@ class UserAccountsView(APIView):
             {
                 "account_id": str(account.account_id),
                 "nickname": account.nickname,
-                "balance": account.balance
+                "balance": account.balance,
+                "status": account.status,
             }
             for account in accounts
         ]

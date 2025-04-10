@@ -148,3 +148,28 @@
   aspect-ratio: 1;
   margin-top: -5px; /* 버튼을 위로 올리기 */
 }
+
+.account-info-card.open {
+  background: #f1f1f1; /* 밝은 회색 */
+}
+
+.account-info-card.closed {
+  background: #999999; /* 어두운 회색 */
+}
+
+.status-indicator {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.status-indicator.open {
+  background-color: #0091ea; /* 초록색 */
+}
+
+.status-indicator.closed {
+  background-color: #d32f2f; /* 빨간색 */
+}
