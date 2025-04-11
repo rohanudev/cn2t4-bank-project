@@ -231,7 +231,7 @@ def transaction_history(request, account_number):
         ) | Transaction.objects.filter(
             to_account=account
         )
-        transactions = transactions.order_by('-created_at')[:50]  # 최근 50개만
+        transactions = transactions.order_by('-created_at')
 
         history = []
         for tx in transactions:
