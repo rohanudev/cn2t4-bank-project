@@ -105,34 +105,34 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'mydatabase',
-#         'USER': 'admin',
-#         'PASSWORD': os.getenv("DB_PASSWORD"),
-#         'HOST': 'cn2t4-db.cluster-cxmoyywwc77u.ap-northeast-2.rds.amazonaws.com',
-#         'PORT': '3306',
-#         'OPTIONS': {
-#             'charset': 'utf8mb4',
-#             'init_command': "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
-#         },
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mydatabase',
-        'USER': 'root',
-        'PASSWORD': 'rootpassword',
-        'HOST': 'db',
+        'USER': 'admin',
+        'PASSWORD': os.getenv("DB_PASSWORD"),
+        'HOST': 'cn2t4-db.cluster-cxmoyywwc77u.ap-northeast-2.rds.amazonaws.com',
         'PORT': '3306',
-        'TEST': {
-            'NAME': 'test_mydatabase'
-        }
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'init_command': "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
+        },
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'mydatabase',
+#         'USER': 'root',
+#         'PASSWORD': 'rootpassword',
+#         'HOST': 'db',
+#         'PORT': '3306',
+#         'TEST': {
+#             'NAME': 'test_mydatabase'
+#         }
+#     }
+# }
 
 
 # Password validation
