@@ -1,58 +1,77 @@
 import pytest
-import json
-from django.contrib.auth import get_user_model
-from rest_framework.test import APIClient
+from django.urls import reverse
 from accounts.models import Account
+from transactions.models import Transaction
 
 @pytest.mark.django_db
-def test_full_transaction_flow():
-    User = get_user_model()
-    user = User.objects.create_user(username="flowuser", email="flow@example.com", password="flowpass")
-    recipient = User.objects.create_user(username="receiver", email="recv@example.com", password="recvpass")
+def test_transaction_history_success(authenticated_client):
+    client, user = authenticated_client
 
-    account = Account.objects.create(user=user, account_number="1000000001", nickname="나의계좌", balance=0)
-    to_account = Account.objects.create(user=recipient, account_number="2000000002", nickname="상대계좌", balance=0)
+    # 계좌 2개 생성 (입출금/이체 구분용)
+    account1 = Account.objects.create(user=user, account_number='1000000000', nickname='주계좌', balance=100000)
+    account2 = Account.objects.create(user=user, account_number='2000000000', nickname='서브계좌', balance=50000)
 
-    client = APIClient()
-    client.force_authenticate(user=user)
+    # 입금
+    Transaction.objects.create(
+        type='DEPOSIT',
+        status='SUCCESS',
+        to_account=account1,
+        amount=10000,
+        balance_after=110000,
+        memo='입금 테스트'
+    )
 
-    # 1. Validate account
-    res = client.post("/api/transactions/validate_account", json.dumps({"account_number": account.account_number}), content_type="application/json")
+    # 출금
+    Transaction.objects.create(
+        type='WITHDRAWAL',
+        status='SUCCESS',
+        from_account=account1,
+        amount=20000,
+        balance_after=90000,
+        memo='출금 테스트'
+    )
+
+    # 이체
+    Transaction.objects.create(
+        type='TRANSFER',
+        status='SUCCESS',
+        from_account=account1,
+        to_account=account2,
+        amount=15000,
+        balance_after=75000,
+        memo='이체 테스트'
+    )
+
+    res = client.get(f'/api/accounts/{account1.account_number}/history')
+
     assert res.status_code == 200
-    assert res.json()["account"]["owner"] == user.name
+    data = res.json()
 
-    # 2. Deposit
-    res = client.post("/api/transactions/deposit", json.dumps({
-        "account_number": account.account_number,
-        "amount": 100000,
-        "memo": "초기 입금"
-    }), content_type="application/json")
-    assert res.status_code == 200
-    assert res.json()["transaction"]["balance_after"] == 100000
+    assert data['success'] is True
+    assert len(data['history']) == 3
 
-    # 3. Withdraw
-    res = client.post("/api/transactions/withdraw", json.dumps({
-        "account_number": account.account_number,
-        "amount": 30000,
-        "memo": "현금 인출"
-    }), content_type="application/json")
-    assert res.status_code == 200
-    assert res.json()["transaction"]["balance_after"] == 70000
+    # 항목별 내용 검증 (최신순)
+    tx1 = data['history'][0]
+    assert tx1['type'] == 'TRANSFER'
+    assert tx1['from_account'] == account1.account_number
+    assert tx1['to_account'] == account2.account_number
+    assert tx1['memo'] == '이체 테스트'
 
-    # 4. Transfer
-    res = client.post("/api/transactions/transfer", json.dumps({
-        "from_account": account.account_number,
-        "to_account": to_account.account_number,
-        "amount": 20000,
-        "memo": "용돈 보냄"
-    }), content_type="application/json")
-    assert res.status_code == 200
-    assert res.json()["transaction"]["balance_after"] == 50000
+    tx2 = data['history'][1]
+    assert tx2['type'] == 'WITHDRAWAL'
+    assert tx2['amount'] == 20000
+    assert tx2['memo'] == '출금 테스트'
 
-    # 5. Transaction History
-    res = client.get(f"/api/accounts/{account.account_number}/history")
-    assert res.status_code == 200
-    history = res.json()["history"]
-    assert len(history) == 3  # 입금, 출금, 이체
-    types = [tx["type"] for tx in history]
-    assert set(types) == {"DEPOSIT", "WITHDRAWAL", "TRANSFER"}
+    tx3 = data['history'][2]
+    assert tx3['type'] == 'DEPOSIT'
+    assert tx3['amount'] == 10000
+    assert tx3['memo'] == '입금 테스트'
+
+
+@pytest.mark.django_db
+def test_transaction_history_account_not_found(authenticated_client):
+    client, _ = authenticated_client
+
+    res = client.get('/api/accounts/9999999999/history')
+    assert res.status_code == 404
+    assert "[ERROR] Account not found" in res.content.decode()

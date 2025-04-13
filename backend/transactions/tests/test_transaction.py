@@ -1,4 +1,3 @@
-
 import pytest
 from accounts.models import Account
 import json
