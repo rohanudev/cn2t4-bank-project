@@ -7,7 +7,6 @@ export function Withdraw() {
     // 내부 상태
     let localState = {
       amount: 0,
-      accountId: null,
       accountName: null,
       accountNumber: null,
       accountBalance: 0,
@@ -21,11 +20,10 @@ export function Withdraw() {
 
     // 🚀 컴포넌트 초기화 (초기 상태 세팅, 이벤트 바인딩)
     async function init(props) {
-      localState.accountId = props.accountId;
-      const accountInfo = await validateAccountNumber(localState.accountId);
+      localState.accountNumber = props.accountNumber;
+      const accountInfo = await validateAccountNumber(localState.accountNumber);
       if (!accountInfo) return;
 
-      localState.accountNumber = accountInfo.account_number;
       localState.accountName = accountInfo.account_name;
       localState.accountBalance = accountInfo.balance;
       localState.userName = accountInfo.owner;
@@ -184,13 +182,13 @@ export function Withdraw() {
     }
 
     // 🌐 API 요청 함수
-    async function validateAccountNumber(accountId) {
+    async function validateAccountNumber(accountNumber) {
       try {
         const res = await authorizedFetch(`${API_BASE_URL}/api/transactions/validate_account`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            account_id: accountId
+            account_number: accountNumber
           }),
         });
     

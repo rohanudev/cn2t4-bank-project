@@ -41,6 +41,7 @@ class UserAccountsView(APIView):
         account_data = [
             {
                 "account_id": str(account.account_id),
+                "account_number": account.account_number,
                 "nickname": account.nickname,
                 "balance": account.balance,
                 "status": account.status,
