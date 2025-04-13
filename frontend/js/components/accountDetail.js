@@ -215,19 +215,19 @@ export function AccountDetail() {
     // 거래 버튼 이벤트
     el.querySelector('#deposit-btn').addEventListener('click', () => {
       goTo("deposit", { 
-        accountId: localState.accountId
+        accountNumber: localState.accountNumber
       });
     });
 
     el.querySelector('#withdraw-btn').addEventListener('click', () => {
       goTo("withdraw", { 
-        accountId: localState.accountId,
+        accountNumber: localState.accountNumber,
       });
     });
 
     el.querySelector('#transfer-btn').addEventListener('click', () => {
       goTo("transfer", { 
-        accountId: localState.accountId,
+        accountNumber: localState.accountNumber,
       });
     });
 

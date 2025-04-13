@@ -104,6 +104,7 @@ export function Landing() {
       const accountCard = document.createElement("div");
       accountCard.className = `account-info-card ${account.status === "OPEN" ? "open" : "closed"}`;
       accountCard.dataset.accountId = account.account_id;
+      accountCard.dataset.accountNumber = account.account_number;
       accountCard.innerHTML = `
         <div class="status-indicator ${account.status === "OPEN" ? "open" : "closed"}"></div>
         <div class="account-header">
@@ -153,8 +154,8 @@ export function Landing() {
     transferButtons.forEach(btn => {
       btn.addEventListener("click", (event) => {
         const accountCard = event.target.closest(".account-info-card");
-        const accountId = accountCard.dataset.accountId;
-        goTo("transfer", { accountId });
+        const accountNumber = accountCard.dataset.accountNumber;
+        goTo("transfer", { accountNumber });
       });
     });
   }
