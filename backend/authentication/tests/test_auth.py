@@ -1,13 +1,8 @@
 import json
-import os
-import django
 import pytest
 from unittest.mock import patch
 from django.test import Client
 from users.models import User
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings_tests')  # 네 프로젝트 설정에 맞게
-django.setup()
 
 @pytest.mark.django_db
 class TestAuth:
