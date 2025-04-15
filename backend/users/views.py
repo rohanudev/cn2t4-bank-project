@@ -15,7 +15,6 @@ CLIENT_ID = '155u00i0o1sum2a4dmphpuu54a'
 
 client = boto3.client('cognito-idp', region_name=settings.AWS_REGION)
 
-@method_decorator(jwt_required, name="post")
 class UserCreateView(APIView):
     def post(self, request):
         data = request.data
@@ -68,7 +67,6 @@ class UserCreateView(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # E-mail 인증 Backend Code
-@method_decorator(jwt_required, name="post")
 class UserConfirmView(APIView):
     def post(self, request):
         data = request.data
