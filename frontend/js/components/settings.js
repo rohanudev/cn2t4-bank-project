@@ -22,11 +22,10 @@ export function Settings() {
     // 🔗 이벤트 바인딩
     function bindEvents() {
         const backBtn = el.querySelector(".back-btn");
-        const notificationBtn = el.querySelector("#noti-settings");
         const sleepBtn = el.querySelector("#sleep-mode");
         const deleteBtn = el.querySelector("#user-delete");
 
-        if (!backBtn || !notificationBtn || !sleepBtn || !deleteBtn) {
+        if (!backBtn || !sleepBtn || !deleteBtn) {
         console.error("[ERROR] 설정 화면 UI 요소를 찾을 수 없습니다");
         return;
         }
@@ -38,9 +37,6 @@ export function Settings() {
             });
           });
 
-        notificationBtn.addEventListener("click", () => {
-        goTo("notiSettings");
-        });
 
         sleepBtn.addEventListener("click", async () => {
             if (!confirm("정말로 휴면 전환하시겠습니까?")) return;
@@ -96,7 +92,6 @@ export function Settings() {
         <div class="back-btn-wrapper">
         <img class="back-btn" src="../../assets/icons/back-btn.png" />
         </div>
-        <button id="noti-settings" class="menu-list">알림 설정</button>
         <button id="sleep-mode" class="menu-list">회원 휴면 전환</button>
         <button id="user-delete" class="menu-list">회원 탈퇴</button>
     `;
