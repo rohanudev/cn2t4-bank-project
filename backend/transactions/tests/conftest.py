@@ -1,6 +1,6 @@
 import os
 import django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings_tests')  # 네 프로젝트 설정에 맞게
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings_test')  # 네 프로젝트 설정에 맞게
 django.setup()
 
 import pytest
