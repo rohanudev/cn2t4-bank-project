@@ -40,6 +40,12 @@ def login(request):
         access_token = auth_result.get('AccessToken')
         refresh_token = auth_result.get('RefreshToken')
 
+        if not auth_result:
+            print("[WARN] AuthenticationResult가 없습니다:", response)
+
+        if not id_token:
+            return JsonResponse({'error': 'id_token이 없습니다.'}, status=500)
+
         # JWT 디코딩해서 sub(UUID) 추출
         decoded = jwt.decode(id_token, options={"verify_signature": False})
 
