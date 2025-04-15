@@ -5,11 +5,12 @@ import { state } from "../store.js";
 
 export function VerifyEmail() {
   let localState = {
-    email: state.userEmail,
+    email: "",
     code: "",
   };
 
   function init(props) {
+    localState.email=props.email
     if (!localState.email) {
       console.error("[ERROR] 이메일 정보가 없습니다.");
       return;
@@ -68,7 +69,7 @@ export function VerifyEmail() {
     }
 
     try {
-      const res = await authorizedFetch(`${API_BASE_URL}/api/users/confirm`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/confirm`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
