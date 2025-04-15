@@ -95,7 +95,7 @@ export function Signup() {
     }
 
     try {
-      const res = await authorizedFetch(`${API_BASE_URL}/api/users/signup`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, name, phone, birthdate }),
