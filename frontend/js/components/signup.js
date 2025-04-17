@@ -128,7 +128,7 @@ export function Signup() {
       </div>
 
       <div class="info-input-box">
-        <input id="signup-password" type="password" class="info-input-text" placeholder="비밀번호">
+        <input id="signup-password" type="password" class="info-input-text" placeholder="비밀번호(대/소/특수문자 혼합)">
       </div>
 
       <div class="info-input-box">
@@ -144,7 +144,7 @@ export function Signup() {
       </div>
 
       <div class="info-input-box">
-        <input id="signup-phone" type="tel" class="info-input-text" placeholder="휴대폰 번호">
+        <input id="signup-phone" type="tel" class="info-input-text" placeholder="휴대폰 번호(번호만 입력)">
       </div>
 
       <div class="info-input-box">
