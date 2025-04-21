@@ -95,7 +95,7 @@ export function Signup() {
     }
 
     try {
-      const res = await authorizedFetch(`${API_BASE_URL}/api/users/signup`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, name, phone, birthdate }),
@@ -107,7 +107,7 @@ export function Signup() {
       console.log("[INFO] 회원가입 성공:", data);
       alert("회원가입이 완료되었습니다. 이메일 인증 후 사용해 주세요.");
       
-      goTo("verifyEmail", {});
+      goTo("verifyEmail", {email});
     } catch (error) {
       console.error("[ERROR] 회원가입 실패:", error);
       alert("회원가입에 실패했습니다. 다시 시도해주세요.");
@@ -128,7 +128,7 @@ export function Signup() {
       </div>
 
       <div class="info-input-box">
-        <input id="signup-password" type="password" class="info-input-text" placeholder="비밀번호">
+        <input id="signup-password" type="password" class="info-input-text" placeholder="비밀번호(대/소/특수문자 혼합)">
       </div>
 
       <div class="info-input-box">
@@ -144,7 +144,7 @@ export function Signup() {
       </div>
 
       <div class="info-input-box">
-        <input id="signup-phone" type="tel" class="info-input-text" placeholder="휴대폰 번호">
+        <input id="signup-phone" type="tel" class="info-input-text" placeholder="휴대폰 번호(번호만 입력)">
       </div>
 
       <div class="info-input-box">

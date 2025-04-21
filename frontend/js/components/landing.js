@@ -71,7 +71,6 @@ export function Landing() {
         <div class="header-container">
           <div class="user-name" id="user-name">${localState.userName}</div>
           <div class="icons">
-            <img src="../../assets/icons/noti-btn.png" class="noti-btn" />
             <img src="../../assets/icons/menu-btn.png" class="menu-btn" />
           </div>
         </div>
@@ -138,10 +137,6 @@ export function Landing() {
   function bindEvents() {
     el.querySelector(".add-account-btn").addEventListener("click", () => {
       goTo("accountCreate", {});
-    });
-
-    el.querySelector(".noti-btn").addEventListener("click", () => {
-      goTo("noti");
     });
 
     el.querySelector(".menu-btn").addEventListener("click", () => {
