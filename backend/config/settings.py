@@ -79,7 +79,8 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware', # 클릭재킹 방지
+    'csp.middleware.CSPMiddleware',  # CSP용 미들웨어
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -106,34 +107,34 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mydatabase',
-        'USER': 'admin',
-        'PASSWORD': os.getenv("DB_PASSWORD"),
-        'HOST': 'cn2t4-db.cluster-cxmoyywwc77u.ap-northeast-2.rds.amazonaws.com',
-        'PORT': '3306',
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'init_command': "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
-        },
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
 #         'NAME': 'mydatabase',
-#         'USER': 'root',
-#         'PASSWORD': 'rootpassword',
-#         'HOST': 'db',
+#         'USER': 'admin',
+#         'PASSWORD': os.getenv("DB_PASSWORD"),
+#         'HOST': 'cn2t4-db.cluster-cxmoyywwc77u.ap-northeast-2.rds.amazonaws.com',
 #         'PORT': '3306',
-#         'TEST': {
-#             'NAME': 'test_mydatabase'
-#         }
+#         'OPTIONS': {
+#             'charset': 'utf8mb4',
+#             'init_command': "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
+#         },
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mydatabase',
+        'USER': 'root',
+        'PASSWORD': 'rootpassword',
+        'HOST': 'db',
+        'PORT': '3306',
+        'TEST': {
+            'NAME': 'test_mydatabase'
+        }
+    }
+}
 
 
 # Password validation
@@ -203,3 +204,9 @@ LOGGING = {
         "level": "INFO",
     },
 }
+
+# clickjacking 해결방안1
+X_FRAME_OPTIONS = "DENY"  # 또는 "SAMEORIGIN"
+
+# clickjacking 해결방안2
+CSP_FRAME_ANCESTORS = ("'self'",)
