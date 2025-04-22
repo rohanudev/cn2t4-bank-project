@@ -45,17 +45,19 @@ class NotificationTransferMoneyView(APIView):
         amount = request.data.get("amount")
         toAccountUserEmail = request.data.get("toAccountUserEmail")
         userEmail = request.data.get("userEmail")
-        # access_token = request.headers.get("Authorization").split()[1]
-        # user_email = self.get_user_email_from_cognito(access_token)
-
-        # if user_email:
-        subject = "송금 알림"
-        body = f"{amount}원이 성공적으로 이체되었습니다."
-        print(userEmail)
-        self.send_email(userEmail, subject, body)
         
-        subject = "입금 알림"
-        body = f"{amount}원이 성공적으로 입금되었습니다."
-        self.send_email(toAccountUserEmail, subject, body)
+        try:
+            subject = "송금 알림"
+            body = f"{amount}원이 성공적으로 이체되었습니다."
+            self.send_email(userEmail, subject, body)
 
-        return Response({"message": "송금 및 이메일 알림 완료"})
+            subject = "입금 알림"
+            body = f"{amount}원이 성공적으로 입금되었습니다."
+            self.send_email(toAccountUserEmail, subject, body)
+
+            return Response({"message": "송금 및 이메일 알림 완료"})
+        
+        except Exception as e:
+            # 에러 로그는 서버에 출력하고, 사용자에게는 일반 메시지
+            print(f"[Email Error] {str(e)}")
+            return Response({"error": "이메일 전송 중 문제가 발생했습니다. 다시 시도해주세요."}, status=500)
