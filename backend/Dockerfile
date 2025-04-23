@@ -8,6 +8,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 RUN apt update && apt install -y netcat-openbsd
+RUN apt-get update && apt-get upgrade -y && apt-get clean
 
 # 프로젝트 코드 복사
 COPY . .
