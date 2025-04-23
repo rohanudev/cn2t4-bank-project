@@ -1,0 +1,2 @@
+# FILE: bandit.yaml
+exclude_dirs: ['backend/transactions/tests', 'backend/config/settings_test.py', ] # tests directory 제외(assert 등도 취약점 검사 대상이 되기 때문에)
