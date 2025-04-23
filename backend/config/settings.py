@@ -28,12 +28,12 @@ AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 COGNITO_USER_POOL_ID = os.getenv("COGNITO_USER_POOL_ID")
 SES_SENDER_EMAIL = os.getenv("SES_SENDER_EMAIL")
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-w@xq4=kl(*b-z0)4q)=3j2(2h2%tien=dchb4e+0rv^zr@xoq1'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
