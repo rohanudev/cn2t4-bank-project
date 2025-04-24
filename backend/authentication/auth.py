@@ -1,3 +1,4 @@
+import os
 import jwt
 from jwt import PyJWKClient
 import requests
@@ -28,7 +29,8 @@ def jwt_required(view_func):
                 key=signing_key,
                 algorithms=["RS256"],
                 issuer=ISSUER,
-                options={"verify_aud": False}  # 필요한 경우 audience도 검증 가능
+                options={"verify_aud": False},
+                leeway=30
             )
 
             # sub 값으로 사용자 조회
@@ -43,7 +45,7 @@ def jwt_required(view_func):
         except jwt.ExpiredSignatureError:
             return JsonResponse({"error": "토큰이 만료되었습니다."}, status=401)
         except jwt.InvalidTokenError as e:
-            return JsonResponse({"error": "유효하지 않은 토큰입니다."}, status=401)
+            return JsonResponse({"error": f"유효하지 않은 토큰입니다. {str(e)}"}, status=401)
         except Exception as e:
             return JsonResponse({"error": f"서버 오류: {str(e)}"}, status=500)
 
