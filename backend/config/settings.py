@@ -48,6 +48,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost",
 ]
 
+CORS_ALLOW_ALL_ORIGINS = False
+
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost",
 ]
@@ -69,6 +71,7 @@ INSTALLED_APPS = [
     'users',
     'transactions',
     'notifications',
+    'csp',
 ]
 
 MIDDLEWARE = [
@@ -82,6 +85,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware', # 클릭재킹 방지
     'csp.middleware.CSPMiddleware',  # CSP용 미들웨어
 ]
+
+MIDDLEWARE.insert(0, "backend.middleware.format_guard.FormatGuardMiddleware")
 
 ROOT_URLCONF = 'config.urls'
 
@@ -107,34 +112,34 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mydatabase',
-        'USER': 'admin',
-        'PASSWORD': os.getenv("DB_PASSWORD"),
-        'HOST': 'cn2t4-db.cluster-cxmoyywwc77u.ap-northeast-2.rds.amazonaws.com',
-        'PORT': '3306',
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'init_command': "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
-        },
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
 #         'NAME': 'mydatabase',
-#         'USER': 'root',
-#         'PASSWORD': 'rootpassword',
-#         'HOST': 'db',
+#         'USER': 'admin',
+#         'PASSWORD': os.getenv("DB_PASSWORD"),
+#         'HOST': 'cn2t4-db.cluster-cxmoyywwc77u.ap-northeast-2.rds.amazonaws.com',
 #         'PORT': '3306',
-#         'TEST': {
-#             'NAME': 'test_mydatabase'
-#         }
+#         'OPTIONS': {
+#             'charset': 'utf8mb4',
+#             'init_command': "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
+#         },
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mydatabase',
+        'USER': 'root',
+        'PASSWORD': 'rootpassword',
+        'HOST': 'db',
+        'PORT': '3306',
+        'TEST': {
+            'NAME': 'test_mydatabase'
+        }
+    }
+}
 
 
 # Password validation
@@ -205,8 +210,17 @@ LOGGING = {
     },
 }
 
-# clickjacking 해결방안1
+# clickjacking 해결방안 
+# 1) DENY - none, 2) SAMEORIGIN - self 로 가야됨.
 X_FRAME_OPTIONS = "DENY"  # 또는 "SAMEORIGIN"
+CSP_FRAME_ANCESTORS = ("'none'",) # 또는 "self"
 
-# clickjacking 해결방안2
-CSP_FRAME_ANCESTORS = ("'self'",)
+
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'", "https://fonts.googleapis.com")
+CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com")
+CSP_IMG_SRC = ("'self'", "https:")
+CSP_CONNECT_SRC = ("'self'", "http://localhost")  # 프론트 개발 환경
+CSP_OBJECT_SRC = ("'none'",)
+CSP_FORM_ACTION = ("'self'",)
