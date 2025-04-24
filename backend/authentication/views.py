@@ -1,3 +1,4 @@
+import time
 import json
 import boto3
 import jwt
@@ -48,6 +49,10 @@ def login(request):
 
         # JWT 디코딩해서 sub(UUID) 추출
         decoded = jwt.decode(id_token, options={"verify_signature": False})
+
+        print("서버 현재 시간:", time.time())
+        print("토큰 iat:", decoded.get("iat"))
+
 
         user_sub = decoded['sub']
 
