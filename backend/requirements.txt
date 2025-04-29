@@ -11,3 +11,6 @@ pytest
 pytest-django
 # 클릭재킹 및 보안 관련
 django-csp==3.7
+
+# 라이브러리 취약점 보완
+setuptools>=70.0.0
