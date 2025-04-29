@@ -16,7 +16,7 @@ import os
 import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # .env 불러오기
 load_dotenv(dotenv_path=BASE_DIR / '.env')
@@ -48,8 +48,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = False
-
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost",
 ]
@@ -71,7 +69,6 @@ INSTALLED_APPS = [
     'users',
     'transactions',
     'notifications',
-    'csp',
 ]
 
 MIDDLEWARE = [
@@ -85,8 +82,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware', # 클릭재킹 방지
     'csp.middleware.CSPMiddleware',  # CSP용 미들웨어
 ]
-
-MIDDLEWARE.insert(0, "backend.middleware.format_guard.FormatGuardMiddleware")
 
 ROOT_URLCONF = 'config.urls'
 
@@ -107,41 +102,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-
-#         'ENGINE': os.getenv("DB_ENGINE"),
-#         'NAME': os.getenv("DB_NAME"),
-#         'USER': os.getenv("DB_USER"),
-#         'PASSWORD': os.getenv("DB_PASSWORD"),
-#         'HOST': os.getenv("DB_HOST"),
-#         'PORT': os.getenv("DB_PORT"),
-#         'OPTIONS': {
-#             'charset': os.getenv("DB_CHARSET"),
-#             'init_command': os.getenv("DB_INIT_COMMAND"),
-#         },
-#     }
-# }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mydatabase',
-        'USER': 'root',
-        'PASSWORD': 'rootpassword',
-        'HOST': 'db',
-        'PORT': '3306',
-        'TEST': {
-            'NAME': 'test_mydatabase'
-        }
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -211,17 +171,8 @@ LOGGING = {
     },
 }
 
-# clickjacking 해결방안 
-# 1) DENY - none, 2) SAMEORIGIN - self 로 가야됨.
+# clickjacking 해결방안1
 X_FRAME_OPTIONS = "DENY"  # 또는 "SAMEORIGIN"
-CSP_FRAME_ANCESTORS = ("'none'",) # 또는 "self"
 
-
-CSP_DEFAULT_SRC = ("'self'",)
-CSP_SCRIPT_SRC = ("'self'",)
-CSP_STYLE_SRC = ("'self'", "https://fonts.googleapis.com")
-CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com")
-CSP_IMG_SRC = ("'self'", "https:")
-CSP_CONNECT_SRC = ("'self'", "http://localhost")  # 프론트 개발 환경
-CSP_OBJECT_SRC = ("'none'",)
-CSP_FORM_ACTION = ("'self'",)
+# clickjacking 해결방안2
+CSP_FRAME_ANCESTORS = ("'self'",)
