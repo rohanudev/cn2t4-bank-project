@@ -40,3 +40,6 @@ htmlcov/
 *.cover
 *.py,cover
 .cache/
+
+# Kubernetes
+secret.yaml
