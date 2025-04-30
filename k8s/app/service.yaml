@@ -1,0 +1,26 @@
+# service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  type: ClusterIP  # 기본값, 클러스터 내부에서만 접근 가능
+  selector:
+    app: my-app
+  ports:
+  - port: 8000        # 클러스터 내부에서 이 서비스에 접근할 때 사용할 포트
+    targetPort: 8000  # 실제 컨테이너가 리슨하는 포트
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: ClusterIP  # 기본값, 클러스터 내부에서만 접근 가능
+  selector:
+    app: my-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

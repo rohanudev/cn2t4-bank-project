@@ -1,0 +1,61 @@
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app
+  
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      initContainers:
+      - name: wait-for-db
+        image: busybox
+        command: ['sh', '-c', 'until nc -zv mysql 3306; do echo "Waiting for DB..."; sleep 2; done']
+      
+      containers:
+      - name: backend
+        image: broo22/django-backend:latest
+        
+        ports:
+        - containerPort: 8000
+        
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        
+        envFrom:
+        - configMapRef:
+            name: app-config    # ✅ ConfigMap 주입
+        - secretRef:
+            name: app-secret    # ✅ Secret 주입
+        
+        lifecycle:
+          postStart:
+            exec:
+              command: ["sh", "-c", "python manage.py migrate --noinput"]
+      
+      - name: frontend
+        image: broo22/vanilla-frontend:latest
+        
+        ports:
+        - containerPort: 80
+        
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
