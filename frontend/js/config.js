@@ -7,7 +7,7 @@ if (hostname === "localhost") {
 } else if (hostname.endsWith("tikklemoa.com")) {
   API_BASE_URL = "https://api.tikklemoa.com";
 } else {
-  API_BASE_URL = "https://api.tikklemoa.com";
+  API_BASE_URL = "http://" + hostname;
 }
 
 export { API_BASE_URL };
