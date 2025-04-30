@@ -1,7 +1,13 @@
-// js/config.js
+const hostname = window.location.hostname;
 
-/*url for distribution*/
-// export const API_BASE_URL = "https://api.tikklemoa.com";
+let API_BASE_URL = "";
 
-/*url for local test*/
-export const API_BASE_URL = "http://localhost:8000";
+if (hostname === "localhost") {
+  API_BASE_URL = "http://localhost:8000";
+} else if (hostname.endsWith("tikklemoa.com")) {
+  API_BASE_URL = "https://api.tikklemoa.com";
+} else {
+  API_BASE_URL = "https://api.tikklemoa.com";
+}
+
+export { API_BASE_URL };
