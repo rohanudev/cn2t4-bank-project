@@ -1,0 +1,18 @@
+apiVersion: autoscaling/v2  # HPA API version supporting advanced metrics like cpu utilization
+kind: HorizontalPodAutoscaler  # Declares an HPA object
+metadata:
+  name: my-app-hpa  # Name of the HPA resource
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1  # API version of the target deployment
+    kind: Deployment  # The kind of the target resource to scale
+    name: my-app  # The name of the deployment to scale
+  minReplicas: 2  # Minimum number of pod replicas
+  maxReplicas: 5  # Maximum number of pod replicas
+  metrics:
+    - type: Resource  # Metric type is based on resource usage
+      resource:
+        name: cpu  # Metric to watch: CPU usage
+        target:
+          type: Utilization  # Target is based on percentage utilization
+          averageUtilization: 80  # Scale if average CPU usage exceeds 80%
