@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'pilgrim97/django-backend:latest'
         COMPOSE_PROJECT_NAME = 'bank-project'
+        PATH = "/usr/bin:/usr/local/bin:$PATH"
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')  // 옵션, 나중에 쓰고 싶으면
         GIT_COMMIT_HASH = ''
     }
@@ -14,7 +15,7 @@ pipeline {
                   sh 'docker info'
               }
           }
-          
+
         stage('Checkout') {
             steps {
                 echo "📥 GitHub에서 소스 가져오는 중..."
