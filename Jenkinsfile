@@ -4,25 +4,13 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'pilgrim97/django-backend:latest'
         COMPOSE_PROJECT_NAME = 'bank-project'
-        PATH = "/usr/bin:/usr/local/bin:$PATH"
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
-        GIT_COMMIT_HASH = ''
     }
     
     stages {
         stage('Check Docker Access') {
-              steps {
-                  sh 'docker info'
-              }
-          }
-
-        stage('Login Test') {
             steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
-                        sh 'echo ✅ Docker Hub 로그인 성공!'
-                    }
-                }
+                sh 'docker info'
             }
         }
         
@@ -33,6 +21,33 @@ pipeline {
                     credentialsId: 'Github_Token',
                     url: 'https://github.com/rohanudev/cn2t4-bank-project-2.git'
                 checkout scm
+            }
+        }
+        
+        stage('Static Analysis: Bandit in Docker') {
+            steps {
+                echo "🔍 Python 코드 정적 분석 (Bandit via Docker)"
+                dir('backend') {
+                    sh 'docker run --rm -v $(pwd):/src pyupio/bandit bandit -r /src -lll || true'
+                }
+            }
+        }
+
+        stage('Static Analysis: ESLint in Docker') {
+            steps {
+                echo "🔍 JavaScript 코드 정적 분석 (ESLint via Docker)"
+                dir('frontend') {
+                    sh 'docker run --rm -v $(pwd):/app -w /app node:18 npx eslint . || true'
+                }
+            }
+        }
+
+        stage('Dependency Scan: Trivy in Docker') {
+            steps {
+                echo "🛡️ 의존성 취약점 분석 (Trivy via Docker)"
+                dir('backend') {
+                    sh 'docker run --rm -v $(pwd):/project aquasec/trivy fs --severity HIGH,CRITICAL /project || true'
+                }
             }
         }
             
@@ -46,6 +61,13 @@ pipeline {
         //         }
         //     }
         // }
+
+        stage('Image Scan: Trivy after Build') {
+            steps {
+                echo "🛡️ Docker 이미지 취약점 분석 (Trivy after build)"
+                sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --severity HIGH,CRITICAL pilgrim97/django-backend:latest || true'
+            }
+        }
         
         stage('Login to Docker Hub') {
             steps {
