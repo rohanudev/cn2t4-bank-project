@@ -29,8 +29,10 @@ pipeline {
         stage('Docker Compose Build') {
             steps {
                 echo "🔨 docker-compose build 실행 중..."
-                script{
-                    docker.build("${DOCKER_IMAGE}")
+                dir('backend'){
+                  script{
+                      docker.build("${DOCKER_IMAGE}")
+                  }
                 }
             }
         }
