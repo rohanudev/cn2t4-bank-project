@@ -5,8 +5,7 @@ pipeline {
         DOCKER_IMAGE = 'pilgrim97/django-backend:latest'
         COMPOSE_PROJECT_NAME = 'bank-project'
         PATH = "/usr/bin:/usr/local/bin:$PATH"
-        DOCKERHUB_USERNAME = credentials('docker-hub-credentials').username  // 옵션, 나중에 쓰고 싶으면
-        DOCKERHUB_PASSWORD = credentials('docker-hub-credentials').password
+        DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
         GIT_COMMIT_HASH = ''
     }
     
@@ -51,7 +50,7 @@ pipeline {
         stage('Login to Docker Hub') {
             steps {
                 sh '''
-                echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+                echo "$DOCKERHUB_CREDENTIALS_PSW" | docker login -u "$DOCKERHUB_CREDENTIALS_USR" --password-stdin
                 '''
             }
         }
