@@ -1,75 +1,55 @@
 pipeline {
-  agent any
-
-  environment {
-    REPORT_DIR = 'reports'
-  }
-
-  stages {
-    stage('Prepare') {
-      steps {
-        sh 'mkdir -p ${REPORT_DIR}'
-      }
+    agent any
+    
+    environment {
+        DOCKER_IMAGE = 'pilgrim97/django-backend:latest'
+        COMPOSE_PROJECT_NAME = 'bank-project'
+        DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')  // 옵션, 나중에 쓰고 싶으면
+        GIT_COMMIT_HASH = ''
     }
-
-    stage('Static Analysis - Bandit (Python)') {
-      steps {
-        sh '''
-          docker run --rm -v $PWD:/src -v $PWD/${REPORT_DIR}:/out \
-          python:3.11-slim bash -c "
-            pip install bandit && \
-            bandit -r /src/backend -f html -o /out/bandit.html
-          "
-        '''
-      }
+    
+    stages {
+        stage('Check Docker Access') {
+              steps {
+                  sh 'docker info'
+              }
+          }
+          
+        stage('Checkout') {
+            steps {
+                echo "📥 GitHub에서 소스 가져오는 중..."
+                git branch: 'jenkinsdev_jb',
+                    credentialsId: 'Github_Token',
+                    url: 'https://github.com/rohanudev/cn2t4-bank-project-2.git'
+                checkout scm
+            }
+        }
+            
+        stage('Docker Compose Build') {
+            steps {
+                echo "🔨 docker-compose build 실행 중..."
+                script{
+                    docker.build("${DOCKER_IMAGE}")
+                }
+            }
+        }
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKERHUB_CREDENTIALS}") {
+                        docker.image("${DOCKER_IMAGE}").push()
+                    }
+                }
+            }
+        }
     }
-
-    stage('Static Analysis - ESLint (JavaScript)') {
-      steps {
-        sh '''
-          docker run --rm -v $PWD:/app -w /app node:18 bash -c "
-            npm install && \
-            npx eslint frontend/**/*.js -f html -o ${REPORT_DIR}/eslint.html || true
-          "
-        '''
-      }
+        
+    post {
+        success {
+            echo '✅ Docker 이미지 빌드 완료!'
+        }
+        failure {
+            echo '❌ 빌드 실패! 로그를 확인하세요.'
+        }
     }
-
-    stage('Dynamic Analysis - ZAP (Web Vuln Scan)') {
-      steps {
-        sh '''
-          docker run -u root -v $PWD/${REPORT_DIR}:/zap/reports \
-          -t owasp/zap2docker-stable zap-baseline.py \
-          -t http://localhost:8000 -r zap.html
-        '''
-      }
-    }
-
-    stage('Dependency Scan - Trivy (Docker Image)') {
-      steps {
-        sh '''
-          docker build -t myapp:latest .
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-          -v $PWD/${REPORT_DIR}:/out aquasec/trivy:latest image myapp:latest \
-          --severity HIGH,CRITICAL --format html -o /out/trivy.html
-        '''
-      }
-    }
-
-    stage('Publish HTML Reports') {
-      steps {
-        publishHTML([
-          reportDir: "${REPORT_DIR}",
-          reportFiles: 'bandit.html,eslint.html,zap.html,trivy.html',
-          reportName: 'Security Analysis Reports'
-        ])
-      }
-    }
-  }
-
-  post {
-    always {
-      archiveArtifacts artifacts: "${REPORT_DIR}/*.html", fingerprint: true
-    }
-  }
 }
