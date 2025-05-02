@@ -37,16 +37,16 @@ pipeline {
             }
         }
             
-        stage('Docker Compose Build') {
-            steps {
-                echo "🔨 docker-compose build 실행 중..."
-                dir('backend'){
-                  script{
-                      docker.build("${DOCKER_IMAGE}")
-                  }
-                }
-            }
-        }
+        // stage('Docker Compose Build') {
+        //     steps {
+        //         echo "🔨 docker-compose build 실행 중..."
+        //         dir('backend'){
+        //           script{
+        //               docker.build("${DOCKER_IMAGE}")
+        //           }
+        //         }
+        //     }
+        // }
         
         stage('Login to Docker Hub') {
             steps {
