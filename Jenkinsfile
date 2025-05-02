@@ -16,6 +16,16 @@ pipeline {
               }
           }
 
+        stage('Login Test') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
+                        sh 'echo ✅ Docker Hub 로그인 성공!'
+                    }
+                }
+            }
+        }
+        
         stage('Checkout') {
             steps {
                 echo "📥 GitHub에서 소스 가져오는 중..."
