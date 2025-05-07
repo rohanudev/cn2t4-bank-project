@@ -6,7 +6,6 @@ pipeline {
         COMPOSE_PROJECT_NAME = 'bank-project'
         PATH = "/usr/bin:/usr/local/bin:$PATH"
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
-        GIT_COMMIT_HASH = ''
     }
     
     stages {
@@ -36,32 +35,47 @@ pipeline {
             }
         }
             
-        // stage('Docker Compose Build') {
-        //     steps {
-        //         echo "🔨 docker-compose build 실행 중..."
-        //         dir('backend'){
-        //           script{
-        //               docker.build("${DOCKER_IMAGE}")
-        //           }
-        //         }
-        //     }
-        // }
+         stage('Docker Compose Build') {
+             steps {
+                 echo "🔨 docker-compose build 실행 중..."
+                 dir('backend'){
+                   script{
+                       docker.build("${DOCKER_IMAGE}")
+                   }
+                 }
+             }
+         }
+
+         stage('ZAP Scan') {
+                steps {
+                    sh '''
+                        docker run --rm \
+                            -v $(pwd):/zap/wrk \
+                            owasp/zap2docker-stable zap-baseline.py \
+                            -t $TARGET_URL \
+                            -r zap_report.html \
+                            -x zap_report.xml \
+                            -d || true
+                        '''
+            }
+        }
+
         
-        stage('Login to Docker Hub') {
+        /*stage('Login to Docker Hub') {
             steps {
                 sh '''
                 echo "$DOCKERHUB_CREDENTIALS_PSW" | docker login -u "$DOCKERHUB_CREDENTIALS_USR" --password-stdin
                 '''
             }
-        }
+        }*/
 
-        stage('Push Image') {
+        /*stage('Push Image') {
             steps {
                 sh '''
                 docker push pilgrim97/django-backend:latest
                 '''
             }
-        }
+        }*/
     }
         
     post {
