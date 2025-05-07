@@ -52,7 +52,7 @@ pipeline {
                     docker run --rm \
                         -v $(pwd):/zap/wrk \
                         ghcr.io/zaproxy/zaproxy:stable zap-full-scan.py \
-                        -t https://localhost:8000\
+                        -t http://localhost:8000\
                         -r zap_full_report.html \
                         -x zap_full_report.xml \
                         -d || true
