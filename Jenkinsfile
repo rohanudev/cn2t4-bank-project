@@ -46,17 +46,17 @@ pipeline {
              }
          }
 
-         stage('ZAP Scan') {
-                steps {
-                    sh '''
-                        docker run --rm \
-                            -v $(pwd):/zap/wrk \
-                            owasp/zap2docker-stable zap-baseline.py \
-                            -t $TARGET_URL \
-                            -r zap_report.html \
-                            -x zap_report.xml \
-                            -d || true
-                        '''
+        stage('Run ZAP Full Scan') {
+            steps {
+                sh '''
+                    docker run --rm \
+                        -v $(pwd):/zap/wrk \
+                        ghcr.io/zaproxy/zaproxy:stable zap-full-scan.py \
+                        -t https://localhost:8000\
+                        -r zap_full_report.html \
+                        -x zap_full_report.xml \
+                        -d || true
+                '''
             }
         }
 
