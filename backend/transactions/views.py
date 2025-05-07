@@ -6,11 +6,14 @@ from transactions.models import Transaction
 from django.utils.timezone import now
 from django.db import transaction as db_transaction
 from authentication.auth import jwt_required
+import logging
+logger = logging.getLogger(__name__)
 
 @csrf_exempt
 @jwt_required
 def deposit(request):
     if request.method != "POST":
+        logger.warning("[deposit] Invalid method")
         return JsonResponse({"success": False, "message": "[ERROR] Method Not Allowed"}, status=405)
 
     try:
@@ -20,11 +23,13 @@ def deposit(request):
         memo = data.get("memo", "입금")
 
         if amount <= 0:
+            logger.warning(f"[deposit] Invalid amount: {amount}")
             return JsonResponse({"success": False, "message": "[ERROR] Invalid amount"}, status=400)
 
         try:
             account = Account.objects.get(account_number=account_number)
         except Account.DoesNotExist:
+            logger.error(f"[deposit] Account not found: {account_number}")
             return JsonResponse({"success": False, "message": "[ERROR] Account not found"}, status=404)
 
         with db_transaction.atomic(): # 트랜잭션 정합성 보장 (중간에 에러날  시 DB 반영 안됨)
@@ -39,6 +44,9 @@ def deposit(request):
                 balance_after=account.balance,
                 memo=memo,
             )
+
+            logger.info(f"[deposit] Success | transaction_id: {transaction.transaction_id}, balance: {account.balance}")
+            logger.info(f"[{transaction.type.lower()}] Success | transaction_id: %s", transaction.transaction_id)
 
             return JsonResponse({
                 "success": True,
@@ -55,14 +63,17 @@ def deposit(request):
             })
 
     except json.JSONDecodeError:
+        logger.error("[deposit] JSON Decode Error", exc_info=True)
         return JsonResponse({"success": False, "message": "[ERROR] Invalid JSON"}, status=400)
     except Exception as e:
+        logger.exception(f"[deposit] Unexpected Error: {str(e)}")
         return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
 
 @csrf_exempt
 @jwt_required
 def withdraw(request):
     if request.method != "POST":
+        logger.warning("[withdraw] Invalid method")
         return JsonResponse({"success": False, "message": "[ERROR] Method Not Allowed"}, status=405)
 
     try:
@@ -71,15 +82,20 @@ def withdraw(request):
         amount = int(data.get("amount", 0))
         memo = data.get("memo", "출금")
 
+        logger.info(f"[withdraw] Request received | account: {account_number}, amount: {amount}")
+
         if amount <= 0:
+            logger.warning(f"[withdraw] Invalid amount: {amount}")
             return JsonResponse({"success": False, "message": "[ERROR] Invalid amount"}, status=400)
 
         try:
             account = Account.objects.get(account_number=account_number)
         except Account.DoesNotExist:
+            logger.error(f"[withdraw] Account not found: {account_number}")
             return JsonResponse({"success": False, "message": "[ERROR] Account not found"}, status=404)
 
         if account.balance < amount:
+            logger.warning(f"[withdraw] Insufficient balance | account: {account_number}, balance: {account.balance}, attempted: {amount}")
             return JsonResponse({"success": False, "message": "[ERROR] Insufficient balance"}, status=400)
 
         with db_transaction.atomic():
@@ -94,6 +110,9 @@ def withdraw(request):
                 balance_after=account.balance,
                 memo=memo,
             )
+
+            logger.info(f"[withdraw] Success | transaction_id: {transaction.transaction_id}, balance: {account.balance}")
+            logger.info(f"[{transaction.type.lower()}] Success | transaction_id: %s", transaction.transaction_id)
 
             return JsonResponse({
                 "success": True,
@@ -112,12 +131,14 @@ def withdraw(request):
     except json.JSONDecodeError:
         return JsonResponse({"success": False, "message": "[ERROR] Invalid JSON"}, status=400)
     except Exception as e:
+        logger.exception(f"[withdraw] Unexpected Error: {str(e)}")
         return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
 
 @csrf_exempt
 @jwt_required
 def transfer(request):
     if request.method != "POST":
+        logger.warning("[transfer] Invalid method")
         return JsonResponse({"success": False, "message": "[ERROR] Method Not Allowed"}, status=405)
 
     try:
@@ -127,19 +148,25 @@ def transfer(request):
         amount = int(data.get("amount", 0))
         memo = data.get("memo", "송금")
 
+        logger.info(f"[transfer] Request received | from: {from_account_number}, to: {to_account_number}, amount: {amount}")
+
         if amount <= 0:
+            logger.warning(f"[transfer] Invalid amount: {amount}")
             return JsonResponse({"success": False, "message": "[ERROR] Invalid amount"}, status=400)
 
         if from_account_number == to_account_number:
+            logger.warning(f"[transfer] Same account transfer attempt: {from_account_number}")
             return JsonResponse({"success": False, "message": "[ERROR] Cannot transfer to the same account"}, status=400)
 
         try:
             from_account = Account.objects.get(account_number=from_account_number)
             to_account = Account.objects.get(account_number=to_account_number)
         except Account.DoesNotExist:
+            logger.error(f"[transfer] Account not found: from: {from_account_number}, to: {to_account_number}")
             return JsonResponse({"success": False, "message": "[ERROR] One or both accounts not found"}, status=404)
 
         if from_account.balance < amount:
+            logger.warning(f"[transfer] Insufficient balance | from: {from_account_number}, balance: {from_account.balance}, attempted: {amount}")
             return JsonResponse({"success": False, "message": "[ERROR] Insufficient balance"}, status=400)
 
         with db_transaction.atomic():
@@ -159,6 +186,9 @@ def transfer(request):
                 memo=memo,
             )
 
+            logger.info(f"[transfer] Success | transaction_id: {transaction.transaction_id}, from: {from_account_number}, to: {to_account_number}, amount: {amount}")
+            logger.info(f"[{transaction.type.lower()}] Success | transaction_id: %s", transaction.transaction_id)
+
             return JsonResponse({
                 "success": True,
                 "transaction": {
@@ -177,6 +207,7 @@ def transfer(request):
     except json.JSONDecodeError:
         return JsonResponse({"success": False, "message": "[ERROR] Invalid JSON"}, status=400)
     except Exception as e:
+        logger.exception(f"[transfer] Unexpected Error: {str(e)}")
         return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
 
 @csrf_exempt  
