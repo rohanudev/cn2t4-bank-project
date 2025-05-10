@@ -44,14 +44,13 @@ pipeline {
                    }
                  }
              }
-         }*/
-
-        stages {
-            stage('Static Analysis') {
-                steps {
-                    sh './run_static_analysis.sh'
-                }
+         }*/ 
+            
+        stage('Static Analysis') {
+            steps {
+                sh './run_static_analysis.sh'
             }
+        }
 
         
         /*stage('Login to Docker Hub') {
@@ -69,7 +68,7 @@ pipeline {
                 '''
             }
         }*/
-        }
+        
     }
 
     post {
