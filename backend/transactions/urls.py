@@ -1,9 +1,9 @@
 from django.urls import include, path
-from . import views
+from .views import DepositView, WithdrawView, TransferView, ValidateAccountView, TransactionHistoryView
 
 urlpatterns = [
-    path('deposit', views.deposit, name='deposit'),
-    path('withdraw', views.withdraw, name='withdraw'),
-    path('transfer', views.transfer, name='transfer'),
-    path('validate_account', views.validate_account, name='validate_account'),
+    path('deposit', DepositView.as_view(), name='deposit'),
+    path('withdraw', WithdrawView.as_view(), name='withdraw'),
+    path('transfer', TransferView.as_view(), name='transfer'),
+    path('validate_account', ValidateAccountView.as_view(), name='validate_account'),
 ]

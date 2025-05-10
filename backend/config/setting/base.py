@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'users',
     'transactions',
     'notifications',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -174,5 +175,17 @@ LOGGING = {
 # clickjacking 해결방안1
 X_FRAME_OPTIONS = "DENY"  # 또는 "SAMEORIGIN"
 
-# clickjacking 해결방안2
-CSP_FRAME_ANCESTORS = ("'self'",)
+# Swagger 설정
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Tikklemoa API",
+    "DESCRIPTION": "뱅킹 API 명세",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SERVERS": [
+        {"url": "http://django_backend:8000"}
+    ],
+}
