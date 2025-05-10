@@ -73,6 +73,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'middleware.format_guard.FormatGuardMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -82,6 +83,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware', # 클릭재킹 방지
     'csp.middleware.CSPMiddleware',  # CSP용 미들웨어
+    'middleware.enforce_csp.EnforceCSPMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -172,8 +174,12 @@ LOGGING = {
     },
 }
 
-# clickjacking 해결방안1
-X_FRAME_OPTIONS = "DENY"  # 또는 "SAMEORIGIN"
+# CSP 설정 (외부 리소스 허용)
+CSP_DEFAULT_SRC = ("'self'", "https://cdn.jsdelivr.net")
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net")
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net")
+CSP_IMG_SRC = ("'self'", "https://cdn.jsdelivr.net")
+CSP_FRAME_ANCESTORS = ("'none'",)
 
 # Swagger 설정
 REST_FRAMEWORK = {
