@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+
+    environment {
+        ENV_FILE = credentials('env-file-dev')  // 업로드한 .env 파일 참조
+        PATH = "/usr/local/bin:/opt/homebrew/bin:$PATH"
+    }
+
+    stages {
+        stage('Docker 확인') {
+            steps {
+                sh 'which docker'
+                sh 'docker --version'
+            }
+        }
+
+        stage('Copy .env') {
+            steps {
+                sh 'cp "$ENV_FILE" backend/.env'
+            }
+        }
+
+        stage('소스 체크아웃') {
+            steps {
+                git branch: 'feat/transaction_yh', url: 'https://github.com/Bro-o/cn2t4-bank-project-2.git'
+            }
+        }
+
+        stage('워크스페이스 확인') {
+            steps {
+                sh 'pwd'
+                sh 'ls -al'
+            }
+        }
+
+        stage('환경 구성') {
+            steps {
+                sh 'docker-compose -f docker-compose.yml up -d --build'
+            }
+        }
+
+        stage('ZAP 스캔 실행') {
+            steps {
+                // 실행
+                sh 'docker exec zap_scanner sh /zap/zap-run-scan.sh'
+            }
+        }
+
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: 'zap/zap_report.html', fingerprint: true
+            sh 'docker-compose -f docker-compose.yml down'
+        }
+    }
+}
