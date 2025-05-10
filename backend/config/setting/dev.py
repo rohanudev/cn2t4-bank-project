@@ -2,6 +2,9 @@ from .base import *
 
 # load_dotenv(dotenv_path=BASE_DIR / '.env_dev')
 # os.getenv("KEYWORD")
+DEBUG = True
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 DATABASES = {
     'default': {
