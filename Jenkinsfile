@@ -35,7 +35,7 @@ pipeline {
             }
         }
             
-         stage('Docker Compose Build') {
+         /*stage('Docker Compose Build') {
              steps {
                  echo "🔨 docker-compose build 실행 중..."
                  dir('backend'){
@@ -44,21 +44,14 @@ pipeline {
                    }
                  }
              }
-         }
+         }*/
 
-        stage('Run ZAP Full Scan') {
-            steps {
-                sh '''
-                    docker run --rm \
-                        -v $(pwd):/zap/wrk \
-                        ghcr.io/zaproxy/zaproxy:stable zap-full-scan.py \
-                        -t http://localhost:8000\
-                        -r zap_full_report.html \
-                        -x zap_full_report.xml \
-                        -d || true
-                '''
+        stages {
+            stage('Static Analysis') {
+                steps {
+                    sh './run_static_analysis.sh'
+                }
             }
-        }
 
         
         /*stage('Login to Docker Hub') {
