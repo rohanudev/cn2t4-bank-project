@@ -69,8 +69,9 @@ pipeline {
                 '''
             }
         }*/
+        }
     }
-        
+
     post {
         success {
             echo '✅ Docker 이미지 빌드 완료!'
@@ -79,5 +80,4 @@ pipeline {
             echo '❌ 빌드 실패! 로그를 확인하세요.'
         }
     }
-}
 }
