@@ -8,10 +8,13 @@ class EnforceCSPMiddleware:
         response = self.get_response(request)
         if not response.has_header("Content-Security-Policy"):
             response["Content-Security-Policy"] = (
-                "default-src 'self' https://cdn.jsdelivr.net; "
-                "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
-                "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
-                "img-src 'self' https://cdn.jsdelivr.net;"
+                "default-src 'self'; "
+                "script-src 'self' https://cdn.jsdelivr.net 'nonce-{{nonce}}'; "
+                "style-src 'self' https://cdn.jsdelivr.net; "
+                "img-src 'self' data:; "
+                "object-src 'none'; "
+                "base-uri 'none'; "
                 "frame-ancestors 'none';"
+                "form-action 'self';"
             )
         return response

@@ -21,15 +21,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # .env 불러오기
 load_dotenv(dotenv_path=BASE_DIR / '.env')
 
-# 환경 변수 사용
-AWS_REGION = os.getenv("AWS_REGION")
-COGNITO_CLIENT_ID = os.getenv("COGNITO_CLIENT_ID")
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-COGNITO_USER_POOL_ID = os.getenv("COGNITO_USER_POOL_ID")
-SES_SENDER_EMAIL = os.getenv("SES_SENDER_EMAIL")
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -175,10 +166,13 @@ LOGGING = {
 }
 
 # CSP 설정 (외부 리소스 허용)
-CSP_DEFAULT_SRC = ("'self'", "https://cdn.jsdelivr.net")
-CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net")
-CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net")
-CSP_IMG_SRC = ("'self'", "https://cdn.jsdelivr.net")
+# CSP 설정 (보안 강화)
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", "https://cdn.jsdelivr.net", "'nonce-{{nonce}}'")
+CSP_STYLE_SRC = ("'self'", "https://cdn.jsdelivr.net")
+CSP_IMG_SRC = ("'self'", "data:")
+CSP_OBJECT_SRC = ("'none'",)
+CSP_BASE_URI = ("'none'",)
 CSP_FRAME_ANCESTORS = ("'none'",)
 
 # Swagger 설정
