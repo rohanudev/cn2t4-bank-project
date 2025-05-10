@@ -14,6 +14,11 @@ services:
         condition: service_healthy
     env_file:
       - ./backend/.env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   frontend:
     build: ./frontend
@@ -45,6 +50,17 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+
+  zap:
+    build: ./zap
+    container_name: zap_scanner
+    ports:
+      - "8090:8090"
+    volumes:
+      - ./zap:/zap/wrk  # 명세(schema.json) 파일 저장용
+    depends_on:
+      backend:
+        condition: service_healthy
 
 volumes:
   mysql_data:
