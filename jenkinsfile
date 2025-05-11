@@ -4,6 +4,9 @@ pipeline {
     environment {
         ENV_FILE = credentials('env-file-dev')  // 업로드한 .env 파일 참조
         PATH = "/usr/local/bin:/opt/homebrew/bin:$PATH"
+        AWS_DEFAULT_REGION = 'ap-northeast-2'
+        ECR_REGISTRY = '661393609088.dkr.ecr.ap-northeast-2.amazonaws.com'
+        ECR_REPO = 'django-backend'
     }
 
     stages {
@@ -14,15 +17,16 @@ pipeline {
             }
         }
 
-        stage('Copy .env') {
+        stage('소스 체크아웃') {
             steps {
-                sh 'cp "$ENV_FILE" backend/.env'
+                git branch: 'feat/transaction_yh', url: 'https://github.com/rohanudev/cn2t4-bank-project-2.git/'
             }
         }
 
-        stage('소스 체크아웃') {
+        stage('Copy .env') {
             steps {
-                git branch: 'feat/transaction_yh', url: 'https://github.com/Bro-o/cn2t4-bank-project-2.git'
+                sh 'chmod -R u+w backend'
+                sh 'cp "$ENV_FILE" backend/.env'
             }
         }
 
@@ -46,6 +50,41 @@ pipeline {
             }
         }
 
+        stage('로그인 to ECR') {
+            steps {
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'AWS_CREDENTIALS',
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                ]]) {
+                sh '''
+                    aws ecr get-login-password --region ap-northeast-2 \
+                    | docker login --username AWS --password-stdin 661393609088.dkr.ecr.ap-northeast-2.amazonaws.com
+                '''
+                }
+            }
+        }
+
+        stage('도커 이미지 빌드') {
+            steps {
+                script {
+                    def shortCommit = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    env.IMAGE_TAG = "${shortCommit}"
+                }
+                sh '''
+                docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG ./backend
+                '''
+            }
+        }
+
+        stage('이미지 푸시') {
+            steps {
+                sh '''
+                docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+                '''
+            }
+        }
     }
 
     post {
