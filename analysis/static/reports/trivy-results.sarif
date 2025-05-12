@@ -1,0 +1,134 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "fullName": "Trivy Vulnerability Scanner",
+          "informationUri": "https://github.com/aquasecurity/trivy",
+          "name": "Trivy",
+          "rules": [
+            {
+              "id": "aws-access-key-id",
+              "name": "Secret",
+              "shortDescription": {
+                "text": "AWS Access Key ID"
+              },
+              "fullDescription": {
+                "text": "AWS_ACCESS_KEY_ID=********************"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "helpUri": "https://github.com/aquasecurity/trivy/blob/main/pkg/fanal/secret/builtin-rules.go",
+              "help": {
+                "text": "Secret AWS Access Key ID\nSeverity: CRITICAL\nMatch: AWS_ACCESS_KEY_ID=********************",
+                "markdown": "**Secret AWS Access Key ID**\n| Severity | Match |\n| --- | --- |\n|CRITICAL|AWS_ACCESS_KEY_ID=********************|"
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "9.5",
+                "tags": [
+                  "secret",
+                  "security",
+                  "CRITICAL"
+                ]
+              }
+            },
+            {
+              "id": "aws-secret-access-key",
+              "name": "Secret",
+              "shortDescription": {
+                "text": "AWS Secret Access Key"
+              },
+              "fullDescription": {
+                "text": "AWS_SECRET_ACCESS_KEY=****************************************"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "helpUri": "https://github.com/aquasecurity/trivy/blob/main/pkg/fanal/secret/builtin-rules.go",
+              "help": {
+                "text": "Secret AWS Secret Access Key\nSeverity: CRITICAL\nMatch: AWS_SECRET_ACCESS_KEY=****************************************",
+                "markdown": "**Secret AWS Secret Access Key**\n| Severity | Match |\n| --- | --- |\n|CRITICAL|AWS_SECRET_ACCESS_KEY=****************************************|"
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "9.5",
+                "tags": [
+                  "secret",
+                  "security",
+                  "CRITICAL"
+                ]
+              }
+            }
+          ],
+          "version": "0.62.1"
+        }
+      },
+      "results": [
+        {
+          "ruleId": "aws-access-key-id",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "Artifact: backend/.env\nType: \nSecret AWS Access Key ID\nSeverity: CRITICAL\nMatch: AWS_ACCESS_KEY_ID=********************"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "backend/.env",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "backend/.env"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "aws-secret-access-key",
+          "ruleIndex": 1,
+          "level": "error",
+          "message": {
+            "text": "Artifact: backend/.env\nType: \nSecret AWS Secret Access Key\nSeverity: CRITICAL\nMatch: AWS_SECRET_ACCESS_KEY=****************************************"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "backend/.env",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "endLine": 2,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "backend/.env"
+              }
+            }
+          ]
+        }
+      ],
+      "columnKind": "utf16CodeUnits",
+      "originalUriBaseIds": {
+        "ROOTPATH": {
+          "uri": "file:///project/"
+        }
+      }
+    }
+  ]
+}
