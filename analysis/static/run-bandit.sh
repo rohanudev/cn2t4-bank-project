@@ -3,7 +3,7 @@
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 PROJECT_ROOT=$(realpath "$SCRIPT_DIR/../../")
 REPORT_DIR="$SCRIPT_DIR/reports"
-OUTPUT_JSON="$REPORT_DIR/bandit-results.json"
+OUTPUT_SARIF="$REPORT_DIR/bandit-results.sarif"
 
 mkdir -p "$REPORT_DIR"
 
@@ -16,11 +16,11 @@ docker run --rm \
     pip install --quiet bandit &&
     bandit -r backend \
       --format json \
-      --output /app/analysis/static/reports/bandit-results.json
+      --output /app/analysis/static/reports/bandit-results.sarif
   "
 
-if [ -f "$OUTPUT_JSON" ]; then
-  echo "✅ Bandit JSON saved to: $OUTPUT_JSON"
+if [ -f "$OUTPUT_SARIF" ]; then
+  echo "✅ Bandit JSON saved to: $OUTPUT_SARIF"
 else
   echo "❌ Bandit JSON not generated."
   exit 1
