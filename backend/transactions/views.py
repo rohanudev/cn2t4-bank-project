@@ -7,7 +7,15 @@ from django.utils.timezone import now
 from django.db import transaction as db_transaction
 from authentication.auth import jwt_required
 import logging
+from telemetry.setup import meter
+
 logger = logging.getLogger(__name__)
+
+# OpenTelemetry Counter 정의
+transaction_counter = meter.create_counter(
+    name="transaction_count",
+    description="Count of successful transactions",
+)
 
 @csrf_exempt
 @jwt_required
@@ -30,9 +38,10 @@ def deposit(request):
             account = Account.objects.get(account_number=account_number)
         except Account.DoesNotExist:
             logger.error(f"[deposit] Account not found: {account_number}")
+            transaction_counter.add(1, {"type": "deposit", "status": "fail"})
             return JsonResponse({"success": False, "message": "[ERROR] Account not found"}, status=404)
 
-        with db_transaction.atomic(): # 트랜잭션 정합성 보장 (중간에 에러날  시 DB 반영 안됨)
+        with db_transaction.atomic():
             account.balance += amount
             account.save()
 
@@ -47,6 +56,7 @@ def deposit(request):
 
             logger.info(f"[deposit] Success | transaction_id: {transaction.transaction_id}, balance: {account.balance}")
             logger.info(f"[{transaction.type.lower()}] Success | transaction_id: %s", transaction.transaction_id)
+            transaction_counter.add(1, {"type": "deposit", "status": "success"})
 
             return JsonResponse({
                 "success": True,
@@ -67,6 +77,7 @@ def deposit(request):
         return JsonResponse({"success": False, "message": "[ERROR] Invalid JSON"}, status=400)
     except Exception as e:
         logger.exception(f"[deposit] Unexpected Error: {str(e)}")
+        transaction_counter.add(1, {"type": "deposit", "status": "fail"})
         return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
 
 @csrf_exempt
@@ -92,10 +103,12 @@ def withdraw(request):
             account = Account.objects.get(account_number=account_number)
         except Account.DoesNotExist:
             logger.error(f"[withdraw] Account not found: {account_number}")
+            transaction_counter.add(1, {"type": "withdraw", "status": "fail"})
             return JsonResponse({"success": False, "message": "[ERROR] Account not found"}, status=404)
 
         if account.balance < amount:
             logger.warning(f"[withdraw] Insufficient balance | account: {account_number}, balance: {account.balance}, attempted: {amount}")
+            transaction_counter.add(1, {"type": "withdraw", "status": "fail"})
             return JsonResponse({"success": False, "message": "[ERROR] Insufficient balance"}, status=400)
 
         with db_transaction.atomic():
@@ -113,6 +126,7 @@ def withdraw(request):
 
             logger.info(f"[withdraw] Success | transaction_id: {transaction.transaction_id}, balance: {account.balance}")
             logger.info(f"[{transaction.type.lower()}] Success | transaction_id: %s", transaction.transaction_id)
+            transaction_counter.add(1, {"type": "withdraw", "status": "success"})
 
             return JsonResponse({
                 "success": True,
@@ -132,6 +146,7 @@ def withdraw(request):
         return JsonResponse({"success": False, "message": "[ERROR] Invalid JSON"}, status=400)
     except Exception as e:
         logger.exception(f"[withdraw] Unexpected Error: {str(e)}")
+        transaction_counter.add(1, {"type": "withdraw", "status": "fail"})
         return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
 
 @csrf_exempt
@@ -163,10 +178,12 @@ def transfer(request):
             to_account = Account.objects.get(account_number=to_account_number)
         except Account.DoesNotExist:
             logger.error(f"[transfer] Account not found: from: {from_account_number}, to: {to_account_number}")
+            transaction_counter.add(1, {"type": "transfer", "status": "fail"})
             return JsonResponse({"success": False, "message": "[ERROR] One or both accounts not found"}, status=404)
 
         if from_account.balance < amount:
             logger.warning(f"[transfer] Insufficient balance | from: {from_account_number}, balance: {from_account.balance}, attempted: {amount}")
+            transaction_counter.add(1, {"type": "transfer", "status": "fail"})
             return JsonResponse({"success": False, "message": "[ERROR] Insufficient balance"}, status=400)
 
         with db_transaction.atomic():
@@ -188,6 +205,7 @@ def transfer(request):
 
             logger.info(f"[transfer] Success | transaction_id: {transaction.transaction_id}, from: {from_account_number}, to: {to_account_number}, amount: {amount}")
             logger.info(f"[{transaction.type.lower()}] Success | transaction_id: %s", transaction.transaction_id)
+            transaction_counter.add(1, {"type": "transfer", "status": "success"})
 
             return JsonResponse({
                 "success": True,
@@ -204,11 +222,15 @@ def transfer(request):
                 }
             })
 
+
+
     except json.JSONDecodeError:
         return JsonResponse({"success": False, "message": "[ERROR] Invalid JSON"}, status=400)
     except Exception as e:
         logger.exception(f"[transfer] Unexpected Error: {str(e)}")
+        transaction_counter.add(1, {"type": "transfer", "status": "fail"})
         return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
+
 
 @csrf_exempt  
 @jwt_required
@@ -241,11 +263,14 @@ def validate_account(request):
                 }
             })
         except Account.DoesNotExist:
+            logger.warning(f"[validate_account] Account not found: {account_number}")
             return JsonResponse({"success": False, "message": "[ERROR] Account not found"}, status=404)
 
     except json.JSONDecodeError:
+        logger.error("[validate_account] JSON Decode Error", exc_info=True)
         return JsonResponse({"success": False, "message": "[ERROR] Invalid JSON"}, status=400)
     except Exception as e:
+        logger.exception(f"[validate_account] Unexpected Error: {str(e)}")
         return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
 
 @csrf_exempt
@@ -286,6 +311,8 @@ def transaction_history(request, account_number):
         return JsonResponse({"success": True, "history": history}, json_dumps_params={'ensure_ascii': False})
 
     except Account.DoesNotExist:
+        logger.warning(f"[transaction_history] Account not found: {account_number}")
         return JsonResponse({"success": False, "message": "[ERROR] Account not found"}, status=404)
     except Exception as e:
+        logger.exception(f"[transaction_history] Unexpected Error: {str(e)}")
         return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)

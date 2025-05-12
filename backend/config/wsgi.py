@@ -15,7 +15,7 @@ from django.core.wsgi import get_wsgi_application
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(dotenv_path=BASE_DIR / '.env')  # 추가
-env = os.getenv('DJANGO_ENV', 'development')
+env = os.getenv('DJANGO_ENV', 'DEV')
 
 if env == 'PROD':
     settings_module = 'config.setting.prod'

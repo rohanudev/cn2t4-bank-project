@@ -51,7 +51,7 @@ services:
     container_name: otel_collector
     command: ["--config=/etc/otelcol-contrib/otel-collector-config.yaml"]
     volumes:
-      - ./telemetry/config:/etc/otelcol-contrib
+      - ./backend/telemetry/config:/etc/otelcol-contrib
     ports:
       - "1888:1888"    # pprof extension
       - "9999:8888"    # Prometheus metrics exposed by the Collector
@@ -65,7 +65,7 @@ services:
     image: prom/prometheus
     container_name: prometheus
     volumes:
-      - ./telemetry/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./backend/telemetry/config/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
     depends_on:
