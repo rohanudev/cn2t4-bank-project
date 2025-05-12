@@ -4,8 +4,10 @@ import json
 from accounts.models import Account
 from transactions.models import Transaction
 from django.utils.timezone import now
-from django.db import transaction as db_transaction
+from django.db import transaction as db_transaction, OperationalError, DatabaseError, connection
+
 from authentication.auth import jwt_required
+import time
 
 @csrf_exempt
 @jwt_required
@@ -28,6 +30,7 @@ def deposit(request):
             return JsonResponse({"success": False, "message": "[ERROR] Account not found"}, status=404)
 
         with db_transaction.atomic(): # 트랜잭션 정합성 보장 (중간에 에러날  시 DB 반영 안됨)
+            
             account.balance += amount
             account.save()
 
@@ -133,49 +136,69 @@ def transfer(request):
         if from_account_number == to_account_number:
             return JsonResponse({"success": False, "message": "[ERROR] Cannot transfer to the same account"}, status=400)
 
-        try:
-            from_account = Account.objects.get(account_number=from_account_number)
-            to_account = Account.objects.get(account_number=to_account_number)
-        except Account.DoesNotExist:
-            return JsonResponse({"success": False, "message": "[ERROR] One or both accounts not found"}, status=404)
+        for attempt in range(3):
+            try:
+                with db_transaction.atomic():
+                    
+                    # 락 대기시간을 5초로 변경
+                    with connection.cursor() as cursor:
+                        cursor.execute("SET innodb_lock_wait_timeout = 5")  # 5초로 세션 설정 변경
 
-        if from_account.balance < amount:
-            return JsonResponse({"success": False, "message": "[ERROR] Insufficient balance"}, status=400)
+                    try:
+                        # 계좌 접근에 Lock 걸기(select_for_update)
+                        from_account = Account.objects.select_for_update().get(account_number=from_account_number)
+                        to_account = Account.objects.select_for_update().get(account_number=to_account_number)
+                    except Account.DoesNotExist:
+                        return JsonResponse({"success": False, "message": "[ERROR] One or both accounts not found"}, status=404)
 
-        with db_transaction.atomic():
-            from_account.balance -= amount
-            from_account.save()
+                    if from_account.balance < amount:
+                        return JsonResponse({"success": False, "message": "[ERROR] Insufficient balance"}, status=400)
+                
+                    from_account.balance -= amount
+                    to_account.balance += amount
 
-            to_account.balance += amount
-            to_account.save()
+                    from_account.save()
+                    to_account.save()
 
-            transaction = Transaction.objects.create(
-                type="TRANSFER",
-                status="SUCCESS",
-                from_account=from_account,
-                to_account=to_account,
-                amount=amount,
-                balance_after=from_account.balance,
-                memo=memo,
-            )
+                    transaction = Transaction.objects.create(
+                        type="TRANSFER",
+                        status="SUCCESS",
+                        from_account=from_account,
+                        to_account=to_account,
+                        amount=amount,
+                        balance_after=from_account.balance,
+                        memo=memo,
+                    )
 
-            return JsonResponse({
-                "success": True,
-                "transaction": {
-                    "transaction_id": str(transaction.transaction_id),
-                    "type": "transfer",
-                    "from_account": from_account.account_number,
-                    "to_account": to_account.account_number,
-                    "amount": transaction.amount,
-                    "balance_after": transaction.balance_after,
-                    "timestamp": transaction.created_at.isoformat(),
-                    "memo": transaction.memo,
-                    "status": transaction.status,
-                }
-            })
+                    return JsonResponse({
+                        "success": True,
+                        "transaction": {
+                            "transaction_id": str(transaction.transaction_id),
+                            "type": "transfer",
+                            "from_account": from_account.account_number,
+                            "to_account": to_account.account_number,
+                            "amount": transaction.amount,
+                            "balance_after": transaction.balance_after,
+                            "timestamp": transaction.created_at.isoformat(),
+                            "memo": transaction.memo,
+                            "status": transaction.status,
+                        }
+                    })
+            except DatabaseError as e:
+                if attempt == 2:
+                    # 마지막 시도도 실패하면 에러 터뜨림
+                    return JsonResponse({"success": False, "message": "[ERROR] DB Error: " + str(e)}, status=500) 
+                time.sleep(0.1)  # 짧게 쉬고 재시도
+
+            except OperationalError as e:
+                if attempt == 2:
+                    # 마지막 시도도 실패하면 에러 터뜨림
+                    return JsonResponse({"success": False, "message": "[ERROR] Lock wait timeout or deadlock: " + str(e)}, status=500) 
+                time.sleep(0.1)  # 짧게 쉬고 재시도
 
     except json.JSONDecodeError:
         return JsonResponse({"success": False, "message": "[ERROR] Invalid JSON"}, status=400)
+    
     except Exception as e:
         return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
 
