@@ -15,7 +15,7 @@ docker run --rm \
   python:3.11-slim bash -c "
     pip install --quiet bandit &&
     bandit -r backend \
-      --format json \
+      --format sarif \
       --output /app/analysis/static/reports/bandit-results.sarif
   "
 
