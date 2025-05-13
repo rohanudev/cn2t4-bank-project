@@ -5,6 +5,7 @@ from accounts.models import Account
 from transactions.models import Transaction
 from django.utils.timezone import now
 from django.db import transaction as db_transaction, OperationalError, DatabaseError, connection
+from django.db.utils import IntegrityError
 
 from authentication.auth import jwt_required
 import time
@@ -17,6 +18,7 @@ def deposit(request):
 
     try:
         data = json.loads(request.body)
+        transaction_id = data.get("transaction_id")
         account_number = data.get("account_number")
         amount = int(data.get("amount", 0))
         memo = data.get("memo", "입금")
@@ -29,12 +31,16 @@ def deposit(request):
         except Account.DoesNotExist:
             return JsonResponse({"success": False, "message": "[ERROR] Account not found"}, status=404)
 
+        if Transaction.objects.filter(transaction_id=transaction_id).exists():
+            return JsonResponse({"success": False, "message": "[ERROR] Duplicate transaction"}, status=409)
+
         with db_transaction.atomic(): # 트랜잭션 정합성 보장 (중간에 에러날  시 DB 반영 안됨)
             
             account.balance += amount
             account.save()
 
             transaction = Transaction.objects.create(
+                transaction_id=transaction_id,
                 type="DEPOSIT",
                 status="SUCCESS",
                 to_account=account,
@@ -70,6 +76,7 @@ def withdraw(request):
 
     try:
         data = json.loads(request.body)
+        transaction_id = data.get("transaction_id")
         account_number = data.get("account_number")
         amount = int(data.get("amount", 0))
         memo = data.get("memo", "출금")
@@ -82,6 +89,9 @@ def withdraw(request):
         except Account.DoesNotExist:
             return JsonResponse({"success": False, "message": "[ERROR] Account not found"}, status=404)
 
+        if Transaction.objects.filter(transaction_id=transaction_id).exists():
+            return JsonResponse({"success": False, "message": "[ERROR] Duplicate transaction"}, status=409)
+
         if account.balance < amount:
             return JsonResponse({"success": False, "message": "[ERROR] Insufficient balance"}, status=400)
 
@@ -90,6 +100,7 @@ def withdraw(request):
             account.save()
 
             transaction = Transaction.objects.create(
+                transaction_id=transaction_id,
                 type="WITHDRAWAL",
                 status="SUCCESS",
                 from_account=account,
@@ -125,6 +136,7 @@ def transfer(request):
 
     try:
         data = json.loads(request.body)
+        transaction_id = data.get("transaction_id")
         from_account_number = data.get("from_account")
         to_account_number = data.get("to_account")
         amount = int(data.get("amount", 0))
@@ -140,6 +152,9 @@ def transfer(request):
             try:
                 with db_transaction.atomic():
                     
+                    if Transaction.objects.filter(transaction_id=transaction_id).exists():
+                        return JsonResponse({"success": False, "message": "[ERROR] Duplicate transaction"}, status=409)
+
                     # 락 대기시간을 5초로 변경
                     with connection.cursor() as cursor:
                         cursor.execute("SET innodb_lock_wait_timeout = 5")  # 5초로 세션 설정 변경
@@ -161,6 +176,7 @@ def transfer(request):
                     to_account.save()
 
                     transaction = Transaction.objects.create(
+                        transaction_id=transaction_id,
                         type="TRANSFER",
                         status="SUCCESS",
                         from_account=from_account,
