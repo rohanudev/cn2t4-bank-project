@@ -52,12 +52,12 @@ services:
       retries: 5
 
   zap:
-    build: ./zap
+    build: ./analysis/zap
     container_name: zap_scanner
     ports:
       - "8090:8090"
     volumes:
-      - ./zap:/zap/wrk  # 명세(schema.json) 파일 저장용
+      - ./analysis/zap:/zap/wrk  # 명세(schema.json) 파일 저장용
     depends_on:
       backend:
         condition: service_healthy

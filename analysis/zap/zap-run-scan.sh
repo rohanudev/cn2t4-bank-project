@@ -21,16 +21,16 @@ while true; do
 done
 
 # 4. 리포트 출력
-curl "http://localhost:8090/OTHER/core/other/htmlreport/" -o /zap/wrk/zap_report.html
+curl "http://localhost:8090/OTHER/core/other/htmlreport/" -o /zap/wrk/report/zap_report.html
 
 
-# 5. 위험도 분석 (Medium 10개 이상 감지 시 실패 처리)
-MEDIUM_COUNT=$(curl -s "http://localhost:8090/JSON/core/view/alertsSummary/" | jq -r '.medium // 0')
+# 5. 위험도 분석 (High 1개 이상 감지 시 실패 처리)
+HIGH_COUNT=$(curl -s "http://localhost:8090/JSON/core/view/alertsSummary/" | jq -r '.high // 0')
 
-echo "Detected Medium Risk Alerts: $MEDIUM_COUNT"
+echo "Detected High Risk Alerts: $HIGH_COUNT"
 
-if [ "$MEDIUM_COUNT" -gt 10 ]; then
-  echo "❌ Medium risk issues found. Aborting pipeline."
+if [ "$HIGH_COUNT" -gt 0 ]; then
+  echo "❌ HIGH risk issues found. Aborting pipeline."
   exit 1
 else
   echo "✅ No medium risk issues. Proceeding."
