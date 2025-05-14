@@ -12,7 +12,7 @@ docker run --name eslint \
     npm install &&
     npx eslint /app\
       --format json \
-      --output /home/report/eslint_report.json
+      --output-file /home/report/eslint_report.json
   "
 
 docker cp eslint:/home/report/eslint_report.json $REPORT_PATH
