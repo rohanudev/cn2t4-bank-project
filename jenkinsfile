@@ -2,24 +2,43 @@ pipeline {
     agent any
 
     environment {
-        ENV_FILE = credentials('env-file-dev')  // 업로드한 .env 파일 참조
         PATH = "/usr/local/bin:/opt/homebrew/bin:$PATH"
+        ENV_FILE = credentials('env-file-dev')  // 업로드한 .env 파일 참조
+        GITHUB_TOKEN = credentials('Github_Token')  // Github Personal Access Token
+        GIT_REPO = 'https://github.com/rohanudev/cn2t4-bank-project-2.git'
+        GIT_BRANCH = 'feat/transaction_yh'
         AWS_DEFAULT_REGION = 'ap-northeast-2'
         ECR_REGISTRY = '661393609088.dkr.ecr.ap-northeast-2.amazonaws.com'
         ECR_REPO = 'django-backend'
     }
 
     stages {
-        stage('Docker 확인') {
+        stage('소스 체크아웃') {
             steps {
-                sh 'which docker'
-                sh 'docker --version'
+                git branch: $GIT_BRANCH, 
+                credentialsId: $GITHUB_TOKEN,
+                url: $GIT_REPO
             }
         }
 
-        stage('소스 체크아웃') {
+        stage('Run Bandit') {
             steps {
-                git branch: 'feat/transaction_yh', url: 'https://github.com/rohanudev/cn2t4-bank-project-2.git/'
+                sh 'chmod +x analysis/static/run-bandit.sh'
+                sh 'analysis/static/run-bandit.sh'
+            }
+        }
+
+        stage('Run ESLint') {
+            steps {
+                sh 'chmod +x analysis/static/run-eslint.sh'
+                sh 'analysis/static/run-eslint.sh'
+            }
+        }
+
+        stage('Run Trivy Scan') {
+            steps {
+                sh 'chmod +x analysis/static/run-trivy.sh'
+                sh 'analysis/static/run-trivy.sh'
             }
         }
 
@@ -89,8 +108,16 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'zap/zap_report.html', fingerprint: true
             sh 'docker-compose -f docker-compose.yml down'
+            sh 'rm -f backend/.env'
+            archiveArtifacts artifacts: 'analysis/static/report/bandit_report.json', fingerprint: true
+            archiveArtifacts artifacts: 'analysis/static/report/eslint_report.json', fingerprint: true
+            archiveArtifacts artifacts: 'analysis/static/report/trivy_report.json', fingerprint: true
+            archiveArtifacts artifacts: 'analysis/zap/zap_report.html', fingerprint: true
+            sh 'rm -f analysis/static/report/bandit_report.json'
+            sh 'rm -f analysis/static/report/eslint_report.json'
+            sh 'rm -f analysis/static/report/trivy_report.json'
+            sh 'rm -f analysis/zap/zap_report.html'
         }
     }
 }
