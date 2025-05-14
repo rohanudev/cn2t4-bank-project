@@ -21,7 +21,7 @@ while true; do
 done
 
 # 4. 리포트 출력
-curl "http://localhost:8090/OTHER/core/other/htmlreport/" -o /zap/wrk/zap_report.html
+curl "http://localhost:8090/OTHER/core/other/htmlreport/" -o /zap/zap_report.html
 
 
 # 5. 위험도 분석 (High 1개 이상 감지 시 실패 처리)
