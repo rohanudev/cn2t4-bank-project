@@ -1,0 +1,124 @@
+pipeline {
+    agent any
+
+    environment {
+        PATH = "/usr/bin:/usr/local/bin:$PATH"
+        ENV_FILE = credentials('env-file-dev')  // 업로드한 .env 파일 참조
+        AWS_DEFAULT_REGION = 'ap-northeast-2'
+        ECR_REGISTRY = '661393609088.dkr.ecr.ap-northeast-2.amazonaws.com'
+        ECR_REPO = 'django-backend'
+    }
+
+    stages {
+        stage('소스 체크아웃') {
+            steps {
+                cleanWs()
+                git branch: 'main',
+                url: 'https://github.com/rohanudev/cn2t4-bank-project-2.git'
+            }
+        }
+
+        stage('Run Bandit') {
+            steps {
+                sh 'chmod +x analysis/static/run-bandit.sh'
+                sh 'analysis/static/run-bandit.sh'
+            }
+        }
+
+        stage('Run ESLint') {
+            steps {
+                sh 'chmod +x analysis/static/run-eslint.sh'
+                sh 'analysis/static/run-eslint.sh'
+            }
+        }
+
+        stage('Run Trivy Scan') {
+            steps {
+                sh 'chmod +x analysis/static/run-trivy.sh'
+                sh 'analysis/static/run-trivy.sh'
+            }
+        }
+
+        stage('Copy .env') {
+            steps {
+                sh 'chmod -R u+w backend'
+                sh 'cp "$ENV_FILE" backend/.env'
+            }
+        }
+
+        stage('워크스페이스 확인') {
+            steps {
+                sh 'pwd'
+                sh 'ls -al'
+            }
+        }
+
+        stage('환경 구성') {
+            steps {
+                sh 'docker-compose up -d --build'
+            }
+        }
+
+        stage('ZAP 스캔 실행') {
+            steps {
+                // 실행
+                sh 'docker exec zap_scanner sh /zap/zap-run-scan.sh'
+                sh 'docker cp zap_scanner:/zap/zap_report.html ./analysis/zap'
+            }
+        }
+
+        stage('로그인 to ECR') {
+            steps {
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'AWS_CREDENTIALS',
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                ]]) {
+                sh '''
+                    aws ecr get-login-password --region ap-northeast-2 \
+                    | docker login --username AWS --password-stdin 661393609088.dkr.ecr.ap-northeast-2.amazonaws.com
+                '''
+                }
+            }
+        }
+
+        stage('도커 이미지 빌드') {
+            steps {
+                script {
+                    def shortCommit = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    env.IMAGE_TAG = "${shortCommit}"
+                }
+                sh '''
+                docker build -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG ./backend
+                '''
+            }
+        }
+
+        stage('이미지 푸시') {
+            steps {
+                sh '''
+                docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            sh 'docker-compose down'
+            archiveArtifacts artifacts: 'analysis/static/report/bandit_report.json', fingerprint: true
+            archiveArtifacts artifacts: 'analysis/static/report/eslint_report.json', fingerprint: true
+            archiveArtifacts artifacts: 'analysis/static/report/trivy_report.json', fingerprint: true
+            archiveArtifacts artifacts: 'analysis/zap/zap_report.html', fingerprint: true
+            sh 'rm -f analysis/static/report/bandit_report.json'
+            sh 'rm -f analysis/static/report/eslint_report.json'
+            sh 'rm -f analysis/static/report/trivy_report.json'
+            sh 'rm -f analysis/zap/zap_report.html'
+        }
+        failure {
+            echo "❌ 빌드 실패"
+            sh 'docker-compose down'
+        }
+    }
+}
