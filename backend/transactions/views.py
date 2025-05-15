@@ -9,8 +9,17 @@ from transactions.models import Transaction
 from django.utils.timezone import now
 from django.db import transaction as db_transaction, OperationalError, DatabaseError, connection
 from django.db.utils import IntegrityError
-
 from authentication.auth import jwt_required
+import logging
+from telemetry.setup import meter
+
+logger = logging.getLogger(__name__)
+
+# OpenTelemetry Counter 정의
+transaction_counter = meter.create_counter(
+    name="transaction_count",
+    description="Count of successful transactions",
+)
 import time
 
 class DepositView(APIView):
@@ -24,6 +33,7 @@ class DepositView(APIView):
             memo = data.get("memo", "입금")
 
             if amount <= 0:
+                logger.warning(f"[deposit] Invalid amount: {amount}")
                 return Response({"success": False, "message": "[ERROR] Invalid amount"}, status=400)
             
             if Transaction.objects.filter(transaction_id=transaction_id).exists():
@@ -47,6 +57,10 @@ class DepositView(APIView):
                     memo=memo,
                 )
 
+                logger.info(f"[deposit] Success | transaction_id: {transaction.transaction_id}, balance: {account.balance}")
+                logger.info(f"[{transaction.type.lower()}] Success | transaction_id: %s", transaction.transaction_id)
+                transaction_counter.add(1, {"type": "deposit", "status": "success"})
+
                 return Response({
                     "success": True,
                     "transaction": {
@@ -60,10 +74,16 @@ class DepositView(APIView):
                         "status": transaction.status,
                     }
                 })
-            
+        except Account.DoesNotExist:
+            logger.error(f"[deposit] Account not found: {account_number}")
+            transaction_counter.add(1, {"type": "deposit", "status": "fail"})
+            return JsonResponse({"success": False, "message": "[ERROR] Account not found"}, status=404)
         except json.JSONDecodeError:
+            logger.error("[deposit] JSON Decode Error", exc_info=True)
             return JsonResponse({"success": False, "message": "[ERROR] Invalid JSON"}, status=400)
         except Exception as e:
+            logger.exception(f"[deposit] Unexpected Error: {str(e)}")
+            transaction_counter.add(1, {"type": "deposit", "status": "fail"})
             return Response({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
 
 class WithdrawView(APIView):
@@ -76,6 +96,8 @@ class WithdrawView(APIView):
             amount = int(data.get("amount", 0))
             memo = data.get("memo", "출금")
 
+            logger.info(f"[withdraw] Request received | account: {account_number}, amount: {amount}")
+
             if amount <= 0:
                 return Response({"success": False, "message": "[ERROR] Invalid amount"}, status=400)
             
@@ -86,10 +108,12 @@ class WithdrawView(APIView):
             with db_transaction.atomic():
                 account = Account.objects.select_for_update.get(account_number=account_number)
                 if account.status == "CLOSED":
-                    return Response({"success": False, "message": "[ERROR] 계좌가 비활성되어 있습니다."}, status=400)
+                    return JsonResponse({"success": False, "message": "[ERROR] 계좌가 비활성되어 있습니다."}, status=400)
                 
                 if account.balance < amount:
-                    return Response({"success": False, "message": "[ERROR] Insufficient balance"}, status=400)
+                    logger.warning(f"[withdraw] Insufficient balance | account: {account_number}, balance: {account.balance}, attempted: {amount}")
+                    transaction_counter.add(1, {"type": "withdraw", "status": "fail"})
+                    return JsonResponse({"success": False, "message": "[ERROR] Insufficient balance"}, status=400)
                 
                 account.balance -= amount
                 account.save()
@@ -104,7 +128,11 @@ class WithdrawView(APIView):
                     memo=memo,
                 )
 
-                return Response({
+                logger.info(f"[withdraw] Success | transaction_id: {transaction.transaction_id}, balance: {account.balance}")
+                logger.info(f"[{transaction.type.lower()}] Success | transaction_id: %s", transaction.transaction_id)
+                transaction_counter.add(1, {"type": "withdraw", "status": "success"})
+
+                return JsonResponse({
                     "success": True,
                     "transaction": {
                         "transaction_id": str(transaction.transaction_id),
@@ -117,11 +145,16 @@ class WithdrawView(APIView):
                         "status": transaction.status,
                     }
                 })
-
+        except Account.DoesNotExist:
+            logger.error(f"[withdraw] Account not found: {account_number}")
+            transaction_counter.add(1, {"type": "withdraw", "status": "fail"})
+            return JsonResponse({"success": False, "message": "[ERROR] Account not found"}, status=404)
         except json.JSONDecodeError:
             return JsonResponse({"success": False, "message": "[ERROR] Invalid JSON"}, status=400)
         except Exception as e:
-            return Response({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
+            logger.exception(f"[withdraw] Unexpected Error: {str(e)}")
+            transaction_counter.add(1, {"type": "withdraw", "status": "fail"})
+            return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
 
 class TransferView(APIView):
     @method_decorator(jwt_required)
@@ -134,11 +167,15 @@ class TransferView(APIView):
             amount = int(data.get("amount", 0))
             memo = data.get("memo", "송금")
 
+            logger.info(f"[transfer] Request received | from: {from_account_number}, to: {to_account_number}, amount: {amount}")
+
             if amount <= 0:
-                return Response({"success": False, "message": "[ERROR] Invalid amount"}, status=400)
+                logger.warning(f"[transfer] Invalid amount: {amount}")
+                return JsonResponse({"success": False, "message": "[ERROR] Invalid amount"}, status=400)
 
             if from_account_number == to_account_number:
-                return Response({"success": False, "message": "[ERROR] Cannot transfer to the same account"}, status=400)
+                logger.warning(f"[transfer] Same account transfer attempt: {from_account_number}")
+                return JsonResponse({"success": False, "message": "[ERROR] Cannot transfer to the same account"}, status=400)
 
             for attempt in range(3):
                 try:
@@ -156,12 +193,16 @@ class TransferView(APIView):
                             from_account = Account.objects.select_for_update().get(account_number=from_account_number)
                             to_account = Account.objects.select_for_update().get(account_number=to_account_number)
                         except Account.DoesNotExist:
+                            logger.error(f"[transfer] Account not found: from: {from_account_number}, to: {to_account_number}")
+                            transaction_counter.add(1, {"type": "transfer", "status": "fail"})
                             return JsonResponse({"success": False, "message": "[ERROR] One or both accounts not found"}, status=404)
                         
                         if from_account.status == "CLOSED" or to_account.status == "CLOSED":
                             return Response({"success": False, "message": "[ERROR] 계좌가 비활성되어 있습니다."}, status=400)
 
                         if from_account.balance < amount:
+                            logger.warning(f"[transfer] Insufficient balance | from: {from_account_number}, balance: {from_account.balance}, attempted: {amount}")
+                            transaction_counter.add(1, {"type": "transfer", "status": "fail"})
                             return JsonResponse({"success": False, "message": "[ERROR] Insufficient balance"}, status=400)
                     
                         from_account.balance -= amount
@@ -180,6 +221,10 @@ class TransferView(APIView):
                             balance_after=from_account.balance,
                             memo=memo,
                         )
+
+                        logger.info(f"[transfer] Success | transaction_id: {transaction.transaction_id}, from: {from_account_number}, to: {to_account_number}, amount: {amount}")
+                        logger.info(f"[{transaction.type.lower()}] Success | transaction_id: %s", transaction.transaction_id)
+                        transaction_counter.add(1, {"type": "transfer", "status": "success"})
 
                         return JsonResponse({
                             "success": True,
@@ -211,6 +256,8 @@ class TransferView(APIView):
             return JsonResponse({"success": False, "message": "[ERROR] Invalid JSON"}, status=400)
         
         except Exception as e:
+            logger.exception(f"[transfer] Unexpected Error: {str(e)}")
+            transaction_counter.add(1, {"type": "transfer", "status": "fail"})
             return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
 
 
@@ -222,15 +269,15 @@ class ValidateAccountView(APIView):
             account_number = data.get("account_number")
 
             if not account_number:
-                return Response({"success": False, "message": "[ERROR] Missing account number"}, status=400)
+                return JsonResponse({"success": False, "message": "[ERROR] Missing account number"}, status=400)
 
             try:
                 account = Account.objects.get(account_number=account_number)
 
                 if account.status == "CLOSED":
-                    return Response({"success": False, "message": "[ERROR] 계좌가 비활성되어 있습니다."}, status=400)
+                    return JsonResponse({"success": False, "message": "[ERROR] 계좌가 비활성되어 있습니다."}, status=400)
 
-                return Response({
+                return JsonResponse({
                     "success": True,
                     "account": {
                         "account_number": account.account_number,
@@ -241,10 +288,15 @@ class ValidateAccountView(APIView):
                     }
                 })
             except Account.DoesNotExist:
-                return Response({"success": False, "message": "[ERROR] Account not found"}, status=404)
+                logger.warning(f"[validate_account] Account not found: {account_number}")
+                return JsonResponse({"success": False, "message": "[ERROR] Account not found"}, status=404)
 
+        except json.JSONDecodeError:
+            logger.error("[validate_account] JSON Decode Error", exc_info=True)
+            return JsonResponse({"success": False, "message": "[ERROR] Invalid JSON"}, status=400)
         except Exception as e:
-            return Response({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
+            logger.exception(f"[validate_account] Unexpected Error: {str(e)}")
+            return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
 
 class TransactionHistoryView(APIView):
     @method_decorator(jwt_required)
@@ -281,9 +333,11 @@ class TransactionHistoryView(APIView):
                     "counterparty_name": counterparty_name
                 })
 
-            return Response({"success": True, "history": history},json_dumps_params={'ensure_ascii': False})
+            return JsonResponse({"success": True, "history": history},json_dumps_params={'ensure_ascii': False})
 
         except Account.DoesNotExist:
-            return Response({"success": False, "message": "[ERROR] Account not found"}, status=404)
+            logger.warning(f"[transaction_history] Account not found: {account_number}")
+            return JsonResponse({"success": False, "message": "[ERROR] Account not found"}, status=404)
         except Exception as e:
-            return Response({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)
+            logger.exception(f"[transaction_history] Unexpected Error: {str(e)}")
+            return JsonResponse({"success": False, "message": f"[ERROR] {str(e)}"}, status=500)

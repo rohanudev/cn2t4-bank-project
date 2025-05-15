@@ -124,9 +124,14 @@
 │   ├── pytest.ini
 │   ├── requirements.txt
 │   ├── telemetry
-│   │   └── __pycache__
-│   │       ├── __init__.cpython-311.pyc
-│   │       └── setup.cpython-311.pyc
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-311.pyc
+│   │   │   └── setup.cpython-311.pyc
+│   │   ├── config
+│   │   │   ├── otel-collector-config.yaml
+│   │   │   └── prometheus.yml
+│   │   └── setup.py
 │   ├── tests
 │   │   ├── conftest.py
 │   │   └── test_integration.py
@@ -1677,4 +1682,4 @@
 ├── tree.txt
 └── 정리.md
 
-265 directories, 1413 files
+266 directories, 1417 files

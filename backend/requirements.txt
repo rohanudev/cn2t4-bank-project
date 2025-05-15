@@ -16,3 +16,7 @@ django-csp==3.7
 setuptools>=70.0.0
 
 drf-spectacular
+# OpenTelemetry for logging
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-exporter-otlp
