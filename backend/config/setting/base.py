@@ -17,6 +17,8 @@ import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+ROOT_DIR = os.path.abspath(os.path.join(BASE_DIR, ".."))
+sys.path.append(ROOT_DIR)
 
 # .env 불러오기
 load_dotenv(dotenv_path=BASE_DIR / '.env')
@@ -36,9 +38,9 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'tikklemoa.com', 'www.tikklemoa.com']
 
 CORS_ALLOWED_ORIGINS = [
     "https://tikklemoa.com",
@@ -69,9 +71,11 @@ INSTALLED_APPS = [
     'users',
     'transactions',
     'notifications',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
+    'middleware.format_guard.FormatGuardMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -81,6 +85,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware', # 클릭재킹 방지
     'csp.middleware.CSPMiddleware',  # CSP용 미들웨어
+    'middleware.enforce_csp.EnforceCSPMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -171,8 +176,27 @@ LOGGING = {
     },
 }
 
-# clickjacking 해결방안1
-X_FRAME_OPTIONS = "DENY"  # 또는 "SAMEORIGIN"
+# CSP 설정 (외부 리소스 허용)
+# CSP 설정 (보안 강화)
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", "https://cdn.jsdelivr.net", "'nonce-{{nonce}}'")
+CSP_STYLE_SRC = ("'self'", "https://cdn.jsdelivr.net")
+CSP_IMG_SRC = ("'self'", "data:")
+CSP_OBJECT_SRC = ("'none'",)
+CSP_BASE_URI = ("'none'",)
+CSP_FRAME_ANCESTORS = ("'none'",)
 
-# clickjacking 해결방안2
-CSP_FRAME_ANCESTORS = ("'self'",)
+# Swagger 설정
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Tikklemoa API",
+    "DESCRIPTION": "뱅킹 API 명세",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SERVERS": [
+        {"url": "http://django_backend:8000"}
+    ],
+}

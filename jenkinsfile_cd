@@ -1,0 +1,97 @@
+pipeline {
+    agent any
+
+    environment {
+        PATH = "/usr/bin:/usr/local/bin:$PATH"
+        GIT_REPO = 'https://github.com/rohanudev/cn2t4-bank-project-2.git'
+        GIT_BRANCH = 'main'
+        AWS_DEFAULT_REGION = 'ap-northeast-2'
+        S3_BUCKET = 'tikklemoa.com'
+        CLOUDFRONT_DIST_ID = 'E8UPBRU7LYVLI'
+        LAUNCH_TEMPLATE_ID = 'lt-0e8a55297f786acaf'
+        ASG_NAME = 'cn2t4-autoscaling'
+    }
+
+    stages {
+        stage('Detect FE Changes') {
+            steps {
+                script {
+                    if (!fileExists('.git')) {
+                        echo "✅ 초기 실행: git clone 수행"
+                        sh """
+                            git clone --branch $GIT_BRANCH $GIT_REPO .
+                        """
+                        env.FE_CHANGED = "true"
+                    } else {
+                        // dev 브랜치 기준으로 변경된 파일을 확인
+                        sh 'git fetch origin'
+
+                        def changedFiles = sh(
+                            script: 'git diff HEAD origin/main',
+                            returnStdout: true
+                        ).trim().split('\n')
+
+                        echo "변경된 파일 목록: ${changedFiles}"
+
+                        // FE 디렉토리 내부 변경 여부 체크
+                        def feChanged = changedFiles.any { it.contains('frontend/') }
+
+                        if (feChanged) {
+                            echo "FE 디렉토리에 변경사항이 있습니다. S3 업로드를 진행합니다."
+                            env.FE_CHANGED = "true"
+                        } else {
+                            echo "FE 디렉토리에 변경사항이 없습니다. S3 업로드를 스킵합니다."
+                            env.FE_CHANGED = "false"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Upload to S3') {
+            when {
+                expression {
+                    return env.FE_CHANGED == "true"
+                }
+            }
+            steps {
+                sh '''
+                    git fetch origin
+                    git reset --hard origin/$GIT_BRANCH
+                '''
+                dir('frontend') {
+                    sh '''
+                        aws s3 sync . s3://$S3_BUCKET/ --delete --cache-control "no-cache" \
+                        --exclude "package.json" --exclude "package-lock.json" --exclude ".eslintrc.json" \
+                        --exclude "Dockerfile" --exclude "default.conf"
+                        echo "✅ S3 업로드 완료. CloudFront 캐시 무효화 시작"
+                        aws cloudfront create-invalidation \
+                        --distribution-id $CLOUDFRONT_DIST_ID \
+                        --paths "/*"
+                    '''
+                }
+            }
+        }
+
+        stage('ASG 롤링 업데이트 트리거') {
+            steps {
+                sh '''
+                aws autoscaling start-instance-refresh \
+                --auto-scaling-group-name $ASG_NAME \
+                --strategy Rolling \
+                --desired-configuration '{"LaunchTemplate":{"LaunchTemplateId":"lt-0e8a55297f786acaf","Version":"$Latest"}}' \
+                --preferences '{"MinHealthyPercentage":90,"InstanceWarmup":60}'
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ 배포 성공"
+        }
+        failure {
+            echo "❌ 배포 실패"
+        }
+    }
+}
