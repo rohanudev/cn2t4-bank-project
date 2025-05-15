@@ -5,7 +5,6 @@ from rest_framework.permissions import IsAuthenticated
 from django.utils.decorators import method_decorator
 import json
 from accounts.models import Account
-from transactions.utils import validate_account_number
 from transactions.models import Transaction
 from django.utils.timezone import now
 from django.db import transaction as db_transaction, OperationalError, DatabaseError, connection
