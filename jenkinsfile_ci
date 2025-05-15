@@ -2,11 +2,8 @@ pipeline {
     agent any
 
     environment {
-        PATH = "/usr/local/bin:/opt/homebrew/bin:$PATH"
+        PATH = "/usr/bin:/usr/local/bin:$PATH"
         ENV_FILE = credentials('env-file-dev')  // 업로드한 .env 파일 참조
-        GITHUB_TOKEN = credentials('Github_Token')  // Github Personal Access Token
-        GIT_REPO = 'https://github.com/rohanudev/cn2t4-bank-project-2.git'
-        GIT_BRANCH = 'feat/transaction_yh'
         AWS_DEFAULT_REGION = 'ap-northeast-2'
         ECR_REGISTRY = '661393609088.dkr.ecr.ap-northeast-2.amazonaws.com'
         ECR_REPO = 'django-backend'
@@ -15,9 +12,9 @@ pipeline {
     stages {
         stage('소스 체크아웃') {
             steps {
-                git branch: $GIT_BRANCH, 
-                credentialsId: $GITHUB_TOKEN,
-                url: $GIT_REPO
+                cleanWs()
+                git branch: 'main',
+                url: 'https://github.com/rohanudev/cn2t4-bank-project-2.git'
             }
         }
 
@@ -58,7 +55,7 @@ pipeline {
 
         stage('환경 구성') {
             steps {
-                sh 'docker-compose -f docker-compose.yml up -d --build'
+                sh 'docker-compose up -d --build'
             }
         }
 
@@ -66,6 +63,7 @@ pipeline {
             steps {
                 // 실행
                 sh 'docker exec zap_scanner sh /zap/zap-run-scan.sh'
+                sh 'docker cp zap_scanner:/zap/zap_report.html ./analysis/zap'
             }
         }
 
@@ -92,7 +90,7 @@ pipeline {
                     env.IMAGE_TAG = "${shortCommit}"
                 }
                 sh '''
-                docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG ./backend
+                docker build -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG ./backend
                 '''
             }
         }
@@ -107,9 +105,8 @@ pipeline {
     }
 
     post {
-        always {
-            sh 'docker-compose -f docker-compose.yml down'
-            sh 'rm -f backend/.env'
+        success {
+            sh 'docker-compose down'
             archiveArtifacts artifacts: 'analysis/static/report/bandit_report.json', fingerprint: true
             archiveArtifacts artifacts: 'analysis/static/report/eslint_report.json', fingerprint: true
             archiveArtifacts artifacts: 'analysis/static/report/trivy_report.json', fingerprint: true
@@ -118,6 +115,10 @@ pipeline {
             sh 'rm -f analysis/static/report/eslint_report.json'
             sh 'rm -f analysis/static/report/trivy_report.json'
             sh 'rm -f analysis/zap/zap_report.html'
+        }
+        failure {
+            echo "❌ 빌드 실패"
+            sh 'docker-compose down'
         }
     }
 }
