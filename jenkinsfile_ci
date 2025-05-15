@@ -55,7 +55,7 @@ pipeline {
 
         stage('환경 구성') {
             steps {
-                sh 'docker-compose up -d --build'
+                sh 'docker compose up -d --build'
             }
         }
 
@@ -106,7 +106,7 @@ pipeline {
 
     post {
         success {
-            sh 'docker-compose down'
+            sh 'docker compose down'
             archiveArtifacts artifacts: 'analysis/static/report/bandit_report.json', fingerprint: true
             archiveArtifacts artifacts: 'analysis/static/report/eslint_report.json', fingerprint: true
             archiveArtifacts artifacts: 'analysis/static/report/trivy_report.json', fingerprint: true
@@ -118,7 +118,7 @@ pipeline {
         }
         failure {
             echo "❌ 빌드 실패"
-            sh 'docker-compose down'
+            sh 'docker compose down'
         }
     }
 }
