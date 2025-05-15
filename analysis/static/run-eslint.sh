@@ -5,6 +5,7 @@ REPORT_PATH=./analysis/static/report/eslint_report.json
 
 docker run --name eslint \
   -v ./frontend:/app \
+  -v /app/node_modules \
   -w /app \
   node:20 \
   bash -c "
