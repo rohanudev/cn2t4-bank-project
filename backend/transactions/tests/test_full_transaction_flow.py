@@ -2,6 +2,8 @@ import pytest
 from django.urls import reverse
 from accounts.models import Account
 from transactions.models import Transaction
+import uuid
+import json
 
 @pytest.mark.django_db
 def test_transaction_history_success(authenticated_client):
@@ -75,3 +77,30 @@ def test_transaction_history_account_not_found(authenticated_client):
     res = client.get('/api/accounts/9999999999/history')
     assert res.status_code == 404
     assert "[ERROR] Account not found" in res.content.decode()
+
+
+@pytest.mark.django_db
+def test_deposit_duplicate_transaction_id(authenticated_client):
+    client, user = authenticated_client
+
+    account = Account.objects.create(user=user, account_number="3000000000", nickname="중복체크계좌", balance=50000)
+
+    # 동일한 transaction_id를 두 번 사용
+    tx_id = str(uuid.uuid4())
+
+    payload = {
+        "account_number": account.account_number,
+        "amount": 10000,
+        "memo": "중복 입금 테스트",
+        "transaction_id": tx_id
+    }
+
+    # 첫 번째 요청: 성공 기대
+    res1 = client.post("/api/transactions/deposit", data=json.dumps(payload), content_type="application/json")
+    assert res1.status_code == 200
+    assert res1.json()["transaction"]["transaction_id"] == tx_id
+
+    # 두 번째 요청 (같은 transaction_id): 409 Conflict 기대
+    res2 = client.post("/api/transactions/deposit", data=json.dumps(payload), content_type="application/json")
+    assert res2.status_code == 409
+    assert "[ERROR] Duplicate transaction" in res2.content.decode()
