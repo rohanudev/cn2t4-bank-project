@@ -20,6 +20,9 @@ docker cp eslint:/home/report/eslint_report.json $REPORT_PATH
 docker rm -f eslint
 
 ERRORS=$(jq '[.[] | .messages[] | select(.severity == 2)] | length' $REPORT_PATH)
+
+echo "🚨 ESLint errors found: $ERRORS"
+
 if [ "$ERRORS" -gt 5 ]; then
   echo "❌ ESLint error found: $ERRORS"
   exit 1
